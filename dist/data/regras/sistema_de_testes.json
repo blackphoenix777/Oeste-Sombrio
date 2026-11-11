@@ -1,0 +1,105 @@
+{
+  "titulo": "Sistema de Jogo — Testes",
+  "descricao_geral": "O funcionamento do Oeste Sombrio se apoia em testes que representam o quanto os personagens conseguem se sair em situações de desafio, perigo ou incerteza.",
+  "testes_de_pericia": {
+    "descricao": "Um teste de perícia acontece sempre que o resultado de uma ação não pode ser definido apenas pela narrativa.",
+    "passos": [
+      "Soma um ou mais valores do seu 6B, conforme desejar gastar.",
+      "Rola o dado de sua perícia treinada (geralmente de 1d4 a 1d12, dependendo do nível de treinamento).",
+      "Compara o total com a Dificuldade (DB + Circunstância) determinada para a ação."
+    ],
+    "regra_resultado": "Se o resultado for igual ou maior que a dificuldade, a ação é bem-sucedida. Se for menor, a ação falha — mas em alguns casos o jogador ainda pode recorrer a Fichas do Destino para rolar novamente.",
+    "testes_de_pericia_nao_treinada": {
+      "descricao": "Quando um personagem tenta realizar um teste de perícia no qual não tem treinamento, ele usa 1d4-2.",
+      "regras": [
+        "Para realizar o teste, o jogador soma quaisquer valores do seu 6B que deseje gastar, rola o d4, e só então aplica a penalidade final de -2.",
+        "O dado de perícia não pode explodir."
+      ],
+      "dado_base": "1d4",
+      "penalidade_fixa": -2,
+      "pode_explodir": false
+    }
+  },
+  "testes_passivos": {
+    "descricao": "Usados quando o personagem não está ativamente tentando realizar uma ação, mas sua atenção natural, resistência física/mental ou reação instintiva está em jogo.",
+    "formula": "Maior resultado atual do 6B + rolagem da perícia apropriada",
+    "comparacao": "O Xerife compara esse valor com a dificuldade da situação ou com o teste ativo de outro personagem.",
+    "usos_comuns": [
+      {
+        "pericia": "Percepção Passiva",
+        "uso": "Notar detalhes, ouvir barulhos ou perceber furtividade."
+      },
+      {
+        "pericia": "Acrobacia Passiva",
+        "uso": "Usada como reflexo para esquivar."
+      },
+      {
+        "pericia": "Atletismo Passivo",
+        "uso": "Resistir fisicamente (venenos, doenças, esforços)."
+      },
+      {
+        "pericia": "Misticismo Passivo",
+        "uso": "Resistir a influências ou efeitos mentais e sobrenaturais."
+      }
+    ]
+  },
+  "pericia_x_pericia": {
+    "descricao": "Quando a ação de um personagem precisa ser resistida diretamente pela habilidade de outro, um teste de perícia é feito contra um teste passivo de outra perícia.",
+    "regras": [
+      "O personagem ativo realiza a rolagem normalmente (dado de perícia + possíveis dados extras do 6B + modificadores).",
+      "O personagem defensor usa o teste passivo da perícia apropriada (maior dado do 6B + rolagem da perícia).",
+      "Sempre que houver oposição entre personagens, o teste ativo é confrontado por um teste passivo.",
+      "O Xerife decide qual perícia se aplica como resistência, de acordo com a situação.",
+      "Apenas em casos muito específicos ambos podem rolar ativamente — isso deve ser exceção, como duelo de força."
+    ]
+  },
+  "testes_de_resistencia": {
+    "descricao": "Usados para resistir a forças da natureza, venenos mortais, pressões físicas ou ataques mentais.",
+    "formula": "Rola apenas um dado de perícia e soma o maior valor atual do 6B (forma passiva). O Xerife compara esse resultado com a dificuldade do efeito ou o ataque do inimigo.",
+    "tipos": [
+      {
+        "tipo": "Resistência Física",
+        "pericia": "Atletismo",
+        "uso": "Resistir a venenos, doenças, forças da natureza (vento, afogamento, esmagamento)."
+      },
+      {
+        "tipo": "Resistência de Esquiva",
+        "pericia": "Acrobacia",
+        "uso": "Escapar de explosões, desviar de ataques em área, reagir a armadilhas."
+      },
+      {
+        "tipo": "Resistência Mental",
+        "pericia": "Misticismo",
+        "uso": "Suportar terrores sobrenaturais, resistir a possessões, manter a mente firme diante de horrores."
+      }
+    ],
+    "testes_em_conjunto": {
+      "descricao": "Alguns objetivos são grandes demais para serem realizados por um único personagem, exigindo o esforço coordenado do grupo. A dificuldade é elevada, permitindo que todos os jogadores contribuam.",
+      "regra": "Um dos jogadores rola o teste de perícia (jogador ativo) e os demais podem ajudar, usando um dos valores de seu 6B para compor o teste. Todos os valores do 6B gastos pelo jogador ativo e pelos aliados são somados ao resultado do dado de perícia."
+    }
+  },
+  "falhas_e_sucessos_criticos": {
+    "descricao_geral": "Em momentos de sorte (ou azar) extremos, acontecem os críticos, trazendo efeitos narrativos e mecânicos mais intensos.",
+    "sucesso_critico": {
+      "condicao": "Ocorre quando o jogador rola um 6 no dado de perícia, que explode, e o resultado final ultrapassa a defesa ou dificuldade do alvo em 10 pontos ou mais.",
+      "efeitos": [
+        "O personagem pode causar dano adicional ou aplicar um efeito especial (conforme tabela de efeitos críticos).",
+        "Em perícias não combativas, o crítico pode gerar vantagens adicionais narradas pelo Xerife (ex.: não só convencer alguém, mas também ganhar sua confiança; não só abrir a fechadura, mas sem deixar rastros).",
+        "Em combate, mesmo que o dado exploda várias vezes, o jogador só pode causar +1 de dano extra."
+      ],
+      "limite_dano_extra_em_combate": 1
+    },
+    "falha_critica": {
+      "condicao": "Ocorre quando o jogador rola 1 no dado de perícia e seu resultado final fica 10 pontos abaixo da dificuldade ou defesa do alvo.",
+      "efeitos": [
+        "O personagem sofre uma consequência negativa direta.",
+        "Em combate, pode derrubar ou quebrar a arma, ou se ferir em ataques desarmados.",
+        "Fora de combate, pode gerar complicações sérias (ex.: um teste de furtividade mal-sucedido pode não só revelar o personagem, mas também atrair inimigos extras)."
+      ],
+      "restricoes": [
+        "Falha crítica não gera Progredir na Falha.",
+        "Falha crítica não pode ser rolada novamente com Fichas do Destino — a tentativa falha de maneira catastrófica."
+      ]
+    }
+  }
+}

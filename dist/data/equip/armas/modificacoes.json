@@ -1,0 +1,43 @@
+{
+  "categoria": "Modificações",
+  "descricao": "Algumas armas podem ser modificadas para cumprir outras funções",
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Cabo falso",
+      "preco": 3,
+      "volume": 0.1,
+      "detalhes": "Um compartimento secreto usado para guardar objetos leves"
+    },
+    {
+      "nome": "Carregador Automático",
+      "preco": 50,
+      "volume": 0.1,
+      "detalhes": "Reduz o tempo de recarga de uma arma de fogo para uma ação. Aumenta a frequência de manutenção da arma."
+    },
+    {
+      "nome": "Asas planadoras",
+      "preco": 50,
+      "volume": 0.1,
+      "detalhes": "Asas que são acopladas em armas de arremesso, aumenta a distância em 10 metros e permite fazer curvas leves de até 3m para acertar o alvo"
+    },
+    {
+      "nome": "Reservatório de Veneno",
+      "preco": 10,
+      "volume": 0.1,
+      "detalhes": "Uma modificação que pode ser aplicada na maioria das lâminas permitindo que elas possam ser usadas para inocular venenos no alvo."
+    },
+    {
+      "nome": "Explosão Energética",
+      "preco": 10,
+      "volume": 0.1,
+      "detalhes": "Uma modificação que pode ser aplicada em armas contusivas permitindo que elas causem 1d4 de dano energético (frio, fogo, ácido, eletricidade) adicional nos próximos 3 golpes. Recarregar a arma gasta 3 ações e cada carga adicional custa 3$"
+    },
+    {
+      "nome": "Silenciador",
+      "preco": 1,
+      "volume": 0.1,
+      "detalhes": "Extremamente raro, pode silenciar um disparo de uma arma de fogo uma única vez"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "categoria": "Armas Estranhas",
+  "descricao": "Armamentos raros desenvolvidos por cientistas que estudam as propriedades do carvão eterno",
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Chicote Elétrico",
+      "dano": "2d6",
+      "alcance": "3m/2q",
+      "recarga": "2 ações",
+      "tambor": "X",
+      "preco": 45,
+      "volume": 1,
+      "descricao": "Uma luva de borracha envolve o braço do usuário, a ela está preso um dispositivo de vidro com uma manivela que faz girar pedaços de carvão eterno e metal acumulando cargas elétricas. Um curto cabo de cobre funciona como um chicote que descarrega no inimigo essa carga elétrica acumulada."
+    },
+    {
+      "nome": "Bracelete Lançador",
+      "dano": "1d6",
+      "alcance": "9m/6q",
+      "recarga": "2 ações",
+      "tambor": 1,
+      "preco": 60,
+      "volume": 1,
+      "descricao": "Um bracelete elegante que esconde um mecanismo interno capaz de lançar dardos. Após o disparo é possível fazer um teste de furtividade e permanecer incógnito. Para identificar o mecanismo é necessário um teste de percepção passiva DB+15."
+    },
+    {
+      "nome": "Luvas de Explosão Energética",
+      "dano": "1d6+1d4",
+      "alcance": "c.a.c",
+      "recarga": "3 ações",
+      "tambor": 3,
+      "preco": 10,
+      "volume": 1,
+      "descricao": "Uma luva que quando ativa aplica pequenas detonações de energia (frio, fogo, ácido, eletricidade) cada ativação concede 3 golpes. A luva fica ativa por 1m e leva 3 ações para recarregar completamente. Cada carga adicional custa 3$"
+    },
+    {
+      "nome": "Lançador de Seringas",
+      "dano": "1d4",
+      "alcance": "9m/6q",
+      "recarga": 1,
+      "tambor": 1,
+      "preco": 8,
+      "volume": 1,
+      "descricao": "Uma arma capaz de disparar uma ampola que pode ser carregada com qualquer tipo de químicos líquidos. Essa arma precisa de manutenção diária para garantir o bom funcionamento"
+    },
+    {
+      "nome": "Lança Chamas Pequeno (uma mão)",
+      "dano": "1d8",
+      "alcance": "6m/4q",
+      "recarga": 3,
+      "tambor": 1,
+      "preco": 35,
+      "volume": 1,
+      "descricao": "Aplica queimando de acordo com a munição elemental usada. Atléticos DB+3 para reduzir pela metade"
+    },
+    {
+      "nome": "Lança Chamas Padrão",
+      "dano": "2d8",
+      "alcance": "9m/6q",
+      "recarga": 3,
+      "tambor": 1,
+      "preco": 70,
+      "volume": 2,
+      "descricao": "Aplica queimando de acordo com a munição elemental usada. Atléticos DB+5 para reduzir pela metade"
+    },
+    {
+      "nome": "Lança Chamas Montado",
+      "dano": "4d8",
+      "alcance": "12m/8q",
+      "recarga": 4,
+      "tambor": 1,
+      "preco": 350,
+      "volume": 3,
+      "descricao": "Aplica queimando de acordo com a munição elemental usada. Atléticos DB+7 para reduzir pela metade"
+    },
+    {
+      "nome": "Lança Chamas Obra Prima",
+      "dano": "8d8",
+      "alcance": "12m/8q",
+      "recarga": 2,
+      "tambor": 2,
+      "preco": 3500,
+      "volume": 2,
+      "descricao": "Aplica queimando de acordo com a munição elemental usada. Atléticos DB+10 para reduzir pela metade"
+    }
+  ]
+}

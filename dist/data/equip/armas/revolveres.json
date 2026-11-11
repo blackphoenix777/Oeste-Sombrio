@@ -1,0 +1,202 @@
+{
+  "categoria": "Revolveres",
+  "descricao": null,
+  "notas": [
+    {
+      "modelo": "Colt 1892 Ação Dupla (AD)",
+      "texto": "Ação Dupla permite que o personagem realize 2 disparos com um único teste com uma penalidade de -6 na rolagem total"
+    }
+  ],
+  "itens": [
+    {
+      "modelo": "Colt 1873 Ação Única",
+      "nome": "Colt Usado",
+      "dano": "d4",
+      "alcance": "12m/8q",
+      "recarga": "3 ações",
+      "tambor": 6,
+      "preco": 2,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1873 Ação Única",
+      "nome": "Colt Padrão",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "3 ações",
+      "tambor": 6,
+      "preco": 5,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1873 Ação Única",
+      "nome": "Colt Aprimorado",
+      "dano": "d8",
+      "alcance": "15m/10q",
+      "recarga": "3 ações",
+      "tambor": 6,
+      "preco": 8,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1873 Ação Única",
+      "nome": "Colt Tambor Rápido",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 6,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1873 Ação Única",
+      "nome": "Colt Cano Longo",
+      "dano": "d6",
+      "alcance": "18m/12q",
+      "recarga": "3 ações",
+      "tambor": 6,
+      "preco": 8,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1873 Ação Única",
+      "nome": "Colt Tambor maior",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "4 ações",
+      "tambor": 8,
+      "preco": 10,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1892 Ação Dupla (AD)",
+      "nome": "Colt (AD) Padrão",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 22,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1892 Ação Dupla (AD)",
+      "nome": "Colt (AD) Cano Longo",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 25,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1892 Ação Dupla (AD)",
+      "nome": "Colt (AD) Aprimorado",
+      "dano": "d8",
+      "alcance": "18m/12q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 28,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1892 Ação Dupla (AD)",
+      "nome": "Colt (AD) Tambor Maior",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "3 ações",
+      "tambor": 8,
+      "preco": 30,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson \"Schofield\"",
+      "nome": "Schofield Usado",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 3,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson \"Schofield\"",
+      "nome": "Schofield Padrão",
+      "dano": "d8",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 8,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson \"Schofield\"",
+      "nome": "Schofield Aprimorado",
+      "dano": "d10",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 10,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson \"Schofield\"",
+      "nome": "Schofield Rápido",
+      "dano": "d8",
+      "alcance": "15m/10q",
+      "recarga": "1 ação",
+      "tambor": 6,
+      "preco": 10,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson \"Schofield\"",
+      "nome": "Schofield Cano Longo",
+      "dano": "d8",
+      "alcance": "18m/12q",
+      "recarga": "3 ações",
+      "tambor": 6,
+      "preco": 12,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson \"Schofield\"",
+      "nome": "Schofield Tambor Maior",
+      "dano": "d8",
+      "alcance": "15m/10q",
+      "recarga": "3 ações",
+      "tambor": 8,
+      "preco": 15,
+      "volume": 1
+    },
+    {
+      "modelo": "LeMat",
+      "nome": "LeMat Padrão",
+      "dano": "d8/d12",
+      "alcance": "(15m/10q) ou (30m/20q)",
+      "recarga": "3/1 ações",
+      "tambor": "9/1 (escopeta)",
+      "preco": 20,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1851 Marinha",
+      "nome": "Colt Marinha Usado",
+      "dano": "d6",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 5,
+      "volume": 1
+    },
+    {
+      "modelo": "Colt 1851 Marinha",
+      "nome": "Colt Marinha Padrão",
+      "dano": "d8",
+      "alcance": "15m/10q",
+      "recarga": "2 ações",
+      "tambor": 6,
+      "preco": 8,
+      "volume": 1
+    }
+  ]
+}

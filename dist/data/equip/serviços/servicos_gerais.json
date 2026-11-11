@@ -1,0 +1,122 @@
+[
+  {
+    "tipo_servico": "Freelancer",
+    "preco": "Perícia chave x 2$ / dia",
+    "detalhes": "NPC para diversas finalidades"
+  },
+  {
+    "tipo_servico": "Tratamennto Médico",
+    "preco": "3$ / dia",
+    "detalhes": "Cura 2 SB por dia"
+  },
+  {
+    "tipo_servico": "Curar Doença",
+    "preco": 10.0,
+    "detalhes": "Tratamento completo"
+  },
+  {
+    "tipo_servico": "Tratar Envenenamento",
+    "preco": 10.0,
+    "detalhes": "Tratamento completo"
+  },
+  {
+    "tipo_servico": "Serviços mágicos",
+    "preco": "5$ por nível místico",
+    "detalhes": "Custos adicionais para materiais específicos"
+  },
+  {
+    "tipo_servico": "Banho Padrão",
+    "preco": "30¢",
+    "detalhes": "Uma tina com água fria, geralmennte reutilizada"
+  },
+  {
+    "tipo_servico": "Banho de Luxo",
+    "preco": 3.0,
+    "detalhes": "Ofurô com água quente e sabão. Roupas lavadas"
+  },
+  {
+    "tipo_servico": "Lavar Roupa",
+    "preco": 1.0,
+    "detalhes": "Demora cerca de 2h"
+  },
+  {
+    "tipo_servico": "Transporte",
+    "preco": 10.0,
+    "detalhes": "Esse preço é cobrado entre cidades próximas"
+  },
+  {
+    "tipo_servico": "Trasporte de Carga",
+    "preco": 30.0,
+    "detalhes": "Para cargas vivas já inclui tratameto e alimentação"
+  },
+  {
+    "tipo_servico": "Segurança",
+    "preco": "10$x 6B por dia",
+    "detalhes": "Acima de tudo um seguraça preza pela própria vida"
+  },
+  {
+    "tipo_servico": "Passagem de Trem",
+    "preco": 2.0,
+    "detalhes": "Até a próxima estação"
+  },
+  {
+    "tipo_servico": "Estabulos",
+    "preco": "2$ por semana",
+    "detalhes": "Cuidados básicos e alimentação dos animais"
+  },
+  {
+    "tipo_servico": "Pedagio",
+    "preco": "10¢",
+    "detalhes": "Algumas estradas pasam por dentro de propriedades"
+  },
+  {
+    "tipo_servico": "Operário sem treino",
+    "preco": "10¢ por dia",
+    "detalhes": "Serviço simples que não demanda habilidades"
+  },
+  {
+    "tipo_servico": "Operário treinado",
+    "preco": "1$ po dia",
+    "detalhes": "Serviço mais específico que exige treinamennto"
+  },
+  {
+    "tipo_servico": "Guia urbano",
+    "preco": "4$ x Nível de Terror por dia",
+    "detalhes": "Conhece bem uma cidade"
+  },
+  {
+    "tipo_servico": "Guia Selvagem",
+    "preco": "8$ x Nível de Terror por dia",
+    "detalhes": "Um guia para fora das cidades"
+  },
+  {
+    "tipo_servico": "Informante / espião",
+    "preco": "5$ / Dia",
+    "detalhes": "Busca e fornece informação específica"
+  },
+  {
+    "tipo_servico": "Testemunha falsa",
+    "preco": "10$ / nível de blefe",
+    "detalhes": "Pode alegar qualquer coisa que não a ponha em risco"
+  },
+  {
+    "tipo_servico": "Rede de Informantes",
+    "preco": "15$ / Nível de Terror",
+    "detalhes": "Coleta ou espalha informações em larga escala"
+  },
+  {
+    "tipo_servico": "Pesquisador",
+    "preco": "3$ / dia por nível",
+    "detalhes": "Realiza pesquisas diversas"
+  },
+  {
+    "tipo_servico": "Favor político",
+    "preco": 50.0,
+    "detalhes": "Não presta favor sob ameaça"
+  },
+  {
+    "tipo_servico": "Contrabando",
+    "preco": "10$ / nível",
+    "detalhes": "Comprar ou vender coisas ilegais na região"
+  }
+]

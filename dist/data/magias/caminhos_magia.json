@@ -1,0 +1,25 @@
+{
+  "titulo": "Caminhos da Magia",
+  "caminhos": [
+    {
+      "nome": "Magia Vodu",
+      "descricao": "Baseada na crença em espíritos e na ideia de que cada pessoa tem um duplo espiritual. O objetivo da magia vodu é influenciar energias e espíritos, utilizando rituais com cantos e danças, para controlar e proteger pessoas, curar ou melhorar o desempenho físico."
+    },
+    {
+      "nome": "Magia Xamânica",
+      "descricao": "Uma prática espiritual que geralmente envolve o uso de rituais, danças e música para entrar em um estado alterado de consciência e se comunicar com o mundo espiritual. O xamã atua como intermediário entre o mundo físico e o espiritual, podendo curar doenças e até prever o futuro."
+    },
+    {
+      "nome": "Magia das Trevas",
+      "descricao": "Envolve o uso de energia negativa dos espíritos malignos para alcançar um objetivo, geralmente em troca de algo de valor. Ela é vista como uma ameaça real, associada a rituais de invocação, maldições e possessões espirituais."
+    },
+    {
+      "nome": "Magia da Fé",
+      "descricao": "Acredita-se que a fé e a devoção a um ser divino possam ser usadas para alcançar objetivos mágicos, como proteção e cura. Em Nova Jordana, a intervenção divina é rara, mas poderosa, e pode ser a força necessária para derrotar os espíritos malignos."
+    },
+    {
+      "nome": "Magias Gerais",
+      "descricao": "Uma quinta lista de magias que pode ser aprendida por qualquer místico, independentemente do caminho que ele tenha escolhido. Elas são magias mais sutis e abrangentes, que não se vinculam a uma crença específica."
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "titulo": "Fichas do Destino",
+  "descricao_geral": "As Fichas do Destino representam a sorte, providência divina ou intervenção sobrenatural no Oeste Sombrio. São recursos raros e valiosos, capazes de virar o rumo de uma cena dramática ou salvar personagens em situações fatais.",
+  "funcao_geral": {
+    "regra_comum_a_todas_as_cores": "Todas as fichas podem ser usadas para recuperar a fadiga do personagem, removendo penalidades acumuladas.",
+    "cores": [
+      {
+        "cor": "Vermelha",
+        "opcoes": [
+          {
+            "efeito": "Recupera 1 ponto de fadiga do usuário."
+          },
+          {
+            "efeito": "Permite rolar novamente o dado de perícia.",
+            "regra_adicional": "O segundo resultado é obrigatório, mesmo que seja pior."
+          }
+        ]
+      },
+      {
+        "cor": "Azul",
+        "opcoes": [
+          {
+            "efeito": "Recupera 2 pontos de fadiga do usuário."
+          },
+          {
+            "efeito": "Recupera 1 ponto de fadiga de um aliado."
+          },
+          {
+            "efeito": "Permite rolar novamente qualquer dado de perícia do grupo de jogadores.",
+            "regra_adicional": "O segundo resultado é obrigatório."
+          }
+        ]
+      },
+      {
+        "cor": "Verde",
+        "opcoes": [
+          {
+            "efeito": "Recupera 3 pontos de fadiga do usuário."
+          },
+          {
+            "efeito": "Recupera 1 ponto de fadiga de todos os aliados."
+          },
+          {
+            "efeito": "Permite rolar um dado de perícia adicional e somar ao resultado final."
+          }
+        ]
+      },
+      {
+        "cor": "Preta",
+        "opcoes": [
+          {
+            "efeito": "Recupera todos os pontos de fadiga do usuário."
+          },
+          {
+            "efeito": "Recupera 3 pontos de fadiga de todos os aliados."
+          },
+          {
+            "efeito": "Concede sucesso automático em um teste, sem gastar valores do 6B."
+          }
+        ]
+      }
+    ]
+  },
+  "regras_adicionais": [
+    "Fichas não se acumulam entre sessões. Se não forem usadas, são descartadas.",
+    "O Xerife pode premiar fichas extras por grandes feitos, sacrifícios heroicos, interpretações memoráveis ou decisões ousadas.",
+    "Durante a sessão, qualquer Jogada Especial do 6B (como trinca, quadra ou sequência) concede automaticamente 1 Ficha do Destino adicional."
+  ],
+  "o_6b_rolagem_inicial": {
+    "descricao": "Personagens de nível 1 começam rolando 6d6 para formar seu 6B inicial. Os valores obtidos são anotados e representam os recursos do personagem para reforçar testes ao longo da sessão.",
+    "dados_iniciais": "6d6",
+    "regra_esgotamento": "Quando todos os valores do 6B se esgotam, o personagem acumula fadiga."
+  },
+  "jogadas_especiais_do_6b_inicial": {
+    "descricao": "Na primeira rolagem do 6B de cada sessão, podem ocorrer combinações raras que concedem Fichas do Destino extras.",
+    "restricao_importante": "Essas jogadas especiais só valem para a rolagem inicial da sessão. Durante o jogo, novas combinações não concedem bônus extras — apenas 1 Ficha do Destino adicional (conforme 'regras_adicionais')."
+  },
+  "combinacoes_e_recompensas": [
+    {
+      "combinacao": "Trinca",
+      "condicao": "3 números iguais",
+      "fichas_recebidas": 1,
+      "fichas_devolvidas": 0,
+      "fichas_liquidas": 1
+    },
+    {
+      "combinacao": "Quadra",
+      "condicao": "4 números iguais",
+      "fichas_recebidas": 2,
+      "fichas_devolvidas": 0,
+      "fichas_liquidas": 2
+    },
+    {
+      "combinacao": "Sequência Menor",
+      "condicao": "5 valores consecutivos",
+      "fichas_recebidas": 3,
+      "fichas_devolvidas": 1,
+      "fichas_liquidas": 2
+    },
+    {
+      "combinacao": "Quina",
+      "condicao": "5 números iguais",
+      "fichas_recebidas": 5,
+      "fichas_devolvidas": 3,
+      "fichas_liquidas": 2
+    },
+    {
+      "combinacao": "Sequência Maior",
+      "condicao": "6 valores consecutivos",
+      "fichas_recebidas": 6,
+      "fichas_devolvidas": 3,
+      "fichas_liquidas": 3
+    },
+    {
+      "combinacao": "Seis números iguais",
+      "condicao": "6 números iguais",
+      "fichas_recebidas": 4,
+      "fichas_devolvidas": 0,
+      "fichas_liquidas": 4
+    }
+  ],
+  "pool_por_nivel": {
+    "pool_base_nivel_1": {
+      "vermelha": 20,
+      "azul": 10,
+      "verde": 5,
+      "preta": 1
+    },
+    "max_pretas_ate_nivel_10": 5,
+    "nivel_marco_5_pretas": 10,
+    "intervalo_preta_ate_nivel_10": 2,
+    "intervalo_preta_apos_nivel_10": 4,
+    "ordem_ciclica_outras_cores": ["verde", "azul", "vermelha"],
+    "tabela_progressao": [
+      { "nivel": 2, "cor": "preta" },
+      { "nivel": 3, "cor": "verde" },
+      { "nivel": 4, "cor": "preta" },
+      { "nivel": 5, "cor": "azul" },
+      { "nivel": 6, "cor": "preta" },
+      { "nivel": 7, "cor": "vermelha" },
+      { "nivel": 8, "cor": "preta" },
+      { "nivel": 9, "cor": "verde" },
+      { "nivel": 10, "cor": "preta" },
+      { "nivel": 11, "cor": "azul" },
+      { "nivel": 12, "cor": "vermelha" },
+      { "nivel": 13, "cor": "verde" },
+      { "nivel": 14, "cor": "preta" },
+      { "nivel": 15, "cor": "azul" },
+      { "nivel": 16, "cor": "vermelha" },
+      { "nivel": 17, "cor": "verde" },
+      { "nivel": 18, "cor": "preta" }
+    ],
+    "ciclo_repeticao_apos_nivel_10": ["azul", "vermelha", "verde", "preta"]
+  }
+}

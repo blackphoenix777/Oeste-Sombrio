@@ -1,0 +1,20 @@
+{
+  "name": "ficha-dark-westy",
+  "version": "1.4.1",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tauri": "tauri",
+    "signer:generate": "tauri signer generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "@tauri-apps/cli": "^2.11.2",
+    "@tauri-apps/plugin-updater": "^2.14.1"
+  }
+}

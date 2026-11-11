@@ -1,0 +1,98 @@
+[
+  {
+    "nome": "Álcool",
+    "preco": "10¢",
+    "volume": 0.1,
+    "detalhes": "Comumente adquirido em bebidas e destilados em geral"
+  },
+  {
+    "nome": "Pólvora (cartucho)",
+    "preco": "10¢",
+    "volume": 0.1,
+    "detalhes": "Uma quantidade suficiente para produzir uma única bala."
+  },
+  {
+    "nome": "Pólvora (estojo)",
+    "preco": 5.0,
+    "volume": 0.3,
+    "detalhes": "Quantidade de pólvora suficiente para 50 balas"
+  },
+  {
+    "nome": "Pólvora (Barril)",
+    "preco": 50.0,
+    "volume": 3.0,
+    "detalhes": "Quantidade de pólvora sufiiciente para 500 balas"
+  },
+  {
+    "nome": "Caixa de fósforo",
+    "preco": "20¢",
+    "volume": 0.1,
+    "detalhes": "10 unidades"
+  },
+  {
+    "nome": "Repelente animal fraco",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Usado para repelir um tipo de animal específico. DB+3 para resistir"
+  },
+  {
+    "nome": "Repelente animal",
+    "preco": 15.0,
+    "volume": 0.1,
+    "detalhes": "Usado para um tipo de animal específico. DB+5 para resistir"
+  },
+  {
+    "nome": "Repelente animal moderado",
+    "preco": 75.0,
+    "volume": 0.2,
+    "detalhes": "Usado para repelir dois tipos de animais específicos. DB+8 para resistir"
+  },
+  {
+    "nome": "Repelente animal forte",
+    "preco": 350.0,
+    "volume": 0.2,
+    "detalhes": "Usado para repelir até três tipos de animais específicos. DB+11 para resistir"
+  },
+  {
+    "nome": "Repelente animal potente",
+    "preco": 1600.0,
+    "volume": 0.3,
+    "detalhes": "Usado para repelir animais lendarios ou do submundo. DB+15 para resistir"
+  },
+  {
+    "nome": "Carvão Eterno",
+    "preco": "1$ / 10g",
+    "volume": 0.1,
+    "detalhes": "Para cada 5$ do valor original do item é usado até 100g de carvão eterno para fabricar um item aprimorado."
+  },
+  {
+    "nome": "Pimenta Negra",
+    "preco": 7.0,
+    "volume": 0.1,
+    "detalhes": "Uma pimenta forte pulverizada que pode ser usada a culinária. É possível jogar um punhado desse pó no rosto de uma criatura. Atléticos BD+4 para não ser acometido por uma tosse incontrolável e ficar Desprevinido por 1 round."
+  },
+  {
+    "nome": "Óleo Eterno",
+    "preco": 20.0,
+    "volume": 0.1,
+    "detalhes": "Um óleo extraído do Carvão Eterno capaz de dobrar a duração de qualquer tônico, veneno ou mutagêncio."
+  },
+  {
+    "nome": "Ervas de Purificação",
+    "preco": 11.0,
+    "volume": 0.1,
+    "detalhes": "Um mix de ervas usadas para tratar veneno. Ao usar elas em testes de Medicina para tratar venenos concede bônus de 1d6. As ervas revigorantes permitem que o personagem role novamente o 6B."
+  },
+  {
+    "nome": "Sais de Obra Prima",
+    "preco": 12.0,
+    "volume": 0.1,
+    "detalhes": "Usado para aumentar o valor de artesanato com metais. Qualquer item feito ou aprimorado com esses sais pode ser vendido por até 1d10 dólares a mais que o normal."
+  },
+  {
+    "nome": "Sais Conservantes",
+    "preco": 14.0,
+    "volume": 0.1,
+    "detalhes": "Jogar esses sais na comida não altera o sabor mas evita que elas envelheçam, preservando a integridade e temperatura de qualquer porção de comida por até 1 semana."
+  }
+]

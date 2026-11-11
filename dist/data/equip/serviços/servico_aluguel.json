@@ -1,0 +1,37 @@
+[
+  {
+    "tipo_aluguel": "Laboratório",
+    "preco": "5$ / semana",
+    "detalhes": "Equipado com bacada de trabalho e equipamentos necesários para criar todo tipo de item e estudar fórmular durante o tempo livre"
+  },
+  {
+    "tipo_aluguel": "Laboratório Estranho",
+    "preco": "55$ / Semana",
+    "detalhes": "Equipado com bacada de trabalho e equipamentos necesários para criar todo tipo de item e estudar fórmular durante o tempo livre. Confere 1d6 de bônus nos testes relacionados."
+  },
+  {
+    "tipo_aluguel": "Esconderijo Secreto",
+    "preco": "10$ / semana por nível de terror",
+    "detalhes": "Lugar secreto para esconder pessoas ou coisas. +1d10 em testes para camuflar acampamento"
+  },
+  {
+    "tipo_aluguel": "Alojamento",
+    "preco": "30¢",
+    "detalhes": "Por pessoa por noite"
+  },
+  {
+    "tipo_aluguel": "Alojamento confortável",
+    "preco": 1.0,
+    "detalhes": "Por pessoa por noite"
+  },
+  {
+    "tipo_aluguel": "Alojamento de Luxo",
+    "preco": 5.0,
+    "detalhes": "Por pessoa por noite"
+  },
+  {
+    "tipo_aluguel": "Alojamento Extravagante",
+    "preco": 10.0,
+    "detalhes": "Por pessoa por noite"
+  }
+]

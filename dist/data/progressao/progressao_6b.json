@@ -1,0 +1,94 @@
+{
+  "titulo": "Progressão do 6B",
+  "descricao_geral": "A progressão de um personagem no Oeste Sombrio é refletida diretamente no seu 6B. A cada novo nível, a força e a determinação do personagem aumentam, e isso se traduz no crescimento dos dados que compõem seu conjunto de seis balas.",
+  "categorias_dado_em_ordem": [
+    "d4",
+    "d6",
+    "d8",
+    "d10",
+    "d12"
+  ],
+  "quantidade_dados_6b": 6,
+  "estado_inicial": {
+    "nivel": 1,
+    "configuracao_6b": {
+      "d6": 6
+    },
+    "descricao": "Você começa com um conjunto de dados de 6d6."
+  },
+  "faixas_de_progressao": [
+    {
+      "nivel_inicial": 2,
+      "nivel_final": 6,
+      "tipo_efeito": "upgrade_dado_individual",
+      "dado_origem": "d6",
+      "dado_destino": "d8",
+      "quantidade_por_nivel": 1,
+      "descricao": "Para cada nível que avança (2 a 6), um dos seus d6 se torna um d8."
+    },
+    {
+      "nivel_inicial": 7,
+      "nivel_final": 7,
+      "tipo_efeito": "estado_resultante",
+      "configuracao_6b": {
+        "d8": 6
+      },
+      "descricao": "Ao atingir o Nível 7, seu 6B será composto por 6d8."
+    },
+    {
+      "nivel_inicial": 8,
+      "nivel_final": 13,
+      "tipo_efeito": "upgrade_dado_individual",
+      "dado_origem": "d8",
+      "dado_destino": "d10",
+      "quantidade_por_nivel": 1,
+      "descricao": "A cada nível que avança (8 a 13), um dos seus d8 é substituído por um d10."
+    },
+    {
+      "nivel_inicial": 13,
+      "nivel_final": 13,
+      "tipo_efeito": "estado_resultante",
+      "configuracao_6b": {
+        "d10": 6
+      },
+      "descricao": "Ao atingir o Nível 13, seu 6B será de 6d10."
+    },
+    {
+      "nivel_inicial": 14,
+      "nivel_final": 19,
+      "tipo_efeito": "upgrade_dado_individual",
+      "dado_origem": "d10",
+      "dado_destino": "d12",
+      "quantidade_por_nivel": 1,
+      "descricao": "A partir deste ponto (14 a 19), a cada nível que avança, um dos seus d10 é substituído por um d12."
+    },
+    {
+      "nivel_inicial": 19,
+      "nivel_final": 19,
+      "tipo_efeito": "estado_resultante",
+      "configuracao_6b": {
+        "d12": 6
+      },
+      "descricao": "Neste nível, todos os seus dados de 6B se tornam d12."
+    }
+  ],
+  "alem_do_nivel_20": {
+    "nivel_inicial": 20,
+    "descricao_geral": "O Oeste Sombrio não tem nível máximo. A partir do Nível 20, a progressão se torna infinita, oferecendo mais poder e opções táticas ao personagem. Ao atingir este nível, você ganha um dado extra no seu 6B, mas ainda só pode usar seis resultados por vez, devendo descartar um.",
+    "regra_dado_extra_inicial": {
+      "nivel_gatilho": 20,
+      "dado_inicial": "d4",
+      "sobe_uma_categoria_por_nivel": true,
+      "categoria_maxima": "d12",
+      "nivel_em_que_atinge_categoria_maxima": 24
+    },
+    "regra_novo_dado_adicional": {
+      "nivel_gatilho": 25,
+      "descricao": "O personagem ganha outro dado adicional, também começando como d4, e o ciclo se repete indefinidamente (novo dado extra a cada 5 níveis, a partir do 20)."
+    },
+    "regra_descarte": {
+      "descricao": "A capacidade de descartar um dado após a rolagem é uma vantagem estratégica: usa-se para ignorar um resultado ruim ou para tentar formar jogadas especiais que garantem Fichas do Destino.",
+      "maximo_resultados_usados_por_rolagem": 6
+    }
+  }
+}

@@ -1,0 +1,170 @@
+[
+  {
+    "nome": "Vareta Brilhante",
+    "preco": "40¢",
+    "volume": 0.1,
+    "detalhes": "Uma vareta curta que produz uma faísca brilhante capaz de iluminar num raio de 3m por 1 minuto. Enquanto acesa, pode ser usada como arma improvisada causando 1d4 de dano de fogo."
+  },
+  {
+    "nome": "Removedor de Ferrugem",
+    "preco": 2.0,
+    "volume": 0.1,
+    "detalhes": "Usado para restauração de ferramentas antigas. Ou em péssimo estado de conservação"
+  },
+  {
+    "nome": "Bomba bioluminescente",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Um frasco com uma gosma luminosa. Quando esse frasco é arremessado em um inimigo ou nnas proximidades ele exploda lançando gosma para todos os lados. Acrobacia BD+4 para evitar ser atingido pela gosma. Atletismo DB+4 para evitar ficar Ofuscado pelo brilho. A gosma brilha por 24 horas depois de sair do frasco."
+  },
+  {
+    "nome": "Zarabatana Picante",
+    "preco": 3.0,
+    "volume": 0.2,
+    "detalhes": "Um tubo de bambu carregado com um mix de pimentas pulverizado. Com duas acões o personagem pode remover o lacre do tubo e soprar o conteúdo no rosto de uma criatura. A criatura faz um teste de Acrobacia DB+3 para esquivar do jato de pimenta. Caso falhe a criatura fica Abalada e Cega por 1 turno."
+  },
+  {
+    "nome": "Copiador Líquido",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Uma solução viscosa que pode ser espalhada em uma folha de papel e após um minuto ela seca e pode ser removida como uma segunda folha de papel contendo uma cópia espe;hada de todo o conteúdo que página original."
+  },
+  {
+    "nome": "Tinta Forense",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Um frasco com um líquido transparente onde pode ser colocado uma amostra de sangue ou outros fluidos. após um minuto o líquido pode ser usado para identificar se há traços da mesma substância em outro lugar. Caso haja, um leve brilho azul se manifesta no local onde o líquido transparente foi espalhado."
+  },
+  {
+    "nome": "Tinta Fantasma",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Uma tinta levemente azul que após usada torna-se invisível em um minuto. Quando aplicado ao calor a tinta revel-se novamente numa cor vermelha viva."
+  },
+  {
+    "nome": "Óleo Abençoado de Avanyu",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Óleo abençoado por rituais xamânicos que garante um bônus de +1d6 em testes de Medicina para primeiros socorros e tratamentos a longo prazo."
+  },
+  {
+    "nome": "Sutura Quente",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Uma série de bandagens com pólvora de pó de carvão eterno que quando acesa estanca imediatamente um sangramento ao custo de 1 ponto de dano no 6B"
+  },
+  {
+    "nome": "Sutura Quente Aprimorada",
+    "preco": 120.0,
+    "volume": 0.1,
+    "detalhes": "Uma bandagem menor e mais localizada, não causa dano no 6B"
+  },
+  {
+    "nome": "Papel Auto-queimante",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Após 5 minutos de exposição ao ar o papel pega fogo e é destruido imediatamente."
+  },
+  {
+    "nome": "Tinnta Lunar",
+    "preco": 5.0,
+    "volume": 0.1,
+    "detalhes": "Uma tinta feita com compostos químicos específicos e aplicados através de um carimbo de madeira. A tinta é levemente prateada e some logo depois de aplicada, sendo revelada apenas quando a luz da lua incide sobre o ela por 1 minuto. Repor a tinta custa 10¢"
+  },
+  {
+    "nome": "Doce Falante",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "10m: Um doce feito qímicos pesados e fumaça de carvão eterno. O alquimista pode inserir uma menagem de até 25 palavras no doce que se desprendem dele quando é mastigado fazendo ressoar uma voz artificial para quem o consome."
+  },
+  {
+    "nome": "Repelente de Vermes Menor",
+    "preco": 8.0,
+    "volume": 0.1,
+    "detalhes": "Um repelente que garante +1 proteção natural contra Insetos e Vermes durante 1 minuto."
+  },
+  {
+    "nome": "Repelente de Vermes Moderado",
+    "preco": 75.0,
+    "volume": 0.1,
+    "detalhes": "Um repelente que garante +2 proteção natural contra Insetos e Vermes durante 10 minutos."
+  },
+  {
+    "nome": "Repelente de Vermes Maior",
+    "preco": 315.0,
+    "volume": 0.1,
+    "detalhes": "Um repelente que garante +3 proteção natural contra Insetos e Vermes durante 30 minutos."
+  },
+  {
+    "nome": "Repelente de Vermes Superior",
+    "preco": 3150.0,
+    "volume": 0.1,
+    "detalhes": "Um repelente que garante +4 proteção natural contra Insetos e Vermes durante1 hora."
+  },
+  {
+    "nome": "Colírio Luminescente",
+    "preco": 9.0,
+    "volume": 0.1,
+    "detalhes": "Feito de cogumelos luminosos na intenção de simular a visão noturna de um animal. Conecede visão no escuro num raio de 10m por 1d4 Minutos."
+  },
+  {
+    "nome": "Óleo Veterano Menor",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Um óleo bentificado e ungido que pode ser espalhado em uma arma,ou em 10 unidades de munição, para conceder (durante 10 golpes ou 10 minutos) um bônus de 1d4 contra Veteranos."
+  },
+  {
+    "nome": "Óleo Veterano Moderado",
+    "preco": 140.0,
+    "volume": 0.1,
+    "detalhes": "Um óleo bentificado e ungido que pode ser espalhado em uma arma,ou em 15 unidades de munição, para conceder (durante 15 golpes ou 30 minutos) um bônus de 1d6 contra Veteranos."
+  },
+  {
+    "nome": "Óleo Veterano Maior",
+    "preco": 1700.0,
+    "volume": 0.1,
+    "detalhes": "Um óleo bentificado e ungido que pode ser espalhado em uma arma,ou em 20 unidades de munição, para conceder (durante 20 golpes ou 1h minutos) um bônus de 1d8 contra Veteranos."
+  },
+  {
+    "nome": "Reparo Rápido",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Pode ser usada durante o combate com duas ações para reparar qualquer item quebrado. O reparo dura 1 minuto e depois se desfaz quebrando o item definitivamente e impedindo que outro Reparo Rápido seja usado."
+  },
+  {
+    "nome": "Pomada de Sapo",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Uma pomada que pode ser passada no corpo inteiro e dura 10 minutos. Ao ser atacado a poada reage soltando vapores no inimigo causando 1d4 dano persistente de veneno."
+  },
+  {
+    "nome": "Pomada de Sapo Aprimorada",
+    "preco": 55.0,
+    "volume": 0.1,
+    "detalhes": "Uma pomada que pode ser passada no corpo inteiro e dura 10 minutos. Ao ser atacado a poada reage soltando vapores no inimigo causando 2d4 dano persistente de veneno."
+  },
+  {
+    "nome": "Pomada de Sapo Superior",
+    "preco": 225.0,
+    "volume": 0.1,
+    "detalhes": "Uma pomada que pode ser passada no corpo inteiro e dura 10 minutos. Ao ser atacado a poada reage soltando vapores no inimigo causando 3d4 dano persistente de veneno."
+  },
+  {
+    "nome": "Esfera Nevoeiro",
+    "preco": 11.0,
+    "volume": 0.2,
+    "detalhes": "Uma esfera de metal do tamanho de uma laranja. Ao ser acionada ela libera uma nuvem de fumaça num raio de 2 metros"
+  },
+  {
+    "nome": "Esfera Nevoeiro Aprimorada",
+    "preco": 90.0,
+    "volume": 0.2,
+    "detalhes": "Uma esfera de metal do tamanho de uma laranja. Ao ser acionada ela libera uma nuvem de fumaça num raio de 3 metros"
+  },
+  {
+    "nome": "Esfera Nevoeiro Superior",
+    "preco": 500.0,
+    "volume": 0.2,
+    "detalhes": "Uma esfera de metal do tamanho de uma laranja. Ao ser acionada ela libera uma nuvem de fumaça num raio de 5 metros"
+  }
+]

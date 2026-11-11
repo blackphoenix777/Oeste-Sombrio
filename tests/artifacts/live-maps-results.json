@@ -1,0 +1,19 @@
+{
+  "results": [
+    "três imagens distintas coexistem no Storage real",
+    "upsert slot 2 preserva bytes do slot 1 e três arquivos",
+    "RPC HTTP do jogador oculta mapa e tokens de preparação",
+    "download autenticado de slot privado é negado",
+    "download autenticado do mapa ativo funciona",
+    "URL pública de imagem privada é bloqueada",
+    "RPC HTTP anônima é negada",
+    "jogador lê sinal via HTTP antes da assinatura",
+    "preparação do Mestre não sinaliza mudança da visão do jogador",
+    "troca da flâmula recebida por WebSocket autenticado em 471 ms",
+    "após sinal, RPC HTTP entrega imagem/grade/token corretos e oculta monstro secreto",
+    "download autenticado sem cache acompanha a flâmula",
+    "SELECT HTTP direto preserva isolamento de mapas/visibilidade"
+  ],
+  "cleanupOK": true,
+  "passed": true
+}

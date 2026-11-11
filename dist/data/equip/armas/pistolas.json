@@ -1,0 +1,67 @@
+{
+  "categoria": "Pistolas",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "modelo": "Smith & Wesson 1855 Volcanic",
+      "nome": "Volcanic usada",
+      "dano": "d6",
+      "alcance": "5m",
+      "recarga": "2 ações",
+      "tambor": 8,
+      "preco": 15,
+      "volume": 1
+    },
+    {
+      "modelo": "Smith & Wesson 1855 Volcanic",
+      "nome": "Volcanic Padrão",
+      "dano": "d8",
+      "alcance": "5m",
+      "recarga": "2 ações",
+      "tambor": 8,
+      "preco": 18,
+      "volume": 1
+    },
+    {
+      "modelo": "Borchardt C-93 (Semi-Automática)",
+      "nome": "C-93 Usada",
+      "dano": "d4",
+      "alcance": "5m",
+      "recarga": "1 ação",
+      "tambor": 8,
+      "preco": 20,
+      "volume": 1
+    },
+    {
+      "modelo": "Borchardt C-93 (Semi-Automática)",
+      "nome": "C-93 Padrão",
+      "dano": "d6",
+      "alcance": "5m",
+      "recarga": "1 ação",
+      "tambor": 8,
+      "preco": 25,
+      "volume": 1
+    },
+    {
+      "modelo": "Mouser C96",
+      "nome": "Mouser Padrão",
+      "dano": "d4",
+      "alcance": "5m",
+      "recarga": "1 ação",
+      "tambor": 10,
+      "preco": 15,
+      "volume": 1
+    },
+    {
+      "modelo": "Mouser C96",
+      "nome": "Mouser Silenciada",
+      "dano": "d4",
+      "alcance": "5m",
+      "recarga": "1 ação",
+      "tambor": 10,
+      "preco": 20,
+      "volume": 1
+    }
+  ]
+}

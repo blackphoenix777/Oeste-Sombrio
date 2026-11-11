@@ -1,0 +1,109 @@
+{
+  "titulo": "Tempo Livre",
+  "descricao_geral": "O Tempo Livre representa os períodos entre as aventuras principais, quando os personagens têm a chance de se recuperar, aprimorar suas habilidades e interagir com o mundo de forma mais cotidiana.",
+  "retreinamento_de_pericias": {
+    "descricao": "Representa a mudança de foco e prática ao longo da vida dos personagens, permitindo trocar o domínio de uma perícia por outra.",
+    "como_funciona": [
+      "O personagem deve dedicar 1 semana inteira de tempo livre em treinamento intensivo.",
+      "Ao final desse período, ele ganha +1 ponto em uma nova perícia, desde que tenha acesso a mestres, materiais ou prática necessária.",
+      "No mesmo processo, ele deve remover 1 ponto de uma perícia anterior, representando a perda de prática ou desuso."
+    ],
+    "restricoes": [
+      "O personagem não pode reduzir uma perícia para menos de 0 pontos.",
+      "Não é possível retreinar mais de uma perícia por semana.",
+      "O Xerife pode exigir testes de perícia ou custos narrativos para justificar o aprendizado (como encontrar um professor ou pagar por materiais)."
+    ],
+    "custo_tempo_semanas": 1,
+    "pontos_ganhos_na_nova_pericia": 1,
+    "pontos_removidos_da_pericia_anterior": 1
+  },
+  "profissoes": {
+    "descricao": "Exercer um ofício durante o Tempo Livre é a principal maneira de ganhar dinheiro e sustentar o personagem.",
+    "ganhar_a_vida": {
+      "custo_tempo_semanas": 1,
+      "regra": "No final da semana, o personagem realiza um teste passivo de Profissões. O valor de dinheiro ganho em dólar é igual ao resultado do teste."
+    },
+    "outras_habilidades": {
+      "descricao": "O Xerife pode permitir o uso de outras perícias para ganhar a vida, como um teste de Sobrevivência para caçar e vender peles, ou um teste de Engenharia para consertar máquinas.",
+      "regra_valor": "Nesse caso o valor ganho é metade do resultado do teste."
+    }
+  },
+  "criacao_e_pesquisa_de_itens": {
+    "descricao_geral": "Durante o Tempo Livre, os personagens podem usar suas perícias para criar e aprimorar equipamentos, tornando-os mais bem preparados para as aventuras.",
+    "regra_geral": {
+      "descricao": "A criação de um item requer um teste de perícia bem-sucedido e é regida pelas seguintes regras de custo e tempo.",
+      "custo_materiais": {
+        "regra": "O valor dos materiais para fabricar um item é sempre metade do seu preço tabelado.",
+        "fracao_do_preco_tabelado": 0.5
+      },
+      "tempo_de_fabricacao": {
+        "tempo_base_dias": 1,
+        "regra_tempo_adicional": "Um dia adicional para cada $10 dólares de custo tabelado do item.",
+        "dolares_por_dia_adicional": 10
+      },
+      "pericia_utilizada": [
+        {
+          "pericia": "Engenharia",
+          "aplicavel_a": "Armas, munições, armadilhas, veículos e outras quinquilharias tecnológicas."
+        },
+        {
+          "pericia": "Alquimia",
+          "aplicavel_a": "Tônicos, elixires, mutagênicos, venenos e explosivos."
+        }
+      ],
+      "regra_acesso": "Para confeccionar itens, o jogador deve ter acesso a ferramentas especializadas como laboratórios de alquimia, oficinas ou kits portáteis de manufatura.",
+      "nota_alquimia": "Ao usar Alquimia para fabricar itens, o personagem sempre consegue produzir 4 doses por teste bem-sucedido.",
+      "exemplo": "Se uma determinada arma custa $24, são necessários 3 dias para fabricá-la (1 dia + 2 adicionais) e o personagem pagaria apenas $12 pelo material."
+    },
+    "processo_de_criacao": {
+      "descricao": "Ao final do período de tempo e com os materiais em mãos, o jogador realiza um teste passivo da perícia relevante. A dificuldade do teste é determinada pelo Xerife conforme a raridade ou complexidade do item.",
+      "resultados": [
+        {
+          "caso": "Sucesso Crítico",
+          "efeito": "O item é fabricado de forma excepcional, levando metade do tempo ou custando metade do valor dos materiais, a critério do Xerife."
+        },
+        {
+          "caso": "Sucesso",
+          "efeito": "O item é fabricado conforme o esperado."
+        },
+        {
+          "caso": "Falha Comum",
+          "efeito": "O item não pode ser fabricado no prazo. O jogador pode gastar mais 50% do custo original do item para conseguir terminá-lo no prazo original.",
+          "custo_extra_percentual": 50
+        },
+        {
+          "caso": "Falha Crítica",
+          "efeito": "O item não pode ser fabricado. Os materiais são descartados e podem ocorrer acidentes."
+        }
+      ],
+      "nota_receita": "Se o personagem possuir algum tipo de receita ou livro de manufatura, a dificuldade do teste é reduzida em 6.",
+      "reducao_dificuldade_com_receita": 6
+    },
+    "engenharia_reversa": {
+      "descricao": "O jogador pode tentar engenharia reversa em um item, desmantelando-o para aprender sua receita. Para isso, o item é quebrado, e um teste de perícia é feito nas mesmas condições de fabricação.",
+      "resultados": [
+        {
+          "caso": "Sucesso Crítico",
+          "efeito": "A receita é aprendida, e o personagem consegue recuperar metade do valor original do item em materiais."
+        },
+        {
+          "caso": "Sucesso",
+          "efeito": "A receita do item é aprendida."
+        },
+        {
+          "caso": "Falha Comum",
+          "efeito": "O personagem não consegue pesquisar a receita do item, mas ele não é destruído."
+        },
+        {
+          "caso": "Falha Crítica",
+          "efeito": "A receita do item não é aprendida, e o item é acionado involuntariamente, sendo destruído e podendo causar um acidente."
+        }
+      ],
+      "tempo_de_pesquisa": {
+        "tempo_base_dias": 1,
+        "regra_tempo_adicional": "Um dia adicional para cada $10 dólares de custo tabelado do item.",
+        "dolares_por_dia_adicional": 10
+      }
+    }
+  }
+}

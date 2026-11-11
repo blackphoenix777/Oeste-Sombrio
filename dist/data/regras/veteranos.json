@@ -1,0 +1,46 @@
+{
+  "titulo": "Os Veteranos",
+  "descricao_geral": "Quando um personagem morre, mas o destino lhe nega o descanso eterno, ele retorna como um Veterano. Eles são almas desencarnadas que escaparam do Submundo para habitar sua própria carcaça sem vida. Jogar como um Veterano significa encarar uma nova existência, com regras e desafios que se curvam ao poder do Submundo.",
+  "jogando_como_um_veterano": {
+    "descricao": "Um personagem que se torna Veterano agora existe sob outras regras, que refletem sua condição de morto-vivo.",
+    "o_corpo_sem_vida": {
+      "sobrevivencia": {
+        "descricao": "Veteranos estão, acima de tudo, mortos. Eles não precisam mais comer, beber ou respirar, pois sua fisiologia e metabolismo estão completamente parados."
+      },
+      "cura": {
+        "descricao": "Ferimentos não se curam com o tempo, nem com testes normais de Medicina.",
+        "formas_de_recuperacao": [
+          "Magia",
+          "Medicina Mortuária (repor membros danificados com outras partes mortas)"
+        ]
+      },
+      "fadiga": {
+        "descricao": "Veteranos não podem recuperar fadiga com descanso ou tônicos.",
+        "forma_de_recuperacao": "Fichas do Destino"
+      }
+    }
+  },
+  "maldicao_da_cicatriz_da_morte": {
+    "descricao": "A maioria dos Veteranos carrega consigo a marca do golpe final que os derrubou. Esse ferimento de morte nunca será curado e dói constantemente.",
+    "regra": "Qualquer ataque que atinja essa cicatriz paralisa um Veterano por alguns segundos, fazendo-o perder seu próximo turno no combate."
+  },
+  "resistencia_e_poder": {
+    "defesa_natural": {
+      "descricao": "A proximidade com o Submundo confere uma defesa natural aos Veteranos.",
+      "regra_bonus": "O Nível de Terror do local sempre conta como Bônus de defesa do Veterano.",
+      "regra_minimo": "A Defesa de um Veterano nunca pode ser menor que o Nível de Terror local, funcionando também como valor de defesa mínima."
+    },
+    "poderes_reforcados": {
+      "descricao": "As magias de um Veterano são reforçadas pelo Nível de Terror do local.",
+      "regra_rem": "Para um Veterano, a capacidade máxima do Reservatório de Energia Mística (REM) é somada ao valor do Nível de Terror do local.",
+      "regra_recuperacao_descanso_curto": "Após cada descanso curto, um Veterano recupera um valor de energia mística igual ao seu nível de Misticismo."
+    }
+  },
+  "o_retorno_do_submundo": {
+    "descricao": "Um Veterano que toma dano suficiente para bloquear todos os valores do 6B tem seu espírito arremessado de volta ao Submundo. Ele então precisa escapar de lá para retornar ao seu corpo."
+  },
+  "morte_definitiva": {
+    "descricao": "Um Veterano só pode habitar naturalmente seu próprio corpo.",
+    "regra": "Se ele for destruído, o Veterano pode ficar vagando como espírito no mundo mortal ou no Submundo, mas a sua ficha será perdida definitivamente e o jogador precisará fazer outro personagem."
+  }
+}

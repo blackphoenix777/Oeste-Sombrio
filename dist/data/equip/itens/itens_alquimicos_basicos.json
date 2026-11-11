@@ -1,0 +1,236 @@
+[
+  {
+    "nome": "Pó de Alerta",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": "Um pó feito com carvão eterno e pequenas pedras. Ele pode ser espalhado no chão e quando alguém pisa solta um pequeno estalo."
+  },
+  {
+    "nome": "Óleo de cobra",
+    "preco": 2.0,
+    "volume": 0.1,
+    "detalhes": "Usado para deixar uma parte do corpo dormente, aliviando por 1h sintomas de dor causado por ferimentos."
+  },
+  {
+    "nome": "Supressor de vício Menor",
+    "preco": 2.0,
+    "volume": 0.1,
+    "detalhes": "Bônus de +1d4 para resistir ao vício de alguma droga"
+  },
+  {
+    "nome": "Supressor de vício Moderado",
+    "preco": 30.0,
+    "volume": 0.1,
+    "detalhes": "Bônus de +1d6 para resistir ao vício de alguma droga"
+  },
+  {
+    "nome": "Supressor de vício Maior",
+    "preco": 140.0,
+    "volume": 0.1,
+    "detalhes": "Bônus de +1d8 para resistir ao vício de alguma droga"
+  },
+  {
+    "nome": "Supressor de Vício Supremo",
+    "preco": 500.0,
+    "volume": 0.1,
+    "detalhes": "Bônus de +1d10 para resistir ao vício de alguma droga"
+  },
+  {
+    "nome": "Paviu alongado",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Cada paviu alongado adiciona 1d6 turnos em a uma dinamite. É possível juntar dois ou mais alongadores"
+  },
+  {
+    "nome": "Antídoto Menor",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra toxinas por 6 horas. +1d4 de bônus para resistir à venenos"
+  },
+  {
+    "nome": "Antídoto Moderado",
+    "preco": 35.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra toxinas por 8 horas. +1d6 de bônus para resistir à venenos"
+  },
+  {
+    "nome": "Antídoto Maior",
+    "preco": 160.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra toxinas por 10 horas. +1d8 de bônus para resistir à venenos"
+  },
+  {
+    "nome": "Antídoto Supremo",
+    "preco": 675.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra toxinas por 12 horas. +1d10 de bônus para resistir à venenos"
+  },
+  {
+    "nome": "Imunizante Menor",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra doenças por 6 horas. +1d4 de bônus para testes de resistência"
+  },
+  {
+    "nome": "Imunizante Moderado",
+    "preco": 35.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra doenças por 8 horas. +1d6 de bônus para testes de resistência"
+  },
+  {
+    "nome": "Imunizante Maior",
+    "preco": 160.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra doenças por 10 horas. +1d8 de bônus para testes de resistência"
+  },
+  {
+    "nome": "Imunizante Supremo",
+    "preco": 675.0,
+    "volume": 0.1,
+    "detalhes": "Protege contra doenças por 12 horas. +1d10 de bônus para testes de resistência"
+  },
+  {
+    "nome": "Frasco Fumaça",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Ao se romper espalha rapidamente uma cortina de fumaça num raio de 1,5m"
+  },
+  {
+    "nome": "Frasco Fumaça Eterna",
+    "preco": 53.0,
+    "volume": 0.1,
+    "detalhes": "Uma mistura com fumaça de carvão eterno se espalha numa raio de 6m. DB+5 para não causar cegueira por 1d4 turnos"
+  },
+  {
+    "nome": "Tocha Douro",
+    "preco": 3.0,
+    "volume": 0.2,
+    "detalhes": "Um bastão feito de uma liga de metal e carvão eterno de 30 cm e banhado de ouro. Quando o usuário bate em algo com o bastão ele brilha como uma tocha durante 6h."
+  },
+  {
+    "nome": "Máscara do Cão do Farejador Menor",
+    "preco": 6.0,
+    "volume": 0.2,
+    "detalhes": "Ao acionar a máscara o usuário ganha um leve olfato podendo distinguir odores. +1d6 para testes de percepção olfativa. Duração: 10 minutos"
+  },
+  {
+    "nome": "Máscara do Cão do Farejador Moderado",
+    "preco": 40.0,
+    "volume": 0.2,
+    "detalhes": "Ao acionar a máscara o usuário ganha um leve olfato podendo distinguir odores. +1d8 para testes de percepção olfativa. Duração: 1 hora"
+  },
+  {
+    "nome": "Máscara do Cão do Farejador Maior",
+    "preco": 250.0,
+    "volume": 0.2,
+    "detalhes": "Ao acionar a máscara o usuário ganha um leve olfato podendo distinguir odores. +1d10 para testes de percepção olfativa. Duração: 8 horas"
+  },
+  {
+    "nome": "Cola Original",
+    "preco": 6.0,
+    "volume": 0.1,
+    "detalhes": "Uma cola natural feita de forma ritualística que pode ser usada para reparar itens quebrados, reconhecendo as partes quebradas do item e retaurando-o de forma que pareça que nunca foi quebrado. Se as partes quebradas não forem do mesmo item originalmente a cola não funciona."
+  },
+  {
+    "nome": "Pasta de Prata",
+    "preco": 6.0,
+    "volume": 0.1,
+    "detalhes": "É possível espalhar essa pasta por uma lâmina, ou por 10 unidades de munição, para torná-las de prata. Esse efeito dura 1h."
+  },
+  {
+    "nome": "Pó de Espirro",
+    "preco": 7.0,
+    "volume": 0.1,
+    "detalhes": "Um mis de pimentas e ervas pulverizadas que podem ser jogadas no rosto de uma criatura adjacente causando uma profusão de espirros consecutivos. A criatura perde 1d4 ações no seu próximo turno"
+  },
+  {
+    "nome": "Tinta Mágica Azul",
+    "preco": 8.0,
+    "volume": 0.1,
+    "detalhes": "Uma tinta de secagem rápida capaz de estabilizar qualquer superfície. Adiciona +1d6 na dificuldade em testes de atletismo para quebrar alguma coisa ou para testes de Acrobacia em superfícies instáveis. Duração 1 minuto"
+  },
+  {
+    "nome": "Tinta Mágica Amarela",
+    "preco": 8.0,
+    "volume": 0.1,
+    "detalhes": "Torna qualquer superfície perfeitamente plana. Transforma terrenos difíceis em terrenos comuns. Duração 1 Minuto"
+  },
+  {
+    "nome": "Tinta Mágica Verde",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Deixa a superfície escorregadia. Teste de acrobacia DB+6 para não escorregar e cair, ou de Atléticos para subir em uma superfície com essa tinta. Duração 1 minuto"
+  },
+  {
+    "nome": "Tinta Mágica Branca",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Bônus de 1d4 em testes de atléticos para quebrar a superfície. Causa 1d4 de dano ácido por turno no local pintado. Duração 1 minuto."
+  },
+  {
+    "nome": "Tinta Mágica Vermelha",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Torna a superfície levemente mais macia, reduzindo o dano de queda. Duração 1 Minuto"
+  },
+  {
+    "nome": "Tinta Mágica Laranja",
+    "preco": 12.0,
+    "volume": 0.1,
+    "detalhes": "Solta uma núvem tóxica que causa 1 de dano no 6B em quem entrar em contato. Atléticos DB+6 para resistir. Duração 1 Minuto"
+  },
+  {
+    "nome": "Tinta Mágica Violeta",
+    "preco": 15.0,
+    "volume": 0.1,
+    "detalhes": "Torna a superfície grudenta. Acrobacia DB+6 para evitar ser imobilizado pela superfície. Atléticos DB+6 para conseguir se soltar uma vez imobilizado. Duração 1 Minuto"
+  },
+  {
+    "nome": "Máscara Olfativa",
+    "preco": 9.0,
+    "volume": 0.2,
+    "detalhes": "Um óelo capaz de mascarar os odores corporais de uma pessoa. Durante 10 minutos concede +1d8 em testes de furtividade contra criaturas que usam faro."
+  },
+  {
+    "nome": "Máscara Olfativa Aprimorada",
+    "preco": 225.0,
+    "volume": 0.2,
+    "detalhes": "Um óelo capaz de mascarar os odores corporais de uma pessoa. Durante 8 horas concede +1d8 em testes de furtividade contra criaturas que usam faro."
+  },
+  {
+    "nome": "Spray de Busca",
+    "preco": 9.0,
+    "volume": 0.2,
+    "detalhes": "Uma lata com ar comprimido que solta químicos em um cone de 3 metros destacando detalhes do ambiente difíceis de enxergar. Bônus de 1d6 em testes de percepção ativa"
+  },
+  {
+    "nome": "Spray de Busca Aprimorado",
+    "preco": 60.0,
+    "volume": 0.2,
+    "detalhes": "Uma lata com ar comprimido que solta químicos em um cone de 6 metros destacando detalhes do ambiente difíceis de enxergar. Bônus de 1d8 em testes de percepção ativa"
+  },
+  {
+    "nome": "Pó de Camuflagem",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Uma mistura de ervas pulverizadas com outros elementos que pode ser espalhada pelo corpo. Após um turno totalmente imóvel concede +1d6 em testes de furtividade. O efeito dura 10 Minutos e desativa com qualquer movimento ou ação ofensiva."
+  },
+  {
+    "nome": "Pó de Camuflagem Aprimorado",
+    "preco": 60.0,
+    "volume": 0.1,
+    "detalhes": "Uma mistura de ervas pulverizadas com outros elementos que pode ser espalhada pelo corpo. Após um turno totalmente imóvel concede +1d6 em testes de furtividade. O efeito dura 10 Minutos mas não desativa com movimentos apenas com ações ofensivas."
+  },
+  {
+    "nome": "Dedo de Gelo",
+    "preco": 11.0,
+    "volume": 0.1,
+    "detalhes": "Um dedo de veterano congelado e encantado para conceder 1d6 de bônus em testes de sobrevivência em climas frios"
+  },
+  {
+    "nome": "Banndagem Mil-Folhas",
+    "preco": 12.0,
+    "volume": 0.1,
+    "detalhes": "Bandagem feita com ervas medicinais potentes. Com duas ações é possível aplicar essa bandagem para estancar um sangramento e curar 1 ponto do SB"
+  }
+]

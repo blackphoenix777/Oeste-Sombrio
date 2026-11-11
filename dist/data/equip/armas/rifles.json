@@ -1,0 +1,52 @@
+{
+  "categoria": "Rifles",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Springfield",
+      "dano": "d8",
+      "alcance": "90m/80q",
+      "recarga": "1 ação",
+      "tambor": 1,
+      "preco": 12,
+      "volume": 2
+    },
+    {
+      "nome": "Ferrolho",
+      "dano": "d6",
+      "alcance": "90m/80q",
+      "recarga": "1 ação",
+      "tambor": 5,
+      "preco": 18,
+      "volume": 2
+    },
+    {
+      "nome": "Remington",
+      "dano": "d10",
+      "alcance": "90m/80q",
+      "recarga": "1 ação",
+      "tambor": 1,
+      "preco": 22,
+      "volume": 2
+    },
+    {
+      "nome": "Carcano",
+      "dano": "d8",
+      "alcance": "90m/80q",
+      "recarga": "2 ações",
+      "tambor": 5,
+      "preco": 25,
+      "volume": 2
+    },
+    {
+      "nome": "Elefante",
+      "dano": "d12+4",
+      "alcance": "90m/80q",
+      "recarga": "1 ação",
+      "tambor": 1,
+      "preco": 30,
+      "volume": 2
+    }
+  ]
+}

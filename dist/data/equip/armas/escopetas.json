@@ -1,0 +1,61 @@
+{
+  "categoria": "Escopetas",
+  "descricao": null,
+  "notas": [
+    {
+      "marcador": "*",
+      "texto": "uma vez por turno permite fazer um disparo como parte de uma ação de movimento"
+    },
+    {
+      "marcador": "**",
+      "texto": "sempre permite fazer um disparo como parte de uma ação de movimento"
+    }
+  ],
+  "itens": [
+    {
+      "nome": "CANO SERRADO",
+      "dano": "d10",
+      "alcance": "15m/10q",
+      "recarga": "1 ação / cartucho",
+      "tambor": 2,
+      "preco": 10,
+      "volume": 1
+    },
+    {
+      "nome": "BARRIL DUPLO",
+      "dano": "d12",
+      "alcance": "30m/20q",
+      "recarga": "1 ação / cartucho",
+      "tambor": 2,
+      "preco": 12,
+      "volume": 2
+    },
+    {
+      "nome": "PUMP ACTION",
+      "dano": "d10",
+      "alcance": "30m/20q",
+      "recarga": "1 ação / cartucho",
+      "tambor": 7,
+      "preco": 15,
+      "volume": 2
+    },
+    {
+      "nome": "SEMI AUTO*",
+      "dano": "d8",
+      "alcance": "30m/20q",
+      "recarga": "1 ação / cartucho",
+      "tambor": 8,
+      "preco": 25,
+      "volume": 2
+    },
+    {
+      "nome": "REPETIDORA**",
+      "dano": "d6",
+      "alcance": "30m/20q",
+      "recarga": "1 ação / cartucho",
+      "tambor": 8,
+      "preco": 40,
+      "volume": 2
+    }
+  ]
+}

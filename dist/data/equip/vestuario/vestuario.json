@@ -1,0 +1,133 @@
+{
+  "categoria": "Vestuário",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Roupas Comuns",
+      "preco": "10¢",
+      "volume": 0.2,
+      "protecao": 0,
+      "detalhes": "Preço por peça de roupa"
+    },
+    {
+      "nome": "Roupas de Inverno",
+      "preco": "40¢",
+      "volume": 0.3,
+      "protecao": 0,
+      "detalhes": "Roupas apropriadas para suportar climas frios"
+    },
+    {
+      "nome": "Roupas Caras",
+      "preco": 2,
+      "volume": 0.2,
+      "protecao": 0,
+      "detalhes": "Peças de roupas de luxo, nobres e bem alinhadas. Geralmente feitas sob medida"
+    },
+    {
+      "nome": "Capa do Viajante",
+      "preco": 7,
+      "volume": 0.3,
+      "protecao": 0,
+      "detalhes": "Essa capa se ajusta à variação do clima, podendo manter o usuário confortável independente das variações de temperatura. Apesar disso ela não é feita para suportar temperaturas severas."
+    },
+    {
+      "nome": "Vestimentas Exóticas",
+      "preco": 25,
+      "volume": 0.3,
+      "protecao": 0,
+      "detalhes": "Roupas Caras feitas por estilistas excêntricos. Podem garantir +1d6 nos testes de Diplomacia caso o interlocutor entenda alguma coisa sobre moda"
+    },
+    {
+      "nome": "Óculos de Proteção Solar",
+      "preco": 30,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Um óculos com lentes escurecidas que protegem o usuário de luzes fortes. Testes de percepção visual têm -2 de penalidade."
+    },
+    {
+      "nome": "Capa Aquecida",
+      "preco": 160,
+      "volume": 0.3,
+      "protecao": 0,
+      "detalhes": "Uma capa costurada com fibras de carvão eterno ligeiramente aquecido. É capaz de manter o usuário aquecido mesmo no frio severo."
+    },
+    {
+      "nome": "Vestimenta Camuflada",
+      "preco": 10,
+      "volume": 0.2,
+      "protecao": 0,
+      "detalhes": "Vestimentas apropriadas para camuflagem em diferentes ambientes. Ganhe +1d6 nos testes de furtividade"
+    },
+    {
+      "nome": "Vestimenta Camuflada Superior",
+      "preco": 140,
+      "volume": 0.2,
+      "protecao": 0,
+      "detalhes": "Bônus de +1d10 nos testes de Furtividade"
+    },
+    {
+      "nome": "Máscara Comum",
+      "preco": "5¢",
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": null
+    },
+    {
+      "nome": "Máscara de luxo",
+      "preco": 2,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Uma máscara bem construída e impecável, com alguns traços de ouro ou pequenas pedras preciosas."
+    },
+    {
+      "nome": "Máscara disfarce",
+      "preco": 5,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Esculpida de uma forma que simula o rosto de outra pessoa."
+    },
+    {
+      "nome": "Máscara da Praga",
+      "preco": 10,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Máscara com nariz alongado como o bico de uma ave, pode-se usar ervas e outros materiais para filtrar o ar respirado."
+    },
+    {
+      "nome": "Colete de flutuação",
+      "preco": 5,
+      "volume": 0.3,
+      "protecao": 0,
+      "detalhes": "Um colete usado para prevenir afogamentos."
+    },
+    {
+      "nome": "Nadadeiras",
+      "preco": 5,
+      "volume": 0.2,
+      "protecao": 0,
+      "detalhes": "Nadadeiras para ser usadas nos pés. Aumenta a velocidade de movimento dentro d'água"
+    },
+    {
+      "nome": "Sapatos de Neve",
+      "preco": 10,
+      "volume": 0.3,
+      "protecao": 0,
+      "detalhes": "É difícil andar com esses sapatos em um local onde não há neve"
+    },
+    {
+      "nome": "Roupa de Mergulho",
+      "preco": 100,
+      "volume": 1.5,
+      "protecao": 0,
+      "detalhes": "Grossas camadas de couro garantem a impermeabilidade desse traje. Um capacete de cobre pesado ajuda a afundar. Ela possui um tanque de ar nas costas com ar suficiente para 30 minutos de mergulho."
+    },
+    {
+      "nome": "Lentes Vaporizantes",
+      "preco": 40,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Um par de óculos tratados quimicamente para detectar odores visualmente. Concede +1d6 em testes de sobrevivência para seguir trilhas."
+    }
+  ]
+}

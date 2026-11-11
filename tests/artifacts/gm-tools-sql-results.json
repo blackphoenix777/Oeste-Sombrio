@@ -1,0 +1,570 @@
+{
+  "gmSqlResults": [
+    {
+      "test": "Status inicial deriva instância da criatura e respeita 8 câmaras",
+      "result": "PASS"
+    },
+    {
+      "test": "Mestre lê status visíveis, ocultos e de outros mapas",
+      "result": "PASS"
+    },
+    {
+      "test": "Mestre salva árvore e versão avança",
+      "result": "PASS"
+    },
+    {
+      "test": "Edição de notas com versão antiga não sobrescreve",
+      "result": "PASS"
+    },
+    {
+      "test": "Schema inválido de notas rejeitado",
+      "result": "PASS"
+    },
+    {
+      "test": "Envio do Mestre cria fila idempotente sem escrever ficha",
+      "result": "PASS"
+    },
+    {
+      "test": "Envio para ficha de outra mesa rejeitado",
+      "result": "PASS"
+    },
+    {
+      "test": "Quantidade inválida rejeitada",
+      "result": "PASS"
+    },
+    {
+      "test": "Ficha sem entregas mantém inventário legado intacto",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador recebe apenas próprio status e aliado revelado no mapa da flâmula",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador não lê nem altera notas via tabela privada",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador não envia itens como Mestre",
+      "result": "PASS"
+    },
+    {
+      "test": "Destinatário lê fila, mas não falsifica quantidade ou confirmação direta",
+      "result": "PASS"
+    },
+    {
+      "test": "Confirmação antes de salvar recibo é bloqueada",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador persiste item/recibo e confirma entrega sem duplicar",
+      "result": "PASS"
+    },
+    {
+      "test": "Salvamento concorrente antigo preserva item recebido",
+      "result": "PASS"
+    },
+    {
+      "test": "Consumir dados para tiros não reduz integridade",
+      "result": "PASS"
+    },
+    {
+      "test": "Dano real e REM sincronizam automaticamente após salvar ficha",
+      "result": "PASS"
+    },
+    {
+      "test": "Sessão que conhece recibo pode consumir/remover o item normalmente",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador não altera status de criatura alheia",
+      "result": "PASS"
+    },
+    {
+      "test": "RPC de status rejeita token inexistente",
+      "result": "PASS"
+    },
+    {
+      "test": "Proprietário sincroniza próprio token autorizado",
+      "result": "PASS"
+    },
+    {
+      "test": "Não membro não recebe fila nem status",
+      "result": "PASS"
+    },
+    {
+      "test": "Anon não executa RPC de entrega",
+      "result": "PASS"
+    },
+    {
+      "test": "Anon não executa RPC de status",
+      "result": "PASS"
+    },
+    {
+      "test": "As duas tabelas estão publicadas no Realtime",
+      "result": "PASS"
+    }
+  ],
+  "rls-table-isolation.sql": [
+    {
+      "test": "Não-membro: convite inválido",
+      "result": "PASS — 22023, Código de convite inválido"
+    },
+    {
+      "test": "Não-membro: UUID pela nova RPC",
+      "result": "PASS — bloqueado"
+    },
+    {
+      "test": "Não-membro: UUID pela RPC legada",
+      "result": "PASS — bloqueado"
+    },
+    {
+      "test": "Não-membro: INSERT direto jogador",
+      "result": "PASS — RLS 42501"
+    },
+    {
+      "test": "Não-membro: INSERT fingindo ser Mestre",
+      "result": "PASS — RLS 42501"
+    },
+    {
+      "test": "Não-membro: eventos alheios, inclusive todos",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Não-membro: ficha alheia",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Convite válido normalizado: cria jogador",
+      "result": "PASS — UUID correto, cargo jogador"
+    },
+    {
+      "test": "Reentrada e compatibilidade RPC legada",
+      "result": "PASS — vínculo único"
+    },
+    {
+      "test": "Membro comum: evento todos",
+      "result": "PASS — 1 linha"
+    },
+    {
+      "test": "Membro comum: evento secreto próprio",
+      "result": "PASS — 1 linha"
+    },
+    {
+      "test": "Membro comum: segredo do Mestre",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Membro comum: ficha de colega da mesma mesa",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Membro comum: ficha própria",
+      "result": "PASS — 1 linha"
+    },
+    {
+      "test": "Regressão: fichas alheias privadas e de outra mesa",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Regressão: editar ficha própria/alheia",
+      "result": "PASS — própria 1, alheia 0"
+    },
+    {
+      "test": "Mestre: fichas dos dois jogadores",
+      "result": "PASS — 2 linhas"
+    },
+    {
+      "test": "Mestre: eventos públicos e secretos",
+      "result": "PASS — 3 linhas"
+    },
+    {
+      "test": "Regressão: Mestre não lê fichas privadas/externas",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Mestre: criar mesa + INSERT de vínculo como no frontend",
+      "result": "PASS — cargo mestre"
+    },
+    {
+      "test": "RPC nova: execução anônima",
+      "result": "PASS — privilégio negado"
+    }
+  ],
+  "rls-scene-visibility.sql": [
+    {
+      "test": "Mestre cria tokens jogador/criatura; default false",
+      "result": "PASS — 3 ocultos"
+    },
+    {
+      "test": "Não-membro insere evento próprio",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Não-membro: RPC negada e SELECT vazio, mesmo dono de token",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro insere evento",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro: RPC e SELECT mostram apenas próprio token",
+      "result": "PASS — 1 linha"
+    },
+    {
+      "test": "Dono muda própria visibilidade via UPDATE",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Dono muda identidade para contornar regra",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Jogador altera outro token / chama RPC de visibilidade",
+      "result": "PASS — 0 linhas / 42501"
+    },
+    {
+      "test": "Dono movimenta token oculto",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro: dados privados de mesas bloqueados; metadados mínimos acessíveis",
+      "result": "PASS"
+    },
+    {
+      "test": "Mestre: revela, lê todos, consulta cena completa e edita token",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro após revelar: próprio token + criatura, somente 10 campos públicos (Fase 2)",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro após ocultar: criatura some da RPC e do SELECT",
+      "result": "PASS"
+    },
+    {
+      "test": "Anon executa RPC pública",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Mestre remove token",
+      "result": "PASS"
+    }
+  ],
+  "rls-token-initiative.sql": [
+    {
+      "test": "Mestre cria Inebriados #1/#2, IDs distintos e iniciativas 12/7",
+      "result": "PASS"
+    },
+    {
+      "test": "Token sem iniciativa usa default 0 e visibilidade false",
+      "result": "PASS"
+    },
+    {
+      "test": "INSERT token jogador lê iniciativa atual da própria ficha (9)",
+      "result": "PASS"
+    },
+    {
+      "test": "UPDATE por mesa+instanceId muda apenas #1 (19); #2=7 e outra mesa=0",
+      "result": "PASS"
+    },
+    {
+      "test": "Save cena privada sincroniza #1=23 sem alterar #2=7",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro: RPC e SELECT retornam só próprio token, iniciativa 9",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro salva ficha: token próprio passa a 31 sem revelar visibilidade",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro não burla ficha com UPDATE direto da iniciativa",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Membro mantém movimento; alterar visibilidade continua negado",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro não altera iniciativa de criatura oculta",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Save jogador preserva token de outro jogador e criaturas",
+      "result": "PASS"
+    },
+    {
+      "test": "Revelado #1: RPC contém iniciativa 23 e só 10 campos; cena/ficha alheia privadas",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro não altera iniciativa da criatura mesmo visível",
+      "result": "PASS — 0 linhas"
+    },
+    {
+      "test": "Iniciativa inválida normaliza a 0, preservando outra cópia",
+      "result": "PASS"
+    },
+    {
+      "test": "Mestre lê todos os 4 tokens, inclusive ocultos",
+      "result": "PASS"
+    },
+    {
+      "test": "Ocultar remove token e iniciativa da RPC e SELECT do jogador",
+      "result": "PASS"
+    },
+    {
+      "test": "Não-membro: RPC negada; SELECT vazio mesmo com ficha/token na mesa",
+      "result": "PASS"
+    },
+    {
+      "test": "Anon não executa RPC pública",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Funções internas sem EXECUTE para clientes",
+      "result": "PASS"
+    }
+  ],
+  "rls-turn-tracker.sql": [
+    {
+      "test": "Mestre consulta mesa sem combate",
+      "result": "PASS — null"
+    },
+    {
+      "test": "Setup sem participantes",
+      "result": "PASS — 22023"
+    },
+    {
+      "test": "Setup com token de outra mesa",
+      "result": "PASS — 22023"
+    },
+    {
+      "test": "Setup com token duplicado",
+      "result": "PASS — 22023"
+    },
+    {
+      "test": "Mestre inicia combate com apenas os selecionados",
+      "result": "PASS — round 1, índice 0, três participantes"
+    },
+    {
+      "test": "Cascata d20 + N e prioridades individuais; ordem unificada",
+      "result": "PASS — primeiro=d20+2, segundo=primeiro-1"
+    },
+    {
+      "test": "Cascata não sobrescreve iniciativas dos tokens/fichas",
+      "result": "PASS"
+    },
+    {
+      "test": "Segundo início com combate ativo",
+      "result": "PASS — 40001"
+    },
+    {
+      "test": "Início produz sinal Realtime sem nomes/ordem",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador recebe só próprio token e criatura visível; mesas segue privada",
+      "result": "PASS"
+    },
+    {
+      "test": "Membro pode ler sinal para assinar Realtime",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador não inicia/avança/adiciona/encerra via RPC",
+      "result": "PASS — 42501 nas quatro ações"
+    },
+    {
+      "test": "Jogador não altera sinais nem combate via UPDATE direto",
+      "result": "PASS"
+    },
+    {
+      "test": "Não-membro sem RPC ou sinal da mesa",
+      "result": "PASS — 42501 / zero linhas"
+    },
+    {
+      "test": "Anon não executa RPC pública",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Próximo Turno avança o índice",
+      "result": "PASS — índice 1"
+    },
+    {
+      "test": "Repetição/segunda sessão com versão antiga",
+      "result": "PASS — 40001, sem avanço extra"
+    },
+    {
+      "test": "Monstro oculto tardio entra no fim com iniciativa 0 fixa",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador tardio entra no fim apesar da iniciativa 30",
+      "result": "PASS"
+    },
+    {
+      "test": "Mudança de token sinaliza atualização; cascata mantém iniciativa fixa",
+      "result": "PASS"
+    },
+    {
+      "test": "Ficha atualizada aparece no resumo sem revelar monstro oculto tardio",
+      "result": "PASS"
+    },
+    {
+      "test": "Round 2: jogador sobe com iniciativa 40; monstro segue no fim/0; flags limpas",
+      "result": "PASS"
+    },
+    {
+      "test": "Criatura tardia permanece depois de jogador com iniciativa zero",
+      "result": "PASS"
+    },
+    {
+      "test": "Turno de criatura oculta: índice público -1, sem ID ou nome oculto",
+      "result": "PASS"
+    },
+    {
+      "test": "Ocultar gera sinal público seguro e remove entidade da RPC",
+      "result": "PASS"
+    },
+    {
+      "test": "Encerrar limpa só combate: tokens/fichas/HP/condições/cena/mapa/chat idênticos",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador recebe null após encerramento",
+      "result": "PASS"
+    }
+  ],
+  "rls-multiple-maps.sql": [
+    {
+      "test": "Nova mesa sem imagem recebe Mapa 1 e flâmula",
+      "result": "PASS"
+    },
+    {
+      "test": "Mestre cria quatro mapas com IDs e slots distintos",
+      "result": "PASS"
+    },
+    {
+      "test": "Quinto mapa bloqueado pela RPC",
+      "result": "PASS — 22023"
+    },
+    {
+      "test": "Quinto mapa bloqueado também por UPDATE direto",
+      "result": "PASS — 22023"
+    },
+    {
+      "test": "Nome e grade persistem independentemente por mapa",
+      "result": "PASS"
+    },
+    {
+      "test": "Grade fora de 4–64 bloqueada",
+      "result": "PASS"
+    },
+    {
+      "test": "Flâmula para mapa inexistente bloqueada",
+      "result": "PASS"
+    },
+    {
+      "test": "Mesma entidade aceita em mapas diferentes",
+      "result": "PASS"
+    },
+    {
+      "test": "Duplicata no mesmo mapa bloqueada",
+      "result": "PASS — 23505"
+    },
+    {
+      "test": "Token com mapa inexistente bloqueado",
+      "result": "PASS — 23503"
+    },
+    {
+      "test": "Mestre acessa INSERT/SELECT/UPDATE de três slots coexistentes no Storage",
+      "result": "PASS — metadados"
+    },
+    {
+      "test": "Upload para slot 5 bloqueado pela policy",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Editar mapa de preparação não move nem sinaliza jogadores",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador recebe só mapa da flâmula e token próprio nele",
+      "result": "PASS"
+    },
+    {
+      "test": "SELECT direto oculta tokens de outro mapa, inclusive próprios",
+      "result": "PASS"
+    },
+    {
+      "test": "Movimento próprio só permitido no mapa da flâmula",
+      "result": "PASS"
+    },
+    {
+      "test": "Storage/listagem expõe somente imagem do mapa ativo",
+      "result": "PASS"
+    },
+    {
+      "test": "Linha de mesas privada e RPC legada sem URL de preparação",
+      "result": "PASS"
+    },
+    {
+      "test": "Jogador não gerencia mapas/flâmula",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Combate vinculado ao mapa; entrada de outro mapa bloqueada",
+      "result": "PASS"
+    },
+    {
+      "test": "Tracker não revela combate em mapa de preparação",
+      "result": "PASS"
+    },
+    {
+      "test": "Mover flâmula gera sinal com revisão crescente",
+      "result": "PASS"
+    },
+    {
+      "test": "Mestre continua lendo todos os tokens de todos os mapas",
+      "result": "PASS"
+    },
+    {
+      "test": "Após flâmula, RPC entrega novo mapa/grade/tokens e preserva ocultos",
+      "result": "PASS"
+    },
+    {
+      "test": "RPC de cena antiga também respeita flâmula",
+      "result": "PASS"
+    },
+    {
+      "test": "Tracker reaparece no mapa correto preservando combate",
+      "result": "PASS"
+    },
+    {
+      "test": "Não membro não acessa RPC, sinais nem arquivos",
+      "result": "PASS"
+    },
+    {
+      "test": "Anon não executa RPC pública",
+      "result": "PASS — 42501"
+    },
+    {
+      "test": "Mapa com combate ativo não pode ser excluído",
+      "result": "PASS"
+    },
+    {
+      "test": "Exclusão remove só tokens do mapa; outros mapas e arquivos preservados",
+      "result": "PASS"
+    },
+    {
+      "test": "Slot liberado reutilizado com novo ID",
+      "result": "PASS"
+    }
+  ]
+}

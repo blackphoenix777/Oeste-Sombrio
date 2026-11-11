@@ -1,0 +1,443 @@
+[
+  {
+    "nome": "Cheeta Menor",
+    "preco": 3.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Aumenta sua velocidade de movimento em 1,5m por ação"
+  },
+  {
+    "nome": "Cheeta Moderado",
+    "preco": 25.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Aumenta sua velocidade de movimento em 3m por ação"
+  },
+  {
+    "nome": "Cheeta Maior",
+    "preco": 110.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Aumenta sua velocidade de movimento em 3m por ação"
+  },
+  {
+    "nome": "Cura Básico",
+    "preco": 3.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Cura 1 de dano do 6B"
+  },
+  {
+    "nome": "Cura Menor",
+    "preco": 30.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Cura 2 de dano do 6B"
+  },
+  {
+    "nome": "Cura Moderado",
+    "preco": 150.0,
+    "volume": 0.1,
+    "duracao": "30m",
+    "detalhes": "Cura 3 de dano do 6B"
+  },
+  {
+    "nome": "Cura Maior",
+    "preco": 600.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Cura 4 de dano do 6B"
+  },
+  {
+    "nome": "Cura Supremo",
+    "preco": 1300.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Cura 5 de dano do 6B"
+  },
+  {
+    "nome": "Cura Verdadeiro",
+    "preco": 8000.0,
+    "volume": 0.1,
+    "duracao": "1 Semana",
+    "detalhes": "Se aplicado em alguém morto a menos de 1m revive o personagem e cura todo o 6B"
+  },
+  {
+    "nome": "Revitalizante Belle Thornton",
+    "preco": 3.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Remove os níveis de fatiga e cura uma condição"
+  },
+  {
+    "nome": "Ladrão Alimentado",
+    "preco": 3.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Um tônico quente e viscoso que alimenta e garante +1d4 de bônus para testes de furtividade"
+  },
+  {
+    "nome": "Saltador",
+    "preco": 3.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Pode executar um salto à distância sem precisar tomar impulso"
+  },
+  {
+    "nome": "Saltador Aprimorado",
+    "preco": 55.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Dobra a distância do salto e garante bônus de 1d6."
+  },
+  {
+    "nome": "Doce Falante",
+    "preco": 3.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Um doce feito qímicos pesados e fumaça de carvão eterno. O alquimista pode inserir uma menagem de até 25 palavras no doce que se desprendem dele quando é mastigado fazendo ressoar uma voz artificial para quem o consome."
+  },
+  {
+    "nome": "Perspicaz Menor",
+    "preco": 4.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Bônus +1d6 em percepção"
+  },
+  {
+    "nome": "Perspicaz Moderado",
+    "preco": 27.0,
+    "volume": 0.1,
+    "duracao": "5m",
+    "detalhes": "Bônus +1d8 em percepção"
+  },
+  {
+    "nome": "Perspicaz Maior",
+    "preco": 200.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Bônus +1d10 em percepção"
+  },
+  {
+    "nome": "Perspicaz Superior",
+    "preco": 2000.0,
+    "volume": 0.1,
+    "duracao": "15m",
+    "detalhes": "Bônus +1d12 em percepção"
+  },
+  {
+    "nome": "Regenerativo Básico",
+    "preco": 4.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Recupera 1 de dano do 6B por turno"
+  },
+  {
+    "nome": "Regenerativo Menor",
+    "preco": 30.0,
+    "volume": 0.1,
+    "duracao": "5m",
+    "detalhes": null
+  },
+  {
+    "nome": "Regenerativo Moderado",
+    "preco": 150.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": null
+  },
+  {
+    "nome": "Regenerativo Maior",
+    "preco": 600.0,
+    "volume": 0.1,
+    "duracao": "30m",
+    "detalhes": null
+  },
+  {
+    "nome": "Regenerativo Supremo",
+    "preco": 1300.0,
+    "volume": 0.1,
+    "duracao": "45m",
+    "detalhes": "Recupera 1d4 de dano do 6B por turno"
+  },
+  {
+    "nome": "Regenerativo Verdadeiro",
+    "preco": 8000.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Recupera 1d6 de dano do 6B por turno"
+  },
+  {
+    "nome": "Cético Menor",
+    "preco": 4.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Bônus +1d4 em testes de Percepção e Empatia para discernir mentiras e enganações."
+  },
+  {
+    "nome": "Cético Moderado",
+    "preco": 50.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Bônus +1d6 em testes de Percepção e Empatia para discernir mentiras e enganações."
+  },
+  {
+    "nome": "Cético Maior",
+    "preco": 300.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Bônus +1d8 em testes de Percepção e Empatia para discernir mentiras e enganações."
+  },
+  {
+    "nome": "Imunizante Básico",
+    "preco": 4.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Um tônico milagroso que garante imunidade a determinados tipos de doença comuns e fáceis de tratar. Além disso garante bônus de 2d6 em testes de resistência contra doenças desconhecidas, trazidas do submundo ou criadas a partir do Carvão Eterno"
+  },
+  {
+    "nome": "Imunizante Menor",
+    "preco": 12.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": null
+  },
+  {
+    "nome": "Imunizante Moderado",
+    "preco": 50.0,
+    "volume": 0.1,
+    "duracao": "1 semana",
+    "detalhes": null
+  },
+  {
+    "nome": "Imunizante Maior",
+    "preco": 400.0,
+    "volume": 0.1,
+    "duracao": "1 ano",
+    "detalhes": null
+  },
+  {
+    "nome": "Imunizante Superior",
+    "preco": 5000.0,
+    "volume": 0.1,
+    "duracao": "Permanente",
+    "detalhes": null
+  },
+  {
+    "nome": "Hans Brauer",
+    "preco": 5.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Um tônico muito semelhante em gosto e aparência à um gole de cerveja preta. Bônus de +1d6 em testes de resistência contra Abalado e Pasmo. 1d6 de penalidade em testes de percepção"
+  },
+  {
+    "nome": "Foco Menor",
+    "preco": 5.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Remove e protege a mente contra as condições Confuso e Pasmo"
+  },
+  {
+    "nome": "Foco Moderado",
+    "preco": 15.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": null
+  },
+  {
+    "nome": "Foco Maior",
+    "preco": 325.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": null
+  },
+  {
+    "nome": "Foco Superior",
+    "preco": 3250.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": null
+  },
+  {
+    "nome": "Visão Noturna Menor",
+    "preco": 6.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Deixa a visão mais aguçada durante a noite e em locais escuros"
+  },
+  {
+    "nome": "Visão Noturna Moderada",
+    "preco": 11.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": null
+  },
+  {
+    "nome": "Visão Noturna Maior",
+    "preco": 90.0,
+    "volume": 0.1,
+    "duracao": "8h",
+    "detalhes": null
+  },
+  {
+    "nome": "Transmorfo",
+    "preco": 6.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Altera a aparência de uma criatura dando bônus de 1d8 em testes de blefe para se passar por outra pessoa."
+  },
+  {
+    "nome": "Pés Leves Menor",
+    "preco": 6.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Deixa seus passos leves e ligeiros removendo a penalidade de andar em terrenos difíceis como neve, água, terrenos acidentados etc:"
+  },
+  {
+    "nome": "Pés Leves Moderado",
+    "preco": 36.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": null
+  },
+  {
+    "nome": "Pés Leves Maior",
+    "preco": 160.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": null
+  },
+  {
+    "nome": "Pés Leves Superior",
+    "preco": 640.0,
+    "volume": 0.1,
+    "duracao": "8h",
+    "detalhes": null
+  },
+  {
+    "nome": "Olho de Gato",
+    "preco": 7.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Aprimora a visão e concede bônus de +1d6 para testes de percepção ativa."
+  },
+  {
+    "nome": "Compreensão Menor",
+    "preco": 7.0,
+    "volume": 0.1,
+    "duracao": "1m",
+    "detalhes": "Bônus de +1d6 para testes envolvedo outro idioma falado ou escrito"
+  },
+  {
+    "nome": "Compreensão Maior",
+    "preco": 54.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Bônus de +1d8 para testes envolvedo outro idioma falado ou escrito"
+  },
+  {
+    "nome": "Repouso Reforçado",
+    "preco": 30.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Durante um descanso curto recupera 1d4 de fatiga e cura 1d4 de SB"
+  },
+  {
+    "nome": "Proteção Sanguínea Menor",
+    "preco": 9.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Protege o sangue e concede +1d6 de bônus em testes de atléticos contra Sangramento e Envenenamento"
+  },
+  {
+    "nome": "Proteção Sanguínea Moderado",
+    "preco": 225.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Protege o sangue e concede +1d8 de bônus em testes de atléticos contra Sangramento e Envenenamento"
+  },
+  {
+    "nome": "Proteção Sanguínea Maior",
+    "preco": 3400.0,
+    "volume": 0.1,
+    "duracao": "10m",
+    "detalhes": "Protege o sangue e concede +1d10 de bônus em testes de atléticos contra Sangramento e Envenenamento"
+  },
+  {
+    "nome": "Punhos de Aço",
+    "preco": 13.0,
+    "volume": 0.1,
+    "duracao": "1h",
+    "detalhes": "Ataques desarmados causam 1d6 de dano extra."
+  },
+  {
+    "nome": "Salamandra Menor",
+    "preco": 15.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Concede +1d6 em testes de atlético contra climas quentes"
+  },
+  {
+    "nome": "Salamandra Moderado",
+    "preco": 320.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Concede +1d8 em testes de atlético contra climas quentes e 1d4 de resistência a Fogo"
+  },
+  {
+    "nome": "Salamandra Maior",
+    "preco": 1400.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Concede +1d10 em testes de atlético contra climas quentes e 1d6 de resistência a fogo"
+  },
+  {
+    "nome": "Lobo Montanhês Menor",
+    "preco": 15.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Concede +1d6 em testes de atlético contra climas Frios"
+  },
+  {
+    "nome": "Lobo Montanhês Moderado",
+    "preco": 320.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Concede +1d8 em testes de atlético contra climas Frios e 1d4 de Proteção contra ataques congelantes"
+  },
+  {
+    "nome": "Lobo Montanhês Maior",
+    "preco": 1400.0,
+    "volume": 0.1,
+    "duracao": "24h",
+    "detalhes": "Concede +1d8 em testes de atlético contra climas Frios e 1d6 de Proteção contra ataques congelantes"
+  },
+  {
+    "nome": "Saliva Ácida",
+    "preco": 17.0,
+    "volume": 0.1,
+    "duracao": "1 hora",
+    "detalhes": "Um tônico transparente e dolorosamente ácido. Causa 1 de dano no 6B e concede uma saliva ácida que pode ser cuspida no alvo próximo causando 2d6 de dano ácido"
+  },
+  {
+    "nome": "Enevoado Menor",
+    "preco": 18.0,
+    "volume": 0.1,
+    "duracao": "3 turnos",
+    "detalhes": "Um tônico que faz emanar da pele uma leve camada de fumaça envolvendo quem bebe em uma nevoa aumentando a proteção em 1d6 contra ataques a distância"
+  },
+  {
+    "nome": "Enevoado Moderado",
+    "preco": 56.0,
+    "volume": 0.1,
+    "duracao": "1 minuto",
+    "detalhes": null
+  },
+  {
+    "nome": "Enevoado Maior",
+    "preco": 180.0,
+    "volume": 0.1,
+    "duracao": "5 minutos",
+    "detalhes": null
+  }
+]

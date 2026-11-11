@@ -1,0 +1,97 @@
+{
+  "categoria": "Munições Alquímicas",
+  "descricao": "Algumas munições podem aplicar efeitos sem causar dano.",
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Munição Tóxica Menor",
+      "preco": 3,
+      "volume": 0.1,
+      "detalhes": "Aplica 1d4 de dano de veneno"
+    },
+    {
+      "nome": "Munição Tóxica Moderada",
+      "preco": 25,
+      "volume": 0.1,
+      "detalhes": "Aplica 2d4 de dano de veneno"
+    },
+    {
+      "nome": "Munição Tóxica Maior",
+      "preco": 250,
+      "volume": 0.1,
+      "detalhes": "Aplica 3d4 de dano de veneno"
+    },
+    {
+      "nome": "Munição Elemental Menor",
+      "preco": 3,
+      "volume": 0.1,
+      "detalhes": "Aplica 1d4 de dano Elemental"
+    },
+    {
+      "nome": "Munição Elemental Moderada",
+      "preco": 21,
+      "volume": 0.1,
+      "detalhes": "Aplica 2d4 de dano Elemental"
+    },
+    {
+      "nome": "Munição Elemental Maior",
+      "preco": 210,
+      "volume": 0.1,
+      "detalhes": "Aplica 3d4 de dano Elemental"
+    },
+    {
+      "nome": "Munição Aromática",
+      "preco": 5,
+      "volume": 0.1,
+      "detalhes": "Durante 1 hora, qualquer criatura atingida por essa munição exala um odor característico facilitando sua localização, garantindo bônus de +1d6 em testes para rastreá-la e penalidade de 1d8 em Furtividade."
+    },
+    {
+      "nome": "Munição Gosma Ácida Menor",
+      "preco": 7,
+      "volume": 0.1,
+      "detalhes": "Aplica 1d4 de dano ácido persistente. -2m de movimento. DB+4"
+    },
+    {
+      "nome": "Munição Gosma Ácida Moderada",
+      "preco": 42,
+      "volume": 0.1,
+      "detalhes": "Aplica 2d4 de dano ácido persistente. -3m de movimento. DB+6"
+    },
+    {
+      "nome": "Munição Gosma Ácida Maior",
+      "preco": 350,
+      "volume": 0.1,
+      "detalhes": "Aplica 3d4 de dano ácido persistente. -5m de movimento. DB+8"
+    },
+    {
+      "nome": "Munição Gosma Ácida Superior",
+      "preco": 3250,
+      "volume": 0.1,
+      "detalhes": "Aplica 4d4 de dano ácido persistente. -6m de movimento. DB+10"
+    },
+    {
+      "nome": "Munição Sanguinária Menor",
+      "preco": 15,
+      "volume": 0.1,
+      "detalhes": "Aplica 1d4 de sangramento e 1 de fatiga"
+    },
+    {
+      "nome": "Munição Sanguinária Moderada",
+      "preco": 80,
+      "volume": 0.1,
+      "detalhes": "Aplica 1d6 de sangramento e 2 de fatiga"
+    },
+    {
+      "nome": "Munição Sanguinária Maior",
+      "preco": 360,
+      "volume": 0.1,
+      "detalhes": "Aplica 1d8 de sangramento e 3 de fatiga"
+    },
+    {
+      "nome": "Munição Cola Forte",
+      "preco": 16,
+      "volume": 0.1,
+      "detalhes": "Um cartucho repleto de supercola que explode no impacto reduzindo em 1d4 as ações do alvo. Atléticos DB+5 para soltar"
+    }
+  ]
+}

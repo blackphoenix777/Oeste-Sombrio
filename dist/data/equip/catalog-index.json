@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "basePath": "data/equip",
+  "files": [
+    { "id": "animais", "group": "animais e equipamentos", "path": "animais e equipamentos/animais.json" },
+    { "id": "equipamentos_de_montaria", "group": "animais e equipamentos", "path": "animais e equipamentos/equipamentos_de_montaria.json" },
+    { "id": "arcos_e_bestas", "group": "armas", "path": "armas/arcos_e_bestas.json" },
+    { "id": "armas_corpo_a_corpo", "group": "armas", "path": "armas/armas_corpo_a_corpo.json" },
+    { "id": "armas_estranhas", "group": "armas", "path": "armas/armas_estranhas.json" },
+    { "id": "escopetas", "group": "armas", "path": "armas/escopetas.json" },
+    { "id": "espingardas_de_repeticao", "group": "armas", "path": "armas/espingardas_de_repeticao.json" },
+    { "id": "explosivos_e_armas_de_arremesso", "group": "armas", "path": "armas/explosivos_e_armas_de_arremesso.json" },
+    { "id": "modificacoes_armas", "group": "armas", "path": "armas/modificacoes.json" },
+    { "id": "municoes", "group": "armas", "path": "armas/municoes.json" },
+    { "id": "municoes_alquimicas", "group": "armas", "path": "armas/municoes_alquimicas.json" },
+    { "id": "pistolas", "group": "armas", "path": "armas/pistolas.json" },
+    { "id": "revolveres", "group": "armas", "path": "armas/revolveres.json" },
+    { "id": "rifles", "group": "armas", "path": "armas/rifles.json" },
+    { "id": "equipamentos_avancados", "group": "equipamentos", "path": "equipamentos/equipamentos_avancados.json" },
+    { "id": "equipamentos_comuns", "group": "equipamentos", "path": "equipamentos/equipamentos_comuns.json" },
+    { "id": "kits", "group": "equipamentos", "path": "equipamentos/kits.json" },
+    { "id": "componentes_quimicos", "group": "itens", "path": "itens/componentes_quimicos.json" },
+    { "id": "drogas_e_venenos", "group": "itens", "path": "itens/drogas_e_venenos.json" },
+    { "id": "itens_alquimicos_basicos", "group": "itens", "path": "itens/itens_alquimicos_basicos.json" },
+    { "id": "itens_alquimicos_raros", "group": "itens", "path": "itens/itens_alquimicos_raros.json" },
+    { "id": "tonicos", "group": "itens", "path": "itens/tonicos.json" },
+    { "id": "tonicos_mutagenicos", "group": "itens", "path": "itens/tonicos_mutagenicos.json" },
+    { "id": "itens_de_protecao", "group": "vestuario", "path": "vestuario/itens_de_protecao.json" },
+    { "id": "modificacoes_vestuario", "group": "vestuario", "path": "vestuario/modificacoes.json" },
+    { "id": "vestuario", "group": "vestuario", "path": "vestuario/vestuario.json" }
+  ]
+}

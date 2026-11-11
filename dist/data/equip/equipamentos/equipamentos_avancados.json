@@ -1,0 +1,278 @@
+[
+  {
+    "nome": "Medidor de Profundidade",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "Usado para medir a profundidade de poços, rios e lagos."
+  },
+  {
+    "nome": "Laterna Frontal",
+    "preco": 1.0,
+    "volume": 0.3,
+    "detalhes": "Uma lanterna a óleo feita com espelhos que produz um cone de luz de 10 metros."
+  },
+  {
+    "nome": "Estojo de cera",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "Uma estojo de madeira que pode ser aberto no meio contendo cera dos dois lados. É usado para fazer cópias de chaves."
+  },
+  {
+    "nome": "Anel Envenenado",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Um compartimento secreto esconde uma pequena agulha que inocula qualquer tipo de veneno com um aperto de mão"
+  },
+  {
+    "nome": "Pinça extensível",
+    "preco": 2.0,
+    "volume": 0.3,
+    "detalhes": "Uma pinça que se estende até uma distância de 1,5m e possui um mecanismo que possibilita que sua ponta abra e feche, simulando uma garra."
+  },
+  {
+    "nome": "Cabo de Reboque",
+    "preco": 3.0,
+    "volume": 0.6,
+    "detalhes": "Correntes de metal usadas para arrastar coisas pesadas pela estrada."
+  },
+  {
+    "nome": "Moeda falsa",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": "Com um compartimento secreto que pode ser usado para esconder uma breve mensagem. Também pode ser usado em fichas de poker. A dificuldade para detectar esse compartimento é DB+10."
+  },
+  {
+    "nome": "Arma de escalada",
+    "preco": 3.0,
+    "volume": 2.0,
+    "detalhes": "Uma arma parecida com um rifle de madeira que pode atirar um projétil de escalada até uma distãncia de 30m. pode ser usada até 5 vezes antes de quebrar. Não danifica o Projétil de Escalada."
+  },
+  {
+    "nome": "Arma de escalada automática",
+    "preco": 15.0,
+    "volume": 2.5,
+    "detalhes": "Uma arma que pode atirar um projétil de escalada até uma distãncia de 30m. com um mecanismo de roldanas usada para puxar o usuário rapidamente. Pode ser usada até 3 vezes antes de quebrar. Não danifica o Projétil de Escalada."
+  },
+  {
+    "nome": "Escalador de Pulso",
+    "preco": 25.0,
+    "volume": 0.3,
+    "detalhes": "Um mecanismo que solta um projétil de escalada com finas mas resistentes cordas de aço lançadas a partir do pulso do usuário."
+  },
+  {
+    "nome": "Cortador de Vidro",
+    "preco": 5.0,
+    "volume": 0.1,
+    "detalhes": "Um pequeno bastão com uma lâmina de metal temperado com carvão eterno na ponta própria para cortar vidros. Acompanha uma ventosa de borracha. Leva cerca de 1m para cortar um buraco grande o bastante para uma mão."
+  },
+  {
+    "nome": "Estandarte",
+    "preco": 5.0,
+    "volume": 0.5,
+    "detalhes": "Uma longa e fina haste de metal resistente para pendurar bandeiras. Ela pode ser colocada na sela de um cavalo ou amarrada na mochila de um viajante."
+  },
+  {
+    "nome": "Purificador de Água",
+    "preco": 5.0,
+    "volume": 0.1,
+    "detalhes": "Uma pequena garrafa de metal e vidro com minerais e agentes purificadores. Os filtros podem ser trocados para tipos específicos de tratamentos. Venenos, doenças, toxinas entre outros. Cada filtro só pode ser usado uma vez."
+  },
+  {
+    "nome": "Algemas Falsas",
+    "preco": 10.0,
+    "volume": 0.2,
+    "detalhes": "Praticamente indistinguíveis de uma algema normal (percepção DB+10)"
+  },
+  {
+    "nome": "Acendedor",
+    "preco": 5.0,
+    "volume": 0.1,
+    "detalhes": "Uma geringonça criada para produzir faíscas, tal qual uma pederneira, utilizando apenas uma mão."
+  },
+  {
+    "nome": "Caderno á prova d'água",
+    "preco": 5.0,
+    "volume": 0.1,
+    "detalhes": "Um caderno ou livro envolto numa capa de couro ipermeável."
+  },
+  {
+    "nome": "Tocha Mecânica",
+    "preco": 10.0,
+    "volume": 0.3,
+    "detalhes": "Uma tocha mecânica que utiliza a queima de carvão eterno para gerar pressão e mover engrenagens que produzem faíscas constantes iluminando o local como uma tocha comum."
+  },
+  {
+    "nome": "Relógio de Mesa",
+    "preco": 10.0,
+    "volume": 0.3,
+    "detalhes": "A cada 24 horas é preciso dar corda novamente. Esse processo leva 1 minuto"
+  },
+  {
+    "nome": "Relógio de Bolso",
+    "preco": 25.0,
+    "volume": 0.1,
+    "detalhes": "A cada 24 horas é preciso dar corda novamente. Esse processo leva 1 minuto"
+  },
+  {
+    "nome": "Relógio de Pêndulo",
+    "preco": 50.0,
+    "volume": 5.0,
+    "detalhes": "A cada 48 horas é preciso dar corda novamente. Esse processo leva 1 minuto"
+  },
+  {
+    "nome": "Estante de Livros Mecanizada",
+    "preco": 15.0,
+    "volume": 15.0,
+    "detalhes": "Uma estante de livros que rotaciona ente os livros colocados nela ao acionar de uma alavanca"
+  },
+  {
+    "nome": "Projetor de voz mecânico",
+    "preco": 15.0,
+    "volume": 0.3,
+    "detalhes": "Mecanismo internos premitem ajustar o volume da voz do usuário para aumentar o volume."
+  },
+  {
+    "nome": "Cobertura Desdobrável Pequena",
+    "preco": 15.0,
+    "volume": 2.0,
+    "detalhes": "Um suporte com placas de metal extensível feitas com liga de Carvão Eterno podem ser montadas rapidamente (2 ações) dando cobertura média para uma pessoa"
+  },
+  {
+    "nome": "Cobertura Desdobrável Grande",
+    "preco": 35.0,
+    "volume": 4.0,
+    "detalhes": "Um suporte com placas de metal extensível feitas com liga de Carvão Eterno podem ser montadas rapidamente (3 ações) dando cobertura total para uma pessoa ou média para 3 pessoas"
+  },
+  {
+    "nome": "Lança Rede",
+    "preco": 16.0,
+    "volume": 1.5,
+    "detalhes": "Um equipamento raro utilizado para lançar uma rede até 6m de distância. Leva 1 minuto para colocar a rede de forma correta dentro do equipamento."
+  },
+  {
+    "nome": "Lâmina Voadora",
+    "preco": 18.0,
+    "volume": 0.3,
+    "detalhes": "Um dispositivo montado no cabo de uma faca que, através de molas e engranagens consegue expulsar  a lâmina de uma arma à uma distância de 6m"
+  },
+  {
+    "nome": "Lançador de Dinamites",
+    "preco": 20.0,
+    "volume": 2.0,
+    "detalhes": "Um dispositivo semelhante a uma arma de cano grosso que pode lançar uma dinamide até uma distância de 10m"
+  },
+  {
+    "nome": "Dicionário",
+    "preco": 25.0,
+    "volume": 0.3,
+    "detalhes": "Usado para aprender idiomas diferentes. Possuir um dicionário possibilita fazer testes de diplomacia em idiomas não dominados pelo personagem com uma penalidade de -2"
+  },
+  {
+    "nome": "Dicionário de expressões",
+    "preco": 125.0,
+    "volume": 0.3,
+    "detalhes": "Esse dicionário contem frases e expressões que facilitam a comunicação. Usar esse dicionário em testes de diplomacia removem a penalidade do dicionário comum"
+  },
+  {
+    "nome": "Astrolábio padrão",
+    "preco": 30.0,
+    "volume": 1.0,
+    "detalhes": "Com um teste de Sobrevivência é possível navegar por locais desconhecidos analizando os astro por 1 minuto. O Astrolábio padrão precisa estar apoiado em uma base fixa."
+  },
+  {
+    "nome": "Astrolábio de Marinheiro",
+    "preco": 50.0,
+    "volume": 0.5,
+    "detalhes": "Esse isntrumento possui um estabilizador interno que possibilita seu uso em movimento"
+  },
+  {
+    "nome": "Diários Acadêmicos",
+    "preco": 6.0,
+    "volume": 0.2,
+    "detalhes": "Cada diário possui um assunto específico. É possível consultá-los antes de realizar alguns testes de conhecimento para ganhar +1d6 de bônus"
+  },
+  {
+    "nome": "Diários Acadêmicos Coleção",
+    "preco": 30.0,
+    "volume": 1.0,
+    "detalhes": "Uma coleção contendo vários diáriossobre assuntos diferentes."
+  },
+  {
+    "nome": "Crônicas do Oeste Sombrio",
+    "preco": 6.0,
+    "volume": 0.2,
+    "detalhes": "Um apanhado de histórias (verdadeiras ou não) sobre o que acontece em Nova Jordana. Pode ser utilizado como um Diário Acadêmico sobre a história e fatos locais."
+  },
+  {
+    "nome": "Mapa Topográfico",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Um mapa detalhado de um condado com informações sobre o bioma e relevos locais. +1d6 no teste de sobrevivência"
+  },
+  {
+    "nome": "Atlas Topográfico",
+    "preco": 50.0,
+    "volume": 0.5,
+    "detalhes": "Livro ilustrado com um conjunto de mapas detalhado de uma região inteira."
+  },
+  {
+    "nome": "Coldre Camuflado",
+    "preco": 25.0,
+    "volume": 0.2,
+    "detalhes": "Um coldre para armas curtas que pode ser facilmente escondido em qualquer parte do corpo. +1d6 nos testes para esconder uma arma."
+  },
+  {
+    "nome": "Bainha Camuflada",
+    "preco": 25.0,
+    "volume": 0.2,
+    "detalhes": "Uma bainha para lâminas curtas que pode ser facilmente escondida em qualquer parte do corpo. +1d6 nos testes para esconder uma lâmia curta."
+  },
+  {
+    "nome": "Altar Portátil",
+    "preco": 25.0,
+    "volume": 3.0,
+    "detalhes": "Esse altear pode ser facilmente colocado numa carroça e montado emqualquer lugar, Geralmente dedicado à uma divindade específica, confere +1d6 de bônus para rituais ou testes de misticismo para conduzir uma cerimônia religiosa."
+  },
+  {
+    "nome": "Máquina do vento Frio",
+    "preco": 125.0,
+    "volume": 10.0,
+    "detalhes": "Um dispositivo criado para resfirar o ar de umambiente a partir de cubos de gelo. O mecanismo usa o poder do carvão eterno para gerar uma leve brisa refescante que resfria o ambiente em minutos, tranformando ambientes quentes e abafados em agradáveis e frescos."
+  },
+  {
+    "nome": "Canalizador espiritual",
+    "preco": 150.0,
+    "volume": 20.0,
+    "detalhes": "Um dispositivo que permite, através de um ritual, canalizar as vozes dos espíritos no ambiente. Renovar os componentes do ritual custa 50$."
+  },
+  {
+    "nome": "Canalizador espiritual Portátil",
+    "preco": 1250.0,
+    "volume": 8.0,
+    "detalhes": "Pode ser facilmente transportado em uma carroça e  instalado em qualquer lugar"
+  },
+  {
+    "nome": "Canalizador espiritual Imagético",
+    "preco": 1650.0,
+    "volume": 8.0,
+    "detalhes": "Além  de sons é capaz de reproduzir uma imagem fraca e tremeluzente de um espírito que tenta se comunicar através do dispositivo"
+  },
+  {
+    "nome": "Replicador de Vibrações",
+    "preco": 250.0,
+    "volume": 2.0,
+    "detalhes": "Um dispositivo capaz de captar a vibração sonora do ambiente eatravés de uma fina agulha metálica transcrever essas vibraçoes para uma placa lisa de carvão eterno. Posteriormente as vibácões nessa placa podem ser repoduzidas e o som gravado pode ser ouvido novamente."
+  },
+  {
+    "nome": "Impressora Tipográfica",
+    "preco": 600.0,
+    "volume": 25.0,
+    "detalhes": "Usada para imprimir uma grande quantidade de um mesmo documentode forma rápida."
+  },
+  {
+    "nome": "Mochila de vôo a vapor",
+    "preco": 6000.0,
+    "volume": 8.0,
+    "detalhes": "Uma mochila com um mecanismoalimentárdo por várias pedras de Carvão Eterno capaz de produzir vapor com força suficiente para erguer uma pessoa no ar. Controlar o vôo com esse dispositivo demanda um teste de Atléticos DB+10"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "tipo_servico": "Caneca de cerveja",
+    "preco": "5¢",
+    "detalhes": "Cerveja barata"
+  },
+  {
+    "tipo_servico": "Refeição",
+    "preco": "10¢",
+    "detalhes": "Para 2 pessoas"
+  },
+  {
+    "tipo_servico": "Bebidas sem álcool (chá, café, suco etc)",
+    "preco": "20¢",
+    "detalhes": "Suficiente para 4 pessoas"
+  },
+  {
+    "tipo_servico": "Refeição Quente",
+    "preco": "30¢",
+    "detalhes": "Feita na hora"
+  },
+  {
+    "tipo_servico": "Vinhos baratos e Destilados caseiro",
+    "preco": "50¢",
+    "detalhes": "Copo ou Dose"
+  },
+  {
+    "tipo_servico": "Bons Vinhos e Destilados de qualidade",
+    "preco": 1.0,
+    "detalhes": "Copo ou Dose"
+  },
+  {
+    "tipo_servico": "Banquete",
+    "preco": 1.0,
+    "detalhes": "Banquete de luxo para 4 pessoas"
+  }
+]

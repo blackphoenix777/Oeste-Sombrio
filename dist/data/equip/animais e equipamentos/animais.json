@@ -1,0 +1,32 @@
+{
+  "categoria": "Animais",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Águia",
+      "preco": 10,
+      "detalhes": null
+    },
+    {
+      "nome": "Coruja",
+      "preco": 8,
+      "detalhes": null
+    },
+    {
+      "nome": "Cavalo",
+      "preco": 20,
+      "detalhes": null
+    },
+    {
+      "nome": "Cabra",
+      "preco": 10,
+      "detalhes": null
+    },
+    {
+      "nome": "Vaca",
+      "preco": 35,
+      "detalhes": null
+    }
+  ]
+}

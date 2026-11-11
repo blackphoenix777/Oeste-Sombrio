@@ -1,0 +1,823 @@
+{
+  "categoria": "Explosivos e Armas de Arremesso",
+  "descricao": "Armamentos raros desenvolvidos por cientistas que estudam as propriedades do carvão eterno",
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Frasco de ácido Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Frasco de ácido Moderado",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Frasco de ácido Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Frasco de ácido Supremo",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Fogo alquímico Menor",
+      "dano": "1d8",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Aplica queimando 1"
+    },
+    {
+      "nome": "Fogo alquímico Moderado",
+      "dano": "2d8",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Aplica queimando 2"
+    },
+    {
+      "nome": "Fogo alquímico Maior",
+      "dano": "3d8",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Aplica queimando 3"
+    },
+    {
+      "nome": "Fogo alquímico Supremo",
+      "dano": "4d8",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Aplica queimando 4"
+    },
+    {
+      "nome": "Relâmpago Engarrafado Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Relâmpago Engarrafado Moderado",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Relâmpago Engarrafado Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Relâmpago Engarrafado Supremo",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Ampola Congelada Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Ampola Congelada Moderada",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Ampola Congelada Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Ampola Congelada Suprema",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": null
+    },
+    {
+      "nome": "Bomba bioluminescente",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Um frasco com uma gosma luminosa. Quando esse frasco é arremessado em um inimigo ou nas proximidades ele explode lançando gosma para todos os lados. Acrobacia DB+4 para evitar ser atingido pela gosma. Atletismo DB+4 para evitar ficar Ofuscado pelo brilho. A gosma brilha por 24 horas depois de sair do frasco."
+    },
+    {
+      "nome": "Bomba de Toxina Menor",
+      "dano": "1d4",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Uma bomba de fragmentos venenosos que causa dano de explosão e aplica 1d4 de veneno"
+    },
+    {
+      "nome": "Bomba de Toxina Moderada",
+      "dano": "2d4",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Uma bomba de fragmentos venenosos que causa dano de explosão e aplica 2d4 de veneno"
+    },
+    {
+      "nome": "Bomba de Toxina Maior",
+      "dano": "3d4",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Uma bomba de fragmentos venenosos que causa dano de explosão e aplica 3d4 de veneno"
+    },
+    {
+      "nome": "Bomba de Toxina Suprema",
+      "dano": "4d4",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Uma bomba de fragmentos venenosos que causa dano de explosão e aplica 4d4 de veneno"
+    },
+    {
+      "nome": "Ampola Aterrorizante Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Um flash alucinógeno que traz à tona o pior dos seus medos. Causa dano mental e aplica a condição Abalado por 1d4 turnos"
+    },
+    {
+      "nome": "Ampola Aterrorizante Moderada",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Um flash alucinógeno que traz à tona o pior dos seus medos. Causa dano mental e aplica a condição Abalado por 2d4 turnos"
+    },
+    {
+      "nome": "Ampola Aterrorizante Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 300,
+      "volume": 0.1,
+      "descricao": "Um flash alucinógeno que traz à tona o pior dos seus medos. Causa dano mental e aplica a condição Abalado por 3d4 turnos"
+    },
+    {
+      "nome": "Ampola Aterrorizante Suprema",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 3000,
+      "volume": 0.1,
+      "descricao": "Um flash alucinógeno que traz à tona o pior dos seus medos. Causa dano mental e aplica a condição Abalado por 4d4 turnos"
+    },
+    {
+      "nome": "Carga Fantasma Menor",
+      "dano": "1d8",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Um explosivo de impacto com sais benzidos e outros químicos que causam dano em criaturas mortas (inclusive veteranos). Em criaturas vivas causa metade do dano."
+    },
+    {
+      "nome": "Carga Fantasma Moderada",
+      "dano": "2d8",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Um explosivo de impacto com sais benzidos e outros químicos que causam dano em criaturas mortas (inclusive veteranos). Em criaturas vivas causa metade do dano."
+    },
+    {
+      "nome": "Carga Fantasma Maior",
+      "dano": "3d8",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Um explosivo de impacto com sais benzidos e outros químicos que causam dano em criaturas mortas (inclusive veteranos). Em criaturas vivas causa metade do dano."
+    },
+    {
+      "nome": "Carga Fantasma Suprema",
+      "dano": "4d8",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Um explosivo de impacto com sais benzidos e outros químicos que causam dano em criaturas mortas (inclusive veteranos). Em criaturas vivas causa metade do dano."
+    },
+    {
+      "nome": "Bomba de Gosma Ácida Menor",
+      "dano": "1d4",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Uma gosma que gruda em superfícies causando dano na defesa todo turno. Acrobacia DB+3 ou 3 ações para limpar"
+    },
+    {
+      "nome": "Bomba de Gosma Ácida Moderada",
+      "dano": "2d4",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Uma gosma que gruda em superfícies causando dano na defesa todo turno. Acrobacia DB+4 ou 4 ações para limpar"
+    },
+    {
+      "nome": "Bomba de Gosma Ácida Maior",
+      "dano": "3d4",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Uma gosma que gruda em superfícies causando dano na defesa todo turno. Acrobacia DB+10 ou 5 ações para limpar"
+    },
+    {
+      "nome": "Bomba de Gosma Ácida Suprema",
+      "dano": "4d4",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Uma gosma que gruda em superfícies causando dano na defesa todo turno. Acrobacia DB+16 ou 6 ações para limpar"
+    },
+    {
+      "nome": "Bomba de Lama Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Aplica Desorientado por 1d4 turnos"
+    },
+    {
+      "nome": "Bomba de Lama Moderada",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Aplica Desorientado por 2d4 turnos"
+    },
+    {
+      "nome": "Bomba de Lama Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Aplica Desorientado por 3d4 turnos"
+    },
+    {
+      "nome": "Bomba de Lama Superior",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Aplica Desorientado por 4d4 turnos"
+    },
+    {
+      "nome": "Bomba Necrose Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Aplica Enjoado por 1d4 turnos"
+    },
+    {
+      "nome": "Bomba Necrose Moderada",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Aplica Enjoado por 2d4 turnos"
+    },
+    {
+      "nome": "Bomba Necrose Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Aplica Enjoado por 3d4 turnos"
+    },
+    {
+      "nome": "Bomba Necrose Superior",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Aplica Enjoado por 4d4 turnos"
+    },
+    {
+      "nome": "Bomba de Esporos Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Causa 1d4 de dano persistente na defesa."
+    },
+    {
+      "nome": "Bomba de Esporos Moderada",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Causa 2d4 de dano persistente na defesa."
+    },
+    {
+      "nome": "Bomba de Esporos Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Causa 3d4 de dano persistente na defesa."
+    },
+    {
+      "nome": "Bomba de Esporos Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Causa 4d4 de dano persistente na defesa."
+    },
+    {
+      "nome": "Bomba Baiacu Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Aplica 1d4 de sangramento"
+    },
+    {
+      "nome": "Bomba Baiacu Moderada",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Aplica 2d4 de sangramento"
+    },
+    {
+      "nome": "Bomba Baiacu Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Aplica 3d4 de sangramento"
+    },
+    {
+      "nome": "Bomba Baiacu Superior",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Aplica 4d4 de sangramento"
+    },
+    {
+      "nome": "Bomba Incendiária Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Aplica 1d4 de queimando"
+    },
+    {
+      "nome": "Bomba Incendiária Moderada",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Aplica 2d4 de queimando"
+    },
+    {
+      "nome": "Bomba Incendiária Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Aplica 3d4 de queimando"
+    },
+    {
+      "nome": "Bomba Incendiária Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Aplica 4d4 de queimando"
+    },
+    {
+      "nome": "Dinamite Estrela Menor",
+      "dano": "1d8",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Uma dinamite especialmente preparada para não explodir num raio. A explosão da dinamite estrela é controlada e explode em linha reta. Quando uma Dinamite Estrela explode sem controle ela gera uma explosão em cruz. Para preparar uma explosão controlada para algum lado específico é necessário 1 minuto."
+    },
+    {
+      "nome": "Dinamite Estrela Moderada",
+      "dano": "2d8",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Uma dinamite especialmente preparada para não explodir num raio. A explosão da dinamite estrela é controlada e explode em linha reta. Quando uma Dinamite Estrela explode sem controle ela gera uma explosão em cruz. Para preparar uma explosão controlada para algum lado específico é necessário 1 minuto."
+    },
+    {
+      "nome": "Dinamite Estrela Maior",
+      "dano": "3d8",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Uma dinamite especialmente preparada para não explodir num raio. A explosão da dinamite estrela é controlada e explode em linha reta. Quando uma Dinamite Estrela explode sem controle ela gera uma explosão em cruz. Para preparar uma explosão controlada para algum lado específico é necessário 1 minuto."
+    },
+    {
+      "nome": "Dinamite Estrela Superior",
+      "dano": "4d8",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Uma dinamite especialmente preparada para não explodir num raio. A explosão da dinamite estrela é controlada e explode em linha reta. Quando uma Dinamite Estrela explode sem controle ela gera uma explosão em cruz. Para preparar uma explosão controlada para algum lado específico é necessário 1 minuto."
+    },
+    {
+      "nome": "Bomba Incendiária Gordurosa Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Uma mistura de gordura animal com agentes incendiários que grudam na pele. Aplica 1d4 de queimando. Atléticos DB+3 ou rolar no chão por 1 turno para apagar o fogo"
+    },
+    {
+      "nome": "Bomba Incendiária Gordurosa Moderada",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Uma mistura de gordura animal com agentes incendiários que grudam na pele. Aplica 2d4 de queimando. Atléticos DB+5 ou rolar no chão por 1 turno para apagar o fogo"
+    },
+    {
+      "nome": "Bomba Incendiária Gordurosa Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Uma mistura de gordura animal com agentes incendiários que grudam na pele. Aplica 3d4 de queimando. Atléticos DB+7 ou rolar no chão por 1 turno para apagar o fogo"
+    },
+    {
+      "nome": "Bomba Incendiária Gordurosa Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Uma mistura de gordura animal com agentes incendiários que grudam na pele. Aplica 4d4 de queimando. Atléticos DB+10 ou rolar no chão por 1 turno para apagar o fogo"
+    },
+    {
+      "nome": "Saco de Grude Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Um saco com explosivo que espalha uma gosma grudenta que reduz em 3m o movimento na área de explosão. Atlético DB+3 para não ser afetado."
+    },
+    {
+      "nome": "Saco de Grude Moderado",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Um saco com explosivo que espalha uma gosma grudenta que reduz em 4m o movimento na área de explosão. Atlético DB+5 para não ser afetado."
+    },
+    {
+      "nome": "Saco de Grude Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Um saco com explosivo que espalha uma gosma grudenta que reduz em 4m o movimento na área de explosão. Atlético DB+7 para não ser afetado."
+    },
+    {
+      "nome": "Saco de Grude Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Um saco com explosivo que espalha uma gosma grudenta que reduz em 6m o movimento na área de explosão. Atlético DB+10 para não ser afetado."
+    },
+    {
+      "nome": "Balão d'água Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 3,
+      "volume": 0.1,
+      "descricao": "Um balão cheio de água que apaga qualquer foco de fogo não mágico dentro do raio de explosão"
+    },
+    {
+      "nome": "Balão d'água Moderado",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 10,
+      "volume": 0.1,
+      "descricao": "Um balão cheio de água que apaga qualquer foco de fogo não mágico dentro do raio de explosão"
+    },
+    {
+      "nome": "Balão d'água Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 250,
+      "volume": 0.1,
+      "descricao": "Um balão cheio de água que apaga qualquer foco de fogo não mágico dentro do raio de explosão"
+    },
+    {
+      "nome": "Balão d'água Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2500,
+      "volume": 0.1,
+      "descricao": "Um balão cheio de água que apaga qualquer foco de fogo não mágico dentro do raio de explosão"
+    },
+    {
+      "nome": "Explosivo Cortante Menor",
+      "dano": "1d4",
+      "raio": "1m",
+      "preco": 4,
+      "volume": 0.1,
+      "descricao": "Aplica 1d6 de sangramento"
+    },
+    {
+      "nome": "Explosivo Cortante Moderado",
+      "dano": "2d4",
+      "raio": "3m",
+      "preco": 11,
+      "volume": 0.1,
+      "descricao": "Aplica 2d6 de sangramento"
+    },
+    {
+      "nome": "Explosivo Cortante Maior",
+      "dano": "3d4",
+      "raio": "4m",
+      "preco": 275,
+      "volume": 0.1,
+      "descricao": "Aplica 3d6 de sangramento"
+    },
+    {
+      "nome": "Explosivo Cortante Superior",
+      "dano": "4d4",
+      "raio": "6m",
+      "preco": 2750,
+      "volume": 0.1,
+      "descricao": "Aplica 6d6 de sangramento"
+    },
+    {
+      "nome": "Bomba de Lixo Menor",
+      "dano": "1d4",
+      "raio": "1m",
+      "preco": 4,
+      "volume": 0.1,
+      "descricao": "Aplica 1d4 de sangramento e 1d4 de doença (DB+3)"
+    },
+    {
+      "nome": "Bomba de Lixo Moderada",
+      "dano": "2d4",
+      "raio": "3m",
+      "preco": 11,
+      "volume": 0.1,
+      "descricao": "Aplica 2d4 de sangramento e 2d4 de doença (DB+5)"
+    },
+    {
+      "nome": "Bomba de Lixo Maior",
+      "dano": "3d4",
+      "raio": "4m",
+      "preco": 275,
+      "volume": 0.1,
+      "descricao": "Aplica 3d4 de sangramento e 3d4 de doença (DB+7)"
+    },
+    {
+      "nome": "Bomba de Lixo Superior",
+      "dano": "4d4",
+      "raio": "6m",
+      "preco": 2750,
+      "volume": 0.1,
+      "descricao": "Aplica 4d4 de sangramento e 4d4 de doença (DB+10)"
+    },
+    {
+      "nome": "Bomba de Excrementos Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 4,
+      "volume": 0.1,
+      "descricao": "Aplica 1d4 de doença e 1d4 turnos Enjoado (DB+3)"
+    },
+    {
+      "nome": "Bomba de Excrementos Moderada",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 12,
+      "volume": 0.1,
+      "descricao": "Aplica 2d4 de doença e 2d4 turnos Enjoado (DB+5)"
+    },
+    {
+      "nome": "Bomba de Excrementos Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 240,
+      "volume": 0.1,
+      "descricao": "Aplica 3d4 de doença e 1d4 turnos Nauseado (DB+7)"
+    },
+    {
+      "nome": "Bomba de Excrementos Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2400,
+      "volume": 0.1,
+      "descricao": "Aplica 4d4 de doença e 2d4 turnos Nauseado (DB+10)"
+    },
+    {
+      "nome": "Bomba de Alga Pegajosa Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 4,
+      "volume": 0.1,
+      "descricao": "Bomba feita de algas que grudam na pele, perfeita pra envenenar corpos d'água. Causa 1d8 de dano de veneno."
+    },
+    {
+      "nome": "Bomba de Alga Pegajosa Moderada",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 12,
+      "volume": 0.1,
+      "descricao": "Bomba feita de algas que grudam na pele, perfeita pra envenenar corpos d'água. Causa 2d8 de dano de veneno."
+    },
+    {
+      "nome": "Bomba de Alga Pegajosa Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 280,
+      "volume": 0.1,
+      "descricao": "Bomba feita de algas que grudam na pele, perfeita pra envenenar corpos d'água. Causa 3d8 de dano de veneno."
+    },
+    {
+      "nome": "Bomba de Alga Pegajosa Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 2800,
+      "volume": 0.1,
+      "descricao": "Bomba feita de algas que grudam na pele, perfeita pra envenenar corpos d'água. Causa 4d8 de dano de veneno."
+    },
+    {
+      "nome": "Bomba Sulfúrica Menor",
+      "dano": "1d4",
+      "raio": "1m",
+      "preco": 4,
+      "volume": 0.1,
+      "descricao": "Causa Penalidade de 1d6 em Percepção"
+    },
+    {
+      "nome": "Bomba Sulfúrica Moderada",
+      "dano": "2d4",
+      "raio": "3m",
+      "preco": 12,
+      "volume": 0.1,
+      "descricao": "Causa Penalidade de 2d6 em Percepção"
+    },
+    {
+      "nome": "Bomba Sulfúrica Maior",
+      "dano": "3d4",
+      "raio": "4m",
+      "preco": 275,
+      "volume": 0.1,
+      "descricao": "Causa Penalidade de 2d6 em Percepção + Enjoado"
+    },
+    {
+      "nome": "Bomba Sulfúrica Superior",
+      "dano": "4d4",
+      "raio": "6m",
+      "preco": 2750,
+      "volume": 0.1,
+      "descricao": "Causa Penalidade de 2d6 em Percepção + Nauseado"
+    },
+    {
+      "nome": "Vapores Confusos Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 4,
+      "volume": 0.1,
+      "descricao": "Um pó vermelho e fino feito de frutas e ervas que causam dano mental e Confusão por 1d4 turnos"
+    },
+    {
+      "nome": "Vapores Confusos Moderado",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 12,
+      "volume": 0.1,
+      "descricao": "Um pó vermelho e fino feito de frutas e ervas que causam dano mental e Confusão por 1d6 turnos"
+    },
+    {
+      "nome": "Vapores Confusos Maior",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 300,
+      "volume": 0.1,
+      "descricao": "Um pó vermelho e fino feito de frutas e ervas que causam dano mental e Confusão por 1d8 turnos"
+    },
+    {
+      "nome": "Vapores Confusos Superior",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 3000,
+      "volume": 0.1,
+      "descricao": "Um pó vermelho e fino feito de frutas e ervas que causam dano mental e Confusão por 1d10 turnos"
+    },
+    {
+      "nome": "Estampidos Menor",
+      "dano": "1d6",
+      "raio": "1m",
+      "preco": 6,
+      "volume": 0.1,
+      "descricao": "Uma série de pequenos explosivos que se acionam em cadeia produzindo explosões em um volume muito alto. Aplica Desorientado e Surdo por 1d4 turnos"
+    },
+    {
+      "nome": "Estampidos Moderado",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 18,
+      "volume": 0.1,
+      "descricao": "Uma série de pequenos explosivos que se acionam em cadeia produzindo explosões em um volume muito alto. Aplica Desorientado e Surdo por 2d4 turnos"
+    },
+    {
+      "nome": "Sol Engarrafado Menor",
+      "dano": "X",
+      "raio": "1m",
+      "preco": 7,
+      "volume": 0.1,
+      "descricao": "Um frasco espelhado que produz luz num raio de 3m. Ao explodir causa cegueira temporária por 1d4 turnos. Reflexos DB+3 reduz o tempo pela metade."
+    },
+    {
+      "nome": "Sol Engarrafado Moderado",
+      "dano": "X",
+      "raio": "3m",
+      "preco": 20,
+      "volume": 0.1,
+      "descricao": "Um frasco espelhado que produz luz num raio de 3m. Ao explodir causa cegueira temporária por 2d4 turnos. Reflexos DB+5 reduz o tempo pela metade."
+    },
+    {
+      "nome": "Sol Engarrafado Maior",
+      "dano": "X",
+      "raio": "4m",
+      "preco": 360,
+      "volume": 0.1,
+      "descricao": "Um frasco espelhado que produz luz num raio de 3m. Ao explodir causa cegueira temporária por 3d4 turnos. Reflexos DB+7 reduz o tempo pela metade."
+    },
+    {
+      "nome": "Sol Engarrafado Superior",
+      "dano": "X",
+      "raio": "6m",
+      "preco": 4500,
+      "volume": 0.1,
+      "descricao": "Um frasco espelhado que produz luz num raio de 3m. Ao explodir causa cegueira temporária por 4d4 turnos. Reflexos DB+10 reduz o tempo pela metade."
+    },
+    {
+      "nome": "Esfera de Vidro Explosiva Menor",
+      "dano": "2d6",
+      "raio": "3m",
+      "preco": 19,
+      "volume": 0.1,
+      "descricao": "Uma pequena esfera de vidro injetada com fumaça de Carvão Eterno. A pressão no interior da esfera causa uma explosão intensa ao impacto causando dano e empurrando os alvos 3m para os lados. Acrobacia DB+3 para não tomar um dano adicional de queda no SB"
+    },
+    {
+      "nome": "Esfera de Vidro Explosiva Moderada",
+      "dano": "3d6",
+      "raio": "4m",
+      "preco": 360,
+      "volume": 0.1,
+      "descricao": "Uma pequena esfera de vidro injetada com fumaça de Carvão Eterno. A pressão no interior da esfera causa uma explosão intensa ao impacto causando dano e empurrando os alvos 3m para os lados. Acrobacia DB+3 para não tomar um dano adicional de queda no SB"
+    },
+    {
+      "nome": "Esfera de Vidro Explosiva Maior",
+      "dano": "4d6",
+      "raio": "6m",
+      "preco": 3400,
+      "volume": 0.1,
+      "descricao": "Uma pequena esfera de vidro injetada com fumaça de Carvão Eterno. A pressão no interior da esfera causa uma explosão intensa ao impacto causando dano e empurrando os alvos 3m para os lados. Acrobacia DB+3 para não tomar um dano adicional de queda no SB"
+    }
+  ]
+}

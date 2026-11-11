@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "basePath": "data/bestiario",
+  "files": [
+    {
+      "id": "cao_das_sombras",
+      "name": "Cão das Sombras",
+      "category": "Criatura",
+      "path": "cao_das_sombras.json"
+    },
+    {
+      "id": "gosma_eterna",
+      "name": "Gosma Eterna",
+      "category": "Criatura",
+      "path": "gosma_eterna.json"
+    },
+    {
+      "id": "inebriados",
+      "name": "Inebriados",
+      "category": "Criatura",
+      "path": "inebriados.json"
+    },
+    {
+      "id": "jebediah_jeb_cale",
+      "name": "Jebediah \"Jeb\" Cale",
+      "category": "NPC",
+      "path": "jebediah_jeb_cale.json"
+    },
+    {
+      "id": "verme_do_carvao",
+      "name": "Verme do Carvão",
+      "category": "Criatura",
+      "path": "verme_do_carvao.json"
+    }
+  ]
+}

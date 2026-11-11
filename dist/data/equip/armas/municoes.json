@@ -1,0 +1,31 @@
+{
+  "categoria": "Munições",
+  "descricao": "Muniçoes padrão e variedades",
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Munição Leve",
+      "preco": "50¢",
+      "volume": 1.5,
+      "detalhes": "Caixa com 20"
+    },
+    {
+      "nome": "Munição Pesada",
+      "preco": 1,
+      "volume": 1.5,
+      "detalhes": "Caixa com 20"
+    },
+    {
+      "nome": "Munição Explosiva",
+      "preco": 1,
+      "volume": 0.1,
+      "detalhes": "Causa 1d2 de dano no SB"
+    },
+    {
+      "nome": "Projétil de escalada",
+      "preco": 2,
+      "volume": 0.1,
+      "detalhes": "Pode ser disparado uma vez a partir de uma arma de fogo. Também pode ser usado 5 vezes com bestas ou arcos."
+    }
+  ]
+}

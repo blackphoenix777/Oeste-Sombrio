@@ -1,0 +1,64 @@
+{
+  "titulo": "Pontos de Perícia",
+  "ganhando_pontos_por_nivel": {
+    "descricao": "Ao subir de nível, o jogador rola um dado e soma o valor obtido em perícias à sua escolha. A quantidade de pontos que você ganha por nível varia de acordo com o nível atual do seu personagem.",
+    "tabela_dado_por_faixa_de_nivel": [
+      {
+        "nivel_min": 1,
+        "nivel_max": 6,
+        "dado_rolado": "1d6"
+      },
+      {
+        "nivel_min": 7,
+        "nivel_max": 12,
+        "dado_rolado": "1d8"
+      },
+      {
+        "nivel_min": 13,
+        "nivel_max": 18,
+        "dado_rolado": "1d10"
+      },
+      {
+        "nivel_min": 19,
+        "nivel_max": null,
+        "dado_rolado": "1d12"
+      }
+    ]
+  },
+  "evolucao_avancada_de_pericias": {
+    "nivel_minimo_para_aplicar": 6,
+    "descricao_geral": "A partir do nível 6, o domínio de uma perícia começa a gerar resultados tão potentes que o personagem adquire um controle quase sobrenatural sobre suas ações.",
+    "categorias_dado_em_ordem": [
+      "d4",
+      "d6",
+      "d8",
+      "d10",
+      "d12"
+    ],
+    "tabela_progressao": [
+      {
+        "nivel_min": 6,
+        "nivel_max": 10,
+        "custo_por_nivel_em_pontos_de_pericia": 2,
+        "efeito": "Adiciona um 2º dado (começando em d4, até d12) à perícia.",
+        "total_de_dados_rolados_na_pericia": 2
+      },
+      {
+        "nivel_min": 11,
+        "nivel_max": null,
+        "custo_por_nivel_em_pontos_de_pericia": 3,
+        "efeito": "Adiciona um 3º dado (começando em d4, até d12) e continua a progressão.",
+        "total_de_dados_rolados_na_pericia": 3
+      }
+    ],
+    "regra_de_progressao_continua": {
+      "descricao": "A progressão do dado extra continua indefinidamente: o dado sobe de categoria (d4, d6, d8, d10, d12) e, ao atingir o d12, um novo dado é adicionado.",
+      "a_cada_quantos_niveis_adiciona_novo_dado": 5,
+      "incremento_de_custo_ao_adicionar_novo_dado": 1
+    },
+    "mecanica_de_rolagem": {
+      "descricao": "Quando for realizar um teste, o jogador rola todos os dados de perícia disponíveis e escolhe apenas o resultado mais alto para compor a soma final do teste.",
+      "exemplo": "Se o personagem está no Nível 11 de Percepção, ele rolará três dados (o d12 original + dois dados extras, por exemplo, d12 e d4). Ele escolhe o resultado mais alto entre os três dados para somar ao 6B. O custo para subir para o Nível 12 será de 3 pontos de perícia."
+    }
+  }
+}

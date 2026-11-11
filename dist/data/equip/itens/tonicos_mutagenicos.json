@@ -1,0 +1,556 @@
+[
+  {
+    "mutagenico": "Mutagênico do Mané Magro",
+    "descricao": "Capaz de afinar os membros do usuário permitindo que eles sejam espremidos e torcidos de formas que normalmente não seria possível",
+    "variantes": [
+      {
+        "nome": "Mané Magro Menor",
+        "preco": 3.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d6 em Acrobacia para escapar, se espremer ou atravessar lugares apertados",
+        "desvantagem": "Penalidade de -3 em Atletismo, Furtividade, e ataques corpo-a-corpo"
+      },
+      {
+        "nome": "Mané Magro Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +2d6 em Acrobacia para escapar, se espremer ou atravessar lugares apertados",
+        "desvantagem": "Penalidade de -4 em Atletismo, Furtividade, e ataques corpo-a-corpo"
+      },
+      {
+        "nome": "Mané Magro Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +3d6 em Acrobacia para escapar, se espremer ou atravessar lugares apertados",
+        "desvantagem": "Penalidade de -5 em Atletismo, Furtividade, e ataques corpo-a-corpo"
+      },
+      {
+        "nome": "Mané Magro Supremo",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +4d6 em Acrobacia para escapar, se espremer ou atravessar lugares apertados",
+        "desvantagem": "Penalidade de -6 em Atletismo, Furtividade, e ataques corpo-a-corpo"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico do Peso Morto",
+    "descricao": "Suas articulações afrouxam e os ossos se espessam, tornando seu corpo incrivelmente pesado e difícil de manobrar",
+    "variantes": [
+      {
+        "nome": "Peso Morto Menor",
+        "preco": 3.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d6 em defesa contra ataques corpo a corpo e em testes de resistência física",
+        "desvantagem": "Sua movimentação é reduzida a 3m por ação. Torna-se incapaz de nadar"
+      },
+      {
+        "nome": "Peso Morto Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +2d6 em defesa contra ataques corpo a corpo e em testes de resistência física",
+        "desvantagem": "Sua movimentação é reduzida a 3m por ação. Torna-se incapaz de nadar"
+      },
+      {
+        "nome": "Peso Morto Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +3d6 em defesa contra ataques corpo a corpo e em testes de resistência física",
+        "desvantagem": "Sua movimentação é reduzida a 3m por ação. Torna-se incapaz de nadar"
+      },
+      {
+        "nome": "Peso Morto Supremo",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +4d6 em defesa contra ataques corpo a corpo e em testes de resistência física",
+        "desvantagem": "Sua movimentação é reduzida a 3m por ação. Torna-se incapaz de nadar"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Sanguíneo",
+    "descricao": "Suas Capacidade de produção de sangue aumenta, dobrando a capacidade de filtrar venenos e doenças. Aumenta os bônus de atléticos e acrobacia para testes de resistência. (dobra o bônus contra venenos e doenças)",
+    "variantes": [
+      {
+        "nome": "Sanquíneo Menor",
+        "preco": 3.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Ferimentos perfurantes ou de corte aplicam 1d4 e sangramento"
+      },
+      {
+        "nome": "Sanguíneo Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +2d4",
+        "desvantagem": "Ferimentos perfurantes ou de corte aplicam 1d6 e sangramento"
+      },
+      {
+        "nome": "Sanguíneo Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +3d4",
+        "desvantagem": "Ferimentos perfurantes ou de corte aplicam 1d8 e sangramento"
+      },
+      {
+        "nome": "Sanguíneo Supremo",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +4d4",
+        "desvantagem": "Ferimentos perfurantes ou de corte aplicam 1d10 e sangramento"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Criativo",
+    "descricao": "Usado tanto por artista quanto por artesãos o tônico reforça a criatividade dos usuários aumentando os bônus em Acrobacia e Engenharia em testes para criar alguma coisa",
+    "variantes": [
+      {
+        "nome": "Criativo Menor",
+        "preco": 3.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Penalidade de -3 em testes de percepção e resistências mentais"
+      },
+      {
+        "nome": "Criativo Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +2d4",
+        "desvantagem": "Penalidade de -4 em testes de percepção e resistências mentais"
+      },
+      {
+        "nome": "Criativo Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +3d4",
+        "desvantagem": "Penalidade de -5 em testes de percepção e resistências mentais"
+      },
+      {
+        "nome": "Criativo Supremo",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +4d4",
+        "desvantagem": "Penalidade de -6 em testes de percepção e resistências mentais"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Besta-Fera",
+    "descricao": "O usuário ganha um enorme aprimoramento muscular e garras afiadas. Bônus em atléticos e em combate corpo-a-corpo",
+    "variantes": [
+      {
+        "nome": "Besta-Fera Menor",
+        "preco": 3.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Penalidade de -3 em testes de percepção e resistências mentais"
+      },
+      {
+        "nome": "Besta-Fera Morderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6",
+        "desvantagem": "Penalidade de -4 em testes de percepção e resistências mentais"
+      },
+      {
+        "nome": "Besta-Fera Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8",
+        "desvantagem": "Penalidade de -5 em testes de percepção e resistências mentais"
+      },
+      {
+        "nome": "Besta-Fera Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d10",
+        "desvantagem": "Penalidade de -6 em testes de percepção e resistências mentais"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Cognitivo",
+    "descricao": "Aumenta o foco e deixa a mente mais clara, mas aspectos físicos se tornam quase obsoletos. Bônus para ciência estranha, misticismo, conhecimentos e cultura.",
+    "variantes": [
+      {
+        "nome": "Cognitivo Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Penalidade de -3 em testes de Ataque, atléticos, acrobacia e furtividade"
+      },
+      {
+        "nome": "Cognitivo Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6",
+        "desvantagem": "Penalidade de -4 em testes de Ataque, atléticos, acrobacia e furtividade"
+      },
+      {
+        "nome": "Cognitivo Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8",
+        "desvantagem": "Penalidade de -5 em testes de Ataque, atléticos, acrobacia e furtividade"
+      },
+      {
+        "nome": "Cognitivo Superios",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d10",
+        "desvantagem": "Penalidade de -6 em testes de Ataque, atléticos, acrobacia e furtividade"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Escamoso",
+    "descricao": "Endurece a pele do usuário, deixando-a com um aspecto escamoso, e afina as pupilas permitindo-o enxergar melhor. Garante bônus de proteção e Percepção.",
+    "variantes": [
+      {
+        "nome": "Escamoso Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Proteção 4 / Percpepção 1d4",
+        "desvantagem": "Penalidade de -3 em resistências mentais e testes que envolvem inteligência"
+      },
+      {
+        "nome": "Escamooso Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Proteção 6 / Percpepção 1d6",
+        "desvantagem": "Penalidade de -4 em resistências mentais e testes que envolvem inteligência"
+      },
+      {
+        "nome": "Escamoso Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Proteção 8 / Percpepção 1d8",
+        "desvantagem": "Penalidade de -5 em resistências mentais e testes que envolvem inteligência"
+      },
+      {
+        "nome": "Escamoso Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Proteção 10 / Percpepção 1d10",
+        "desvantagem": "Penalidade de -6 em resistências mentais e testes que envolvem inteligência"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Energético",
+    "descricao": "Concede bônus de proteção contra um tipo de elemento permitindo que ele seja aplicado naturalmente em um golpe desarmado. O elemento em questão é escolhido durante a fabricação do mutagênico.",
+    "variantes": [
+      {
+        "nome": "Energético Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Proteção 4 / Ataque 1d4",
+        "desvantagem": "Penalidade de -3 em resistências mentais e testes que envolvem inteligência"
+      },
+      {
+        "nome": "Energético Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Proteção 6 / Ataque 1d6",
+        "desvantagem": "Penalidade de -4 em resistências mentais e testes que envolvem inteligência"
+      },
+      {
+        "nome": "Energético Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Proteção 8 / Ataque 1d8",
+        "desvantagem": "Penalidade de -5 em resistências mentais e testes que envolvem inteligência"
+      },
+      {
+        "nome": "Ennergético Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Proteção 10 / Ataque 1d10",
+        "desvantagem": "Penalidade de -6 em resistências mentais e testes que envolvem inteligência"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Implacável",
+    "descricao": "Seu corpo fica robusto e resistente. Emanando um brilho saudável. Ganha bônus nos testes de resistência física e um aumento de 6B temporário usado apenas para aumentar a quantidade de vida.",
+    "variantes": [
+      {
+        "nome": "Implacável Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "1 6B / Atléticos 1d4",
+        "desvantagem": "Penalidade de -3 em resistências mentais Percepção e -5 em Iniciativa"
+      },
+      {
+        "nome": "Implacável Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "2 6B / Atléticos 1d6",
+        "desvantagem": "Penalidade de -4 em resistências mentais Percepção e -10 em Iniciativa"
+      },
+      {
+        "nome": "Implacável Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "3 6B / Atléticos 1d8",
+        "desvantagem": "Penalidade de -5 em resistências mentais Percepção e -15 em Iniciativa"
+      },
+      {
+        "nome": "Implacável Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "4 6B / Atléticos 1d10",
+        "desvantagem": "Penalidade de -6 em resistências mentais Percepção e -20 em Iniciativa"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico da Pressa",
+    "descricao": "Uma mistura de toxinas equilibradas que garante um aumento nas capacidades estratégicas em batalha. Bônus na quantidade de ações por turno.",
+    "variantes": [
+      {
+        "nome": "Pressa Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "1 Ação adicional por turno",
+        "desvantagem": "Penalidade de -3 na defesa"
+      },
+      {
+        "nome": "Pressa Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "2 Ações adicionais por turno",
+        "desvantagem": "Penalidade de -4 defesa"
+      },
+      {
+        "nome": "Pressa Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "3 Ações adicionais por turno",
+        "desvantagem": "Penalidade de -5 defesa"
+      },
+      {
+        "nome": "Pressa Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "4 Ações adicionais por turno",
+        "desvantagem": "Penalidade de -6 defesa"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico de Mercúrio",
+    "descricao": "Deixa seu corpo ágil e veloz, porém frágil. Bônus em testes de Acrobacia, Furtividade e Prestidigitação.",
+    "variantes": [
+      {
+        "nome": "Mercúrio Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Todo dano que receber de oponentes é dobrado"
+      },
+      {
+        "nome": "Mercúrio Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6",
+        "desvantagem": null
+      },
+      {
+        "nome": "Mercúrio Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8",
+        "desvantagem": null
+      },
+      {
+        "nome": "Mercúrio Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d10",
+        "desvantagem": null
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico da Serenidade",
+    "descricao": "Uma mistura especial que te faz focar nos mínimos detalhes. Dá bônus em Percepção, Medicina, Conhecimentos e Sobrevivência.",
+    "variantes": [
+      {
+        "nome": "Serenidade Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Penalidade de -5 em todos os testes de Ataque"
+      },
+      {
+        "nome": "Serenidade Moderado",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6",
+        "desvantagem": "Penalidade de -7 em todos os testes de Ataque"
+      },
+      {
+        "nome": "Serenidade Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8",
+        "desvantagem": "Penalidade de -9 em todos os testes de Ataque"
+      },
+      {
+        "nome": "Serenidade Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d10",
+        "desvantagem": "Penalidade de -12 em todos os testes de Ataque"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico da Lábia",
+    "descricao": "Você ganha uma atração natural e sua voz se torna melodiosa e persuasiva. Bônus em testes de Blefe, Diplomacia e Intimidação",
+    "variantes": [
+      {
+        "nome": "Lábia Menor",
+        "preco": 4.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Penalidade de -3 em todos os testes de Cultura e Misticismo"
+      },
+      {
+        "nome": "Lábia Moderada",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6",
+        "desvantagem": "Penalidade de -4 em todos os testes de Cultura e Misticismo"
+      },
+      {
+        "nome": "Lábia Maior",
+        "preco": 300.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8",
+        "desvantagem": "Penalidade de -5 em todos os testes de Cultura e Misticismo"
+      },
+      {
+        "nome": "Lábia Superior",
+        "preco": 3000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d10",
+        "desvantagem": "Penalidade de -6 em todos os testes de Cultura e Misticismo"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico da Aranha",
+    "descricao": "Um mutagênico viscoso feito de secreções das glandulas que produzem teias em aranhas. Deixa o corpo coberto de pelos grossos. Concede bônus em testes de atléticos para escalar superfícies.",
+    "variantes": [
+      {
+        "nome": "Aranha Menor",
+        "preco": 12.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4",
+        "desvantagem": "Penalidade de -3 em todos os testes de Diplomacia e Empatia"
+      },
+      {
+        "nome": "Aranha Moderada",
+        "preco": 150.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6",
+        "desvantagem": "Penalidade de -4 em todos os testes de Diplomacia e Empatia"
+      },
+      {
+        "nome": "Aranha Maior",
+        "preco": 2500.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8",
+        "desvantagem": "Penalidade de -5 em todos os testes de Diplomacia e Empatia"
+      }
+    ]
+  },
+  {
+    "mutagenico": "Mutagênico Pernalta",
+    "descricao": "Um liquido viscoso e grudento. As pernas esticam e dobrem de tamanho. Facilmente notado a meos que uma peça de roupa muito longa esconda as pernas inteiras. Cocede bônus em testes de Atletismo.",
+    "variantes": [
+      {
+        "nome": "Pernalta Menor",
+        "preco": 20.0,
+        "volume": 0.1,
+        "duracao": "1m",
+        "vantagem": "Bônus de +1d4 Aumenta a velocidade em 3m",
+        "desvantagem": "-3 em todos os testes de resistência com Acrobacia; -2 de proteção"
+      },
+      {
+        "nome": "Pernalta Moderada",
+        "preco": 400.0,
+        "volume": 0.1,
+        "duracao": "10m",
+        "vantagem": "Bônus de +1d6 aumennte a velocidade em 5m",
+        "desvantagem": "-4 em todos os testes de resistência com Acrobacia; -3 de proteção"
+      },
+      {
+        "nome": "Pernalta Maior",
+        "preco": 5000.0,
+        "volume": 0.1,
+        "duracao": "1hr",
+        "vantagem": "Bônus de +1d8 aumenta a velocidade em 6m",
+        "desvantagem": "-5 em todos os testes de resistência com Acrobacia; -4 de proteção"
+      }
+    ]
+  }
+]

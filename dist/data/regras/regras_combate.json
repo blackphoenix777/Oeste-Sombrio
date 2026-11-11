@@ -1,0 +1,365 @@
+{
+  "titulo": "Regras de Combate",
+  "inicio_combate_defesa_e_iniciativa": {
+    "descricao": "No começo de cada sessão (ou sempre que o 6B precisar ser rolado novamente), a rolagem do 6B define a agilidade e a capacidade de defesa do personagem.",
+    "regras": [
+      "Ao rolar o 6B inicial, cada jogador separa 3 resultados para a Defesa (somados) e usa os demais para calcular sua Iniciativa.",
+      "A Defesa é o número que os inimigos devem superar para acertar o personagem.",
+      "A Iniciativa define a ordem de ação e quantas ações o personagem tem por turno."
+    ],
+    "regra_acoes_por_iniciativa": {
+      "acoes_base_por_turno": 1,
+      "pontos_de_iniciativa_por_acao_extra": 5,
+      "descricao": "Cada personagem começa com 1 ação por turno. Para cada 5 pontos na Iniciativa, o personagem ganha +1 ação adicional."
+    },
+    "nota_importante": "A Fadiga deve ser aplicada antes de calcular a Defesa e a Iniciativa.",
+    "regra_recalculo": "Quando o jogador precisa rolar novamente seu 6B (após o esgotamento dos valores), os pontos de fadiga são descontados da nova rolagem e o jogador escolhe novamente 3 valores para a Defesa e o restante para a Iniciativa."
+  },
+  "estrutura_do_turno": {
+    "duracao_turno_segundos": 6,
+    "turnos_por_minuto": 10,
+    "acoes_possiveis_no_turno": [
+      "Atacar (com armas de fogo ou corpo a corpo)",
+      "Se mover",
+      "Mirar",
+      "Recarregar",
+      "Usar itens (tônicos, elixires, equipamentos)",
+      "Ações narrativas (fechar portas, puxar alavancas, interagir com o ambiente)"
+    ],
+    "construindo_um_ataque": {
+      "composicao_do_conjunto_de_dados": [
+        "1 dado de perícia (d6, d8, d10 ou d12, conforme a evolução do personagem)",
+        "O dado de dano da arma (ex.: 1d8 para rifles, 1d6 para pistolas)",
+        "Valores do 6B que o jogador decide gastar"
+      ],
+      "regra_resolucao": {
+        "condicao": "O total do ataque precisa ser igual ou maior que a Defesa do alvo para ser um sucesso.",
+        "resultados": [
+          {
+            "caso": "total menor que a Defesa",
+            "efeito": "O ataque falha."
+          },
+          {
+            "caso": "total igual ou maior que a Defesa",
+            "efeito": "O alvo sofre 1 ponto de dano."
+          },
+          {
+            "caso": "total supera a Defesa em 10 ou mais, e o dado de perícia explodiu",
+            "efeito": "Acerto crítico."
+          }
+        ]
+      }
+    },
+    "regras_de_mira_ataques_a_distancia": {
+      "descricao": "Um personagem pode gastar ações extras para mirar antes de realizar um disparo. Esse foco adicional concede dados de bônus ao ataque.",
+      "categorias_dado_em_ordem": [
+        "d4",
+        "d6",
+        "d8",
+        "d10",
+        "d12"
+      ],
+      "tabela_progressao_por_acoes_mirando": [
+        {
+          "acoes_gastas": 1,
+          "dado_bonus": "d4"
+        },
+        {
+          "acoes_gastas": 2,
+          "dado_bonus": "d6"
+        },
+        {
+          "acoes_gastas": 3,
+          "dado_bonus": "d8"
+        },
+        {
+          "acoes_gastas": 4,
+          "dado_bonus": "d10"
+        },
+        {
+          "acoes_gastas": 5,
+          "dado_bonus": "d12"
+        }
+      ],
+      "limite_maximo": "d12, atingido ao gastar 5 ações mirando.",
+      "regra_luneta": "Com uma luneta acoplada a uma arma longa, o valor inicial da mira já começa em 1d6, em vez de 1d4.",
+      "regra_acumulo": "É possível mirar ao longo de vários turnos, acumulando o bônus, desde que o personagem não seja interrompido ou atacado."
+    },
+    "regras_de_esforco_ataques_corpo_a_corpo": {
+      "descricao": "Nos combates corpo a corpo, o esforço físico do personagem é representado pela quantidade de valores do 6B que ele decide gastar no ataque, gerando um dado extra de dano.",
+      "tabela_progressao_por_valores_6b_gastos": [
+        {
+          "valores_6b_gastos": 1,
+          "dado_bonus_dano": "d4"
+        },
+        {
+          "valores_6b_gastos": 2,
+          "dado_bonus_dano": "d6"
+        },
+        {
+          "valores_6b_gastos": 3,
+          "dado_bonus_dano": "d8"
+        },
+        {
+          "valores_6b_gastos": 4,
+          "dado_bonus_dano": "d10"
+        },
+        {
+          "valores_6b_gastos": "5 ou 6",
+          "dado_bonus_dano": "d12"
+        }
+      ],
+      "nota_importante": "Apenas o dado de perícia pode explodir; os dados extras de esforço nunca explodem."
+    },
+    "regras_de_criticos_e_falhas": {
+      "sucesso_critico": {
+        "condicao": "Acontece quando o dado de perícia explode e o resultado final supera a Defesa em 10 pontos ou mais.",
+        "efeitos_possiveis": [
+          "O ataque causa +1 de dano adicional (mesmo se o dado explodir mais vezes).",
+          "Ou o jogador pode aplicar um efeito narrativo da tabela de críticos contextuais."
+        ]
+      },
+      "falha_critica": {
+        "condicao": "Acontece quando o dado de perícia mostra 1 e o resultado total fica 10 abaixo da Defesa.",
+        "efeitos_possiveis": [
+          "O personagem pode derrubar ou quebrar sua arma.",
+          "Se lutar desarmado, pode se ferir no processo."
+        ],
+        "restricao": "Não aplica Progredir na Falha."
+      }
+    },
+    "modificadores_de_combate": {
+      "cobertura": {
+        "descricao": "A proteção pode aumentar a Defesa.",
+        "tabela": [
+          {
+            "tipo": "Parcial",
+            "bonus_defesa": 2
+          },
+          {
+            "tipo": "Grande",
+            "bonus_defesa": 4
+          },
+          {
+            "tipo": "Total",
+            "bonus_defesa": 8,
+            "restricao": "O alvo não pode agir enquanto permanecer assim."
+          }
+        ]
+      },
+      "mirar": {
+        "descricao": "Gastar ações para mirar aumenta a precisão.",
+        "referencia": "Ver 'estrutura_do_turno.regras_de_mira_ataques_a_distancia' para a tabela completa.",
+        "resumo": "1 ação mirando adiciona 1d4 ao ataque; cada ação extra aumenta o dado em uma categoria, até 1d12 com 5 ações; o bônus pode ser acumulado em turnos."
+      },
+      "corpo_a_corpo": {
+        "descricao": "Ataques corpo a corpo recebem um dado extra de dano conforme o esforço.",
+        "referencia": "Ver 'estrutura_do_turno.regras_de_esforco_ataques_corpo_a_corpo' para a tabela completa."
+      }
+    }
+  },
+  "iniciativa_dos_inimigos": {
+    "regra": "Para simplificar, o Xerife rola 1d20 + o número de inimigos. Esse é o valor de iniciativa do inimigo mais importante. Cada inimigo subsequente tem -1 na iniciativa até chegar a 0.",
+    "exemplo": "Com 5 inimigos, o Xerife rola 1d20+5. Se o resultado for 19, o primeiro inimigo age em 19, o segundo em 18, e assim por diante."
+  },
+  "dano_explosivo": {
+    "descricao": "Explosões e balas explosivas não seguem as mesmas regras de combate comum. O dano é resolvido com rolagens próprias (descritas na lista de equipamentos) e refletem efeitos devastadores, capazes de ferir múltiplos alvos."
+  },
+  "doencas_e_envenenamentos": {
+    "descricao_geral": "As regras de Doença e Envenenamento funcionam de forma acumulativa e letal, refletindo o perigo constante da vida em Nova Jordana.",
+    "condicoes_cumulativas": {
+      "descricao": "Tanto Doente quanto Envenenado são condições cumulativas. Um personagem pode estar Envenenado 1, Envenenado 2, Envenenado 3, e assim por diante. O mesmo vale para a condição Doente, dependendo da gravidade da doença ou da quantidade de vezes em que foi inoculado.",
+      "exemplo": "Se uma criatura aplica Veneno 2 e o alvo é atingido duas vezes, ele acumula a condição Envenenado 4."
+    },
+    "efeitos_mecanicos": {
+      "envenenado": {
+        "regra": "O valor da condição é reduzido diretamente do dado mais alto do 6B.",
+        "exemplo": "Um personagem Envenenado 2 rola 6 no 6B. Esse dado passa a valer 4.",
+        "regra_dano": "Se o redutor zerar o dado, esse valor é considerado como dano por envenenamento (o personagem perde 1 ponto de vida no 6B)."
+      },
+      "doente": {
+        "regra": "O mesmo processo ocorre: o valor da condição reduz o maior dado do 6B.",
+        "regra_zero": "Se o dado for reduzido a 0, ele não causa dano, apenas permanece zerado.",
+        "regra_colapso": "Se todos os dados do 6B forem zerados pela Doença, o personagem fica inconsciente, mas vivo."
+      }
+    },
+    "penalidades_cumulativas": {
+      "descricao": "As penalidades de Fadiga, Doença e Envenenamento são cumulativas. O valor total a ser subtraído do maior dado do 6B é a soma de todas as penalidades ativas no personagem.",
+      "exemplo": "Se um personagem tem Fadiga 2 e está Envenenado 2, a penalidade total é de 4. Esse valor é subtraído do maior dado do 6B na próxima rolagem.",
+      "regra_dano_por_zeramento": "Se a penalidade cumulativa reduzir o valor de um dado a zero, o personagem sofre 1 ponto de vida de dano.",
+      "nota_recuperacao": "Pontos de vida removidos por envenenamento só podem ser recuperados quando o veneno for tratado."
+    },
+    "propagacao": {
+      "descricao": "Sempre que um dado é zerado por doença ou veneno, um segundo dado é contaminado.",
+      "notacao": "Esse dado contaminado deve ser anotado como Doença (N×D) ou Veneno (N×D), sendo N a gravidade da condição e D a quantidade de dados contaminados.",
+      "exemplo": "Um personagem com Envenenado 2×2 tem dois dados contaminados com penalidade 2."
+    },
+    "acumulando_penalidades": {
+      "descricao": "As penalidades de Fadiga, Doença e Envenenamento são cumulativas e se aplicam aos maiores valores do 6B.",
+      "exemplo_1": "Um personagem com Veneno 2×2 tem seus dois maiores resultados do 6B reduzidos em 2. Se os dois maiores valores rolados forem 6 e 6, eles se tornam 4 e 4.",
+      "regra_combinacao_com_fadiga": "No caso de o personagem também ter Fadiga acumulada, a penalidade da fadiga é somada à penalidade do dado de maior valor; o segundo dado mais alto é reduzido apenas pela penalidade de veneno/doença.",
+      "exemplo_narrativo": "Elias está com Veneno 2×2 (reduz seus dois maiores resultados do 6B em 2) e Fadiga 2. A penalidade total no dado de maior valor é de 4 (2 do veneno + 2 da fadiga). O segundo dado mais alto é reduzido apenas em 2 (apenas do veneno)."
+    },
+    "tratamento_e_riscos": {
+      "descricao": "Um aliado pode tentar tratar de uma Doença ou Envenenamento com testes de Medicina.",
+      "regra_falha_critica_no_tratamento": "Em caso de falha crítica no tratamento, o curandeiro se inocula com a condição, mas em metade do valor (mínimo 1).",
+      "exemplo": "Elias tenta curar Abigail de Envenenado 4, mas sofre falha crítica no teste de Medicina. Ele próprio fica com Envenenado 2."
+    }
+  },
+  "dano_e_morte": {
+    "descricao_geral": "No Oeste Sombrio, a linha entre a vida e a morte é tão fina quanto o fio de uma faca. Cada ponto de dano recebido representa a perda de vitalidade, sangue e fôlego — e aproxima o personagem da escuridão do Submundo.",
+    "como_o_dano_funciona": {
+      "regra_base": "Sempre que um ataque ou efeito acerta o personagem, ele sofre 1 ponto de dano.",
+      "regra_bloqueio": "Esse dano bloqueia imediatamente um dos valores disponíveis do 6B.",
+      "regra_escolha": "O jogador decide qual número descartar. Uma vez gasto, ele não pode ser recuperado sem antes realizar uma cura."
+    },
+    "quando_todos_os_valores_do_6b_acabam": {
+      "regra": "Se todos os valores do 6B forem bloqueados, seja por dano, fadiga, doença ou veneno, o personagem sofre um colapso e fica à beira da morte."
+    },
+    "teste_de_morte": {
+      "descricao": "Um personagem em colapso deve tentar um último ato para se salvar.",
+      "processo": [
+        "Ele rola uma última vez o seu 6B na tentativa de realizar uma ação que lhe conceda uma Ficha do Destino.",
+        "Após esse feito, ele deve juntar todas as Fichas do Destino que ainda lhe restam e apostá-las em um teste.",
+        "O Xerife rola novamente seu 6B e compara a soma dos valores com a do jogador."
+      ],
+      "resultados": [
+        {
+          "caso": "A soma do jogador for maior",
+          "efeito": "O jogador recupera pontos de vida conforme a quantidade de Fichas do Destino apostadas e retorna à vida como um mortal, pois o destino lhe concedeu uma segunda chance."
+        },
+        {
+          "caso": "A soma do Xerife for maior",
+          "efeito": "O destino nega ao jogador a chance de voltar à vida como um mortal. Os outros jogadores podem gastar suas Fichas do Destino para trazer o aliado de volta: as fichas são recolhidas e a mesma quantidade de pontos de vida é concedida ao aliado, que retorna como Veterano, pois teve seu descanso negado pelos demais."
+        }
+      ]
+    },
+    "morte_definitiva": {
+      "regra": "Se não houver Fichas do Destino para serem gastas no teste de morte (ou se elas forem negadas), o jogador perde seu personagem definitivamente.",
+      "nota_narrativa": "A morte pode ser narrada pelo Xerife como rápida e brutal, ou lenta e agonizante, de acordo com a cena."
+    },
+    "recuperando_se_do_dano": {
+      "regra_descanso": "Personagens podem recuperar pontos do 6B gastos com descanso ou cuidados médicos. Para cada dia de descanso, o personagem recupera 1 ponto de vida.",
+      "nota_tratamento": "Sangramentos, venenos e doenças devem ser tratados, caso contrário continuarão drenando a vitalidade."
+    }
+  },
+  "condicoes_no_oeste_sombrio": {
+    "descricao_geral": "As condições representam efeitos temporários que alteram as capacidades de um personagem. Elas podem ser resultado de combate, doenças, venenos, ambiente hostil ou até efeitos sobrenaturais.",
+    "condicoes_comuns": [
+      {
+        "nome": "Fatigado",
+        "possui_grau": true,
+        "descricao": "Resulta da exaustão do 6B. Reduz os maiores valores do 6B e, se um dado for zerado, causa dano direto."
+      },
+      {
+        "nome": "Envenenado",
+        "possui_grau": true,
+        "cumulativo": true,
+        "descricao": "Um redutor aplicado ao maior dado do 6B, que pode causar dano se o valor for zerado."
+      },
+      {
+        "nome": "Doente",
+        "possui_grau": true,
+        "descricao": "Funciona como o Envenenado, mas o dano só ocorre quando o maior dado é reduzido a zero. Se todos os dados forem zerados, o personagem fica inconsciente."
+      },
+      {
+        "nome": "Enjoado",
+        "possui_grau": true,
+        "descricao": "O personagem sofre náusea e fraqueza, geralmente aplicado por uso excessivo de tônicos ou drogas. Impede ações complexas e penaliza testes no mesmo valor da condição."
+      },
+      {
+        "nome": "Atordoado",
+        "possui_grau": true,
+        "descricao": "O personagem perde o valor do efeito em ações bônus, ficando com um mínimo de uma ação por turno. Pode vir de impacto, susto ou efeitos mágicos."
+      },
+      {
+        "nome": "Amedrontado",
+        "possui_grau": true,
+        "descricao": "Um redutor temporário em testes de combate e interação social. O nível da condição sempre será igual ao nível de terror local."
+      },
+      {
+        "nome": "Sangrando",
+        "possui_grau": true,
+        "descricao": "O personagem perde o valor da condição em defesa até ser estabilizado. Mínimo zero."
+      },
+      {
+        "nome": "Confuso",
+        "possui_grau": false,
+        "descricao": "O alvo não consegue discernir aliados de inimigos. No início do seu turno, role 1d4 para determinar sua ação.",
+        "tabela_1d4": [
+          {
+            "resultado": 1,
+            "efeito": "O alvo se ataca, causando 1 de dano e a condição é encerrada."
+          },
+          {
+            "resultado": 2,
+            "efeito": "O alvo ataca a criatura mais próxima."
+          },
+          {
+            "resultado": 3,
+            "efeito": "O alvo perde o turno, mas se livra da condição."
+          },
+          {
+            "resultado": 4,
+            "efeito": "O alvo age normalmente e se livra da condição."
+          }
+        ]
+      },
+      {
+        "nome": "Desorientado",
+        "possui_grau": false,
+        "descricao": "O personagem tem dificuldade em saber o que estava fazendo. A condição pode ser removida gastando 3 ações."
+      },
+      {
+        "nome": "Inconsciente",
+        "possui_grau": false,
+        "descricao": "O personagem está desacordado e indefeso. Pode ser resultado de Doença, Fadiga extrema ou dano crítico."
+      }
+    ],
+    "condicoes_menos_comuns": [
+      {
+        "nome": "Imobilizado",
+        "descricao": "O personagem não pode sair do lugar, mas ainda pode agir se as mãos estiverem livres."
+      },
+      {
+        "nome": "Paralizado",
+        "descricao": "O personagem perde todas as ações, não pode andar nem falar."
+      },
+      {
+        "nome": "Cego",
+        "descricao": "O personagem sofre penalidade severa em testes de percepção e ataques, recebendo +6 em todas as dificuldades."
+      },
+      {
+        "nome": "Surdo",
+        "descricao": "O personagem não pode reagir a ameaças sonoras nem se comunicar bem em combate. Recebe dificuldade +6 em todos os testes envolvendo sons."
+      },
+      {
+        "nome": "Apavorado",
+        "descricao": "Uma versão extrema de Amedrontado. O personagem não consegue agir contra a fonte do medo e gasta todas as ações fugindo."
+      }
+    ]
+  },
+  "combate_tatico": {
+    "descricao_geral": "O sistema de Oeste Sombrio dispõe de regras para combates mais estratégicos e detalhados, conduzidos em um grid quadriculado, onde cada quadrado equivale a 1,5m. O uso de posicionamento, flanqueamento e altitude concede bônus ou penalidades cruciais.",
+    "tamanho_do_quadrado_metros": 1.5,
+    "flanqueamento": {
+      "regra": "Quando dois personagens atacam o mesmo inimigo de lados opostos, eles estão flanqueando-o. Isso concede um bônus de +3 no teste de ataque de todos os ataques Corpo a Corpo contra o inimigo.",
+      "bonus_ataque_corpo_a_corpo": 3
+    },
+    "ataques_de_oportunidade": {
+      "custo": "1 ação",
+      "tipo": "Sempre Corpo a Corpo, utiliza o teste passivo da perícia.",
+      "gatilho": "O alvo é uma criatura que se move para fora do alcance do personagem ou realiza uma ação que o deixa vulnerável.",
+      "requisito": "O personagem precisa ainda ter ações neste turno."
+    },
+    "linha_de_visao_e_cobertura": {
+      "descricao": "A Linha de Visão é fundamental para o combate à distância, e um atacante precisa ter uma linha de visão clara para atingir um alvo.",
+      "nota": "As regras de Cobertura, que concedem bônus de defesa, aplicam-se da mesma forma no combate tático (ver 'estrutura_do_turno.modificadores_de_combate.cobertura')."
+    },
+    "altitude_e_posicionamento": {
+      "descricao": "Aproveitar o terreno elevado pode conceder uma vantagem tática.",
+      "regra_armas_longas": "Para ataques com Armas de Fogo Longas, estar em um terreno elevado permite adicionar um bônus de +2 ao dado de mira, caso o atirador execute a ação de mirar.",
+      "bonus_dado_mira": 2
+    }
+  }
+}

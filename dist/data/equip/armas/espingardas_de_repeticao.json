@@ -1,0 +1,52 @@
+{
+  "categoria": "Espingardas de Repetição",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Carabina",
+      "dano": "d6",
+      "alcance": "60m/40q",
+      "recarga": "3 ações",
+      "tambor": 7,
+      "preco": 9,
+      "volume": 2
+    },
+    {
+      "nome": "Lancaster",
+      "dano": "d6",
+      "alcance": "60m/40q",
+      "recarga": "4 ações",
+      "tambor": 14,
+      "preco": 20,
+      "volume": 2
+    },
+    {
+      "nome": "Litchfield",
+      "dano": "d6",
+      "alcance": "60m/40q",
+      "recarga": "5 ações",
+      "tambor": 16,
+      "preco": 22,
+      "volume": 2
+    },
+    {
+      "nome": "Evans (AD)",
+      "dano": "d4",
+      "alcance": "60m/40q",
+      "recarga": "2 ações",
+      "tambor": 26,
+      "preco": 14,
+      "volume": 2
+    },
+    {
+      "nome": "AntiPragas (AD)",
+      "dano": "d4",
+      "alcance": "60m/40q",
+      "recarga": "1 ação",
+      "tambor": 14,
+      "preco": 8,
+      "volume": 2
+    }
+  ]
+}

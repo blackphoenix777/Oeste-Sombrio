@@ -1,0 +1,127 @@
+[
+  {
+    "prato": "Pão diário",
+    "preco": 3.0,
+    "detalhes": "Uma massa de pão feita com frutas secas, nozes e grãos. Comer uma porção garante nutrição e hidratação por 24h"
+  },
+  {
+    "prato": "Pão diário Poderoso",
+    "preco": 15.0,
+    "detalhes": "Além dos benefícos do Pão Diário normal, essa versão garante 1d6 de bônus em testes de atléticos (inclusive de resistência) por 4 horas."
+  },
+  {
+    "prato": "Bock Pedregulho",
+    "preco": 5.0,
+    "detalhes": "Uma cerveja escura e forte o suficiente para obscurecer a mente. Durante 1h concede 1d6 de bônus em testes de resistência mental e 6 de penalidade em testes de Percepção"
+  },
+  {
+    "prato": "Sopa de Remendos",
+    "preco": 5.0,
+    "detalhes": "Uma sopa servida quente com tubérculos, especiaruas, reagentes, legumes e carne. Durante 24hs conncede bônus de 1d6 em testes para reparar itens"
+  },
+  {
+    "prato": "Sopa de Rabanete da Lua",
+    "preco": 6.0,
+    "detalhes": "Uma sopa cremosa feita com rabanetes colhidos ritualisticamente sob a luz da lua. Após tomar essa sopa o personagem tem sua visão no escuro levemente aprimorada, concedendo bônus de +2 em testes relacionado a visão durante a noite."
+  },
+  {
+    "prato": "Cerva Brava",
+    "preco": 7.0,
+    "detalhes": "Uma cerveja espumante e grossa que, durante 1h, garante +1d6 em testes de resistência mental (2d6 contra efeitos de medo)"
+  },
+  {
+    "prato": "Cerva Brava Forte",
+    "preco": 150.0,
+    "detalhes": "Uma cerveja espumante e grossa que, durante 12h, garante +1d8 em testes de resistência mental (2d8 contra efeitos de medo)"
+  },
+  {
+    "prato": "Cerva Brava Melhorada",
+    "preco": 300.0,
+    "detalhes": "Uma cerveja espumante e grossa que, durante 24h, garante +1d10 em testes de resistência mental (2d10 contra efeitos de medo)"
+  },
+  {
+    "prato": "Bolo Verde",
+    "preco": 5.0,
+    "detalhes": "Um bolo feito com absinto e mel que aumenta a confiaça de quem come concedendo 1d6 de bônus para testes de blefe por 10m"
+  },
+  {
+    "prato": "Bolo Verde Saboroso",
+    "preco": 25.0,
+    "detalhes": "Um bolo feito com absinto e mel que aumenta a confiaça de quem come concedendo 1d8 de bônus para testes de blefe por 1h"
+  },
+  {
+    "prato": "Bolo Verde Obra-Prima",
+    "preco": 250.0,
+    "detalhes": "Um bolo feito com absinto e mel que aumenta a confiaça de quem come concedendo 1d10 de bônus para testes de blefe por 4h"
+  },
+  {
+    "prato": "Charcutaria Diplomática",
+    "preco": 9.0,
+    "detalhes": "Uma seleção de queijos finos, salames e frutas secas. Concede +1d6 em diplomacia e empatia durante 24h"
+  },
+  {
+    "prato": "Espaguete Místico",
+    "preco": 10.0,
+    "detalhes": "Um espaguete feito com macarrão frito e legumes selecionados que concede um leve aumento nas habilidades místicas durante 24hs. Dobra a quantidade de REM que o místico pode acumular"
+  },
+  {
+    "prato": "Maçã Brilhante Dourada",
+    "preco": 10.0,
+    "detalhes": "Uma maçã caramelizada de tonalidade dourada como ouro. Por 10 minutos quem consome brilha e ilumina num raio de 6 metros. Condede bônus de +1d4 em Diplomacia."
+  },
+  {
+    "prato": "Maçã Brilhante Rosa",
+    "preco": 16.0,
+    "detalhes": "Uma maçã caramelizada de tonalidade rosa fraco. Por 10 minutos quem consome brilha e ilumina num raio de 6 metros. Condede bônus de +1d4 em Blefe."
+  },
+  {
+    "prato": "Maçã Brilhante Verde",
+    "preco": 26.0,
+    "detalhes": "Uma maçã caramelizada de tonalidade verde-amarelada. Por 10 minutos quem consome brilha e ilumina num raio de 6 metros. Condede bônus de +1d4 de Diplomacia, conhecimento biológico, e quaisquer testes relacionado com animais."
+  },
+  {
+    "prato": "Maçã Brilhante Azul",
+    "preco": 41.0,
+    "detalhes": "Uma maçã caramelizada de tonalidade azul-esverdeada. Por 10 minutos quem consome brilha e ilumina num raio de 6 metros. Condede bônus de +1d6 em testes de Misticismo. Quem está dentro da luz ganha 1d4 de bônus em Misticismo"
+  },
+  {
+    "prato": "Ensopado do Trilheiro",
+    "preco": 10.0,
+    "detalhes": "Um ensopado levemente picante detomates, cenoura e cebola. Durante 24 horas concede +1d6 em teste de Sobrevivência para seguir rastros."
+  },
+  {
+    "prato": "Vinho Medicinal",
+    "preco": 12.0,
+    "detalhes": "Um vinho feito da fermentação de uvas e ervas medicinais. Concede +1d6 para testes de resistência contra venenos ou doenças por 24h"
+  },
+  {
+    "prato": "Rolinho Sumiço",
+    "preco": 13.0,
+    "detalhes": "Um rolinho feito com legumes, queijo, temperos enrolados em uma massa de pão fina e transparente. Concede, por 24 horas, 1d6 de bônus em Furtividade."
+  },
+  {
+    "prato": "Pão de Canela",
+    "preco": 14.0,
+    "detalhes": "Pão doce feito com canela em pó. Durante 1h concede +1d6 em testes de cultura."
+  },
+  {
+    "prato": "Coquetel Furioso Menor",
+    "preco": 15.0,
+    "detalhes": "Durante 10 minutos concede bônus de 1d6 em ataques corpo a corpo"
+  },
+  {
+    "prato": "Coquetel Furioso Moderado",
+    "preco": 150.0,
+    "detalhes": "Durante 30 minutos concede bônus de 1d8 em ataques corpo a corpo"
+  },
+  {
+    "prato": "Coquetel Furioso Maior",
+    "preco": 1500.0,
+    "detalhes": "Durante 1 hora concede bônus de 1d10 em ataques corpo a corpo"
+  },
+  {
+    "prato": "Goma de Oxigênio",
+    "preco": 15.0,
+    "detalhes": "Uma goma de mascar sem sabor que libera oxigênio permitindo respirar debaixo dágua por até uma hora."
+  }
+]

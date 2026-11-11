@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "results": [
+    "Fila acessível por HTTP ao destinatário autenticado",
+    "Entrega recebida por INSERT Realtime em 316 ms",
+    "Envio do Mestre mantém ficha intacta até consumo pelo jogador",
+    "Jogador confirma entrega após persistir item/recibo via HTTP",
+    "Integridade e REM do aliado chegam pelo Realtime",
+    "Criatura visível atualiza Mestre, sem enviar status ao WebSocket do jogador",
+    "SELECT HTTP também oculta status de criaturas",
+    "Notas persistidas por UPDATE HTTP com versão",
+    "Jogador não lê notas por SELECT HTTP",
+    "Versão antiga não sobrescreve notas via HTTP"
+  ],
+  "roomCleanup": true
+}

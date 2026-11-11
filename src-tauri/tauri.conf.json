@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Dark West Character Sheet",
+  "mainBinaryName": "DarkWest",
+  "version": "1.4.1",
+  "identifier": "com.stefano.darkwest",
+  "build": {
+    "frontendDist": "../dist",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Character Sheet",
+        "width": 800,
+        "height": 600,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "android": {
+      "debugApplicationIdSuffix": ".debug"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEYwOEVCOTYyRDU4NTE0MEEKUldRS0ZJWFZZcm1POEtzR3NrQXZhU2dqRXNKZ1hKM3pjWERkSE1yTW12azJHVmw0L0g1bVY1Sm8K",
+      "endpoints": [
+        "https://github.com/blackphoenix777/Oeste-Sombrio/releases/latest/download/latest.json"
+      ]
+    }
+  }
+}

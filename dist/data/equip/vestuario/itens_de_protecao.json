@@ -1,0 +1,77 @@
+{
+  "categoria": "Itens de Proteção",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Protetor Auricular",
+      "preco": "10¢",
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Protege o ouvido contra sons altos. +1 de bônus em testes de resistência relacionadas a sons."
+    },
+    {
+      "nome": "Abafador de ruído",
+      "preco": 1,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "Protege o ouvido contra sons altos. +1d6 de bônus em testes de resistência relacionadas a sons."
+    },
+    {
+      "nome": "Capa de duelo",
+      "preco": "50¢",
+      "volume": 0.3,
+      "protecao": 1,
+      "detalhes": "Usando uma ação esconde um dos membros dentro da capa fornecendo 1 ponto extra de proteção e gerando um bônus de +1d4 para teste de blefe para distrair o oponente em batalha"
+    },
+    {
+      "nome": "Bainha reforçada",
+      "preco": "50¢",
+      "volume": 0.1,
+      "protecao": 1,
+      "detalhes": "Usada para aparar golpes em uma luta corpo-a-corpo. +1 de proteção na defesa."
+    },
+    {
+      "nome": "Saia Reforçada",
+      "preco": 2,
+      "volume": 0.3,
+      "protecao": 1,
+      "detalhes": "Uma saia reforçada com finas placas de metal costuradas internamente. Muito usada por ferreiros. Concede +1 de proteção na defesa"
+    },
+    {
+      "nome": "Sobretudo Reforçado",
+      "preco": 2,
+      "volume": 0.5,
+      "protecao": 2,
+      "detalhes": "Um sobretudo com placas de metal costuradas internamente. Concede +2 de proteção na defesa mas é pesado suficiente para gerar 1d4 de penalidade em testes de perícias relacionadas a agilidade e destreza."
+    },
+    {
+      "nome": "Roupa de Apicultor",
+      "preco": 20,
+      "volume": 0.5,
+      "protecao": 3,
+      "detalhes": "Uma roupa que cobre o usuário da cabeça aos pés dificultando a entrada de pequenos insetos. Garante +3 de proteção contra ataques de enxames de insetos"
+    },
+    {
+      "nome": "Roupa de Apicultor Impenetrável",
+      "preco": 420,
+      "volume": 0.6,
+      "protecao": 10,
+      "detalhes": "É quase impossível que algum inseto consiga entrar nessa roupa. +10 na proteção contra enxames"
+    },
+    {
+      "nome": "Roupa de Mergulho Mecanizada",
+      "preco": 200,
+      "volume": 1.5,
+      "protecao": 4,
+      "detalhes": "Um verdadeiro milagre da tecnologia. Possui um filtro interno que permite respirar debaixo d'água além de conferir proteção contra ataques aumentando a defesa em +4. Quaisquer ações feitas fora da água têm uma penalidade de -1d8"
+    },
+    {
+      "nome": "Óculos de proteção mental",
+      "preco": 20,
+      "volume": 0.1,
+      "protecao": 0,
+      "detalhes": "As lentes possuem duas camadas finas de vidro e entre elas um pouco de fumaça do carvão eterno. Concede +1d6 de bônus para testes de resistência mágica contra efeitos mentais causados pela visão. O usuário tem uma visão turva gerando chance de erro de 20% nos ataques."
+    }
+  ]
+}

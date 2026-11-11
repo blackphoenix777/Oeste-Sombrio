@@ -1,0 +1,13 @@
+{
+  "categoria": "Modificações",
+  "descricao": "Algumas vestimentas podem ser modificadas por um preço",
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Bolso Falso",
+      "preco": 10,
+      "volume": 0.1,
+      "detalhes": "Bolsos internos escondidos são costurados nas peças de roupa dificultando a percepção de itens colocados neles"
+    }
+  ]
+}

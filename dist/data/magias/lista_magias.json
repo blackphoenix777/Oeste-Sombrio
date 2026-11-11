@@ -1,0 +1,789 @@
+{
+  "titulo": "Lista de Magias",
+  "nota_importante": "As listas de magia a seguir são apenas exemplos do que pode ser feito e servem como guia para a criação de magias no Oeste Sombrio. O Xerife e seus jogadores podem se sentir livres para elaborar novas magias e efeitos que se encaixem no cenário e na aventura que estiverem jogando. A magia neste mundo é vasta e imprevisível, e sua imaginação é a única limitação.",
+  "como_ler": {
+    "acoes": "Indica a quantidade de ações necessárias para o lançamento da magia.",
+    "custo": "A quantidade de pontos de energia mística a serem retirados do seu Reservatório de Energia Mística (REM) para que a magia seja lançada.",
+    "alcance": "A distância máxima da magia em metros. O termo Toque significa que o místico deve tocar o alvo, e para isso, deve ser bem-sucedido em um teste de ataque corpo a corpo.",
+    "descricao": "O efeito da magia, incluindo o dano que ela causa e quaisquer testes relacionados."
+  },
+  "magias_por_caminho": {
+    "Gerais": [
+      {
+        "numero": 1,
+        "nome": "Cura do Andarilho",
+        "acoes": "1",
+        "custo": "2 pontos de energia mística",
+        "alcance": "Toque",
+        "descricao": "A magia cura 1 ponto de dano do alvo."
+      },
+      {
+        "numero": 2,
+        "nome": "Pele Grossa",
+        "acoes": "1",
+        "custo": "2 pontos de energia mística",
+        "alcance": "Pessoal",
+        "descricao": "O místico invoca ossos que o protegem. Concede +4 de defesa e a cada 1 ponto de dano que o místico sofrer, ele perde 1 ponto de defesa da magia."
+      },
+      {
+        "numero": 3,
+        "nome": "Sentir Vida",
+        "acoes": "1",
+        "custo": "1 ponto de energia mística",
+        "alcance": "9m",
+        "descricao": "O místico pode sentir se há alguma criatura viva no alcance da magia."
+      },
+      {
+        "numero": 4,
+        "nome": "Sentir Morte",
+        "acoes": "1",
+        "custo": "1 ponto de energia mística",
+        "alcance": "9m",
+        "descricao": "O místico pode sentir se há alguma criatura morta ou não-viva no alcance da magia."
+      },
+      {
+        "numero": 5,
+        "nome": "Projetar Sombra",
+        "acoes": "1",
+        "custo": "2 pontos de energia mística",
+        "alcance": "Pessoal",
+        "descricao": "O místico se mistura às sombras e tem +2 de bônus em testes de furtividade. A magia dura 10 minutos."
+      },
+      {
+        "numero": 6,
+        "nome": "Toque Ácido",
+        "acoes": "Duas",
+        "custo": "1 ponto de magia",
+        "alcance": "Toque",
+        "descricao": "Uma camada fina de ácido envolve suas mãos, aumentando em 1d6 o dano causado por um ataque desarmado."
+      },
+      {
+        "numero": 7,
+        "nome": "Velocidade de Projétil",
+        "acoes": "Duas",
+        "custo": "1 ponto de magia",
+        "alcance": "Variado",
+        "descricao": "Acelera um projétil disparado de uma arma, ou arremessado, adicionando 1d6 ao dano no ataque."
+      },
+      {
+        "numero": 8,
+        "nome": "Agitado",
+        "acoes": "Duas",
+        "custo": "1 ponto de magia",
+        "alcance": "9m, Alvo: Uma criatura por ponto de magia",
+        "resistencia": "Misticismo",
+        "duracao": "Variada",
+        "descricao": "O alvo é acometido por uma intensa vontade de estar em constante movimento. Em seu turno, o alvo deve gastar pelo menos duas de suas ações movimentando-se. Caso não queira ou não possa realizar essas ações, o alvo toma 1 de dano mental no 6B.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "2 turnos.",
+          "falha": "4 turnos.",
+          "falha_critica": "8 turnos."
+        }
+      },
+      {
+        "numero": 9,
+        "nome": "Bolha de Ar",
+        "acoes": "Duas",
+        "custo": "Varia",
+        "alcance": "9m, Alvo: Uma criatura por ponto de magia",
+        "duracao": "1 Minuto",
+        "descricao": "Cria uma bolha de ar em volta da boca e narinas que produz oxigênio suficiente para que uma criatura possa respirar em ambientes sem ar."
+      },
+      {
+        "numero": 10,
+        "nome": "Ventania",
+        "acoes": "Uma",
+        "custo": "1 ponto de magia",
+        "alcance": "3m, Alvo: Uma criatura",
+        "resistencia": "Atletismo",
+        "descricao": "Gera uma lufada de ventos intensos contra um único alvo.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo larga o que estiver segurando.",
+          "falha": "O alvo larga o que está segurando e é atirado ao chão 1,5 m para longe.",
+          "falha_critica": "Igual falha, mas o alvo toma 1 de dano."
+        }
+      },
+      {
+        "numero": 11,
+        "nome": "Sentir Perigo",
+        "acoes": "Duas",
+        "custo": "2",
+        "duracao": "1 minuto por custo de magia.",
+        "descricao": "Aprimora suas capacidades responsivas, adicionando +2 em sua iniciativa. Esse bônus não altera sua quantidade de ações, apenas a ordem em que age."
+      },
+      {
+        "numero": 12,
+        "nome": "Criar Água",
+        "acoes": "Duas",
+        "custo": "1",
+        "descricao": "Você pode condensar as partículas de umidade presentes no ar e criar cerca de 300 ml de água pura e limpa."
+      },
+      {
+        "numero": 13,
+        "nome": "Confundir",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "6m, Alvo: Uma criatura por custo de magia",
+        "resistencia": "Misticismo",
+        "duracao": "1d4 turnos",
+        "descricao": "Você embaralha a mente do alvo, causando-lhe uma profunda confusão mental.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo fica Confuso.",
+          "falha": "O alvo fica Confuso e Desorientado.",
+          "falha_critica": "Igual falha, mas o alvo toma 1 ponto de dano mental."
+        }
+      },
+      {
+        "numero": 14,
+        "nome": "Cano Fumegante",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "4,5m (em cone)",
+        "descricao": "Você dispara um cone de fogo a partir de uma arma de fogo, alvejando todas as criaturas dentro da área de efeito em um único ataque. Adicione 1d4 de dano de fogo em sua rolagem (2d4, caso a arma utilizada seja uma escopeta)."
+      },
+      {
+        "numero": 15,
+        "nome": "Cano Invernal",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "4,5m (em cone)",
+        "resistencia": "Atletismo",
+        "descricao": "Um cone de ar gélido irrompe de sua arma de fogo. Todas as criaturas dentro da área devem fazer um teste de resistência.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "A Criatura perde 1 ação por 1d4 turnos.",
+          "falha": "A Criatura perde 2 ações por 1d6 turnos.",
+          "falha_critica": "A Criatura toma 1 de dano no 6B e perde 2 ações por 1d6 turnos."
+        }
+      }
+    ],
+    "Vodu": [
+      {
+        "numero": 1,
+        "nome": "Espírito da Cura",
+        "acoes": "Duas",
+        "custo": "Varia",
+        "alcance": "3m",
+        "descricao": "Evoca o espírito de Loco que cura o personagem em 1 ponto do 6B para cada ponto de magia gasto."
+      },
+      {
+        "numero": 2,
+        "nome": "Proteção Elemental",
+        "acoes": "Duas",
+        "custo": "1",
+        "alcance": "3m",
+        "duracao": "1 turno por ponto de magia.",
+        "descricao": "Evoca o espírito de Aizã que protege o alvo contra qualquer tipo de dano elemental. Também pode ser usado para cessar imediatamente efeitos de frio ou calor intensos."
+      },
+      {
+        "numero": 3,
+        "nome": "Orientação Espiritual",
+        "acoes": "Duas",
+        "custo": "3",
+        "duracao": "1 minuto por custo de magia.",
+        "descricao": "Incorpora o espírito de Ogum que lhe ajudará durante o combate, adicionando 1d6 em todos os seus testes."
+      },
+      {
+        "numero": 4,
+        "nome": "Avatar do Caçador",
+        "acoes": "Duas",
+        "custo": "2",
+        "duracao": "1 horas",
+        "descricao": "Você incorpora o espírito de Agué para aprimorar suas capacidades de caça. Adicione um dado extra em testes de Atletismo, Acrobacia, ou Sobrevivência. Para cada custo de magia gasto o dado aumenta 1 categoria, para um máximo de d12 (10 pontos)."
+      },
+      {
+        "numero": 5,
+        "nome": "Pura Sorte",
+        "acoes": "Imediato",
+        "custo": "5",
+        "resistencia": "Misticismo",
+        "descricao": "Evoca o espírito de Lebá que abre os caminhos entre os mundos para manipular o acaso. A qualquer momento obriga um teste a ser rolado novamente. Todos os dados rolados terão de ser rolados novamente e o segundo resultado se aplica. Caso o teste seja feito contra a rolagem de uma criatura inimiga, ela tem direito a um teste de resistência.",
+        "efeitos": {
+          "sucesso": "Sem Efeito."
+        }
+      },
+      {
+        "numero": 6,
+        "nome": "Encantar Pessoa",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "3m, Alvo: Uma Pessoa",
+        "duracao": "1 minuto",
+        "resistencia": "Misticismo",
+        "descricao": "Você evoca a influência de Ezili sobre o espírito de um alvo fazendo com que uma pessoa fique mais suscetível a você, melhorando sua atitude magicamente.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo altera em uma categoria sua atitude. (Hostil - Inamistoso - Indiferente - Amistoso - Prestativo)",
+          "falha": "o Alvo altera em duas categorias sua atitude.",
+          "falha_2": "o Alvo altera em três categorias sua atitude."
+        }
+      },
+      {
+        "numero": 7,
+        "nome": "Confusão Moral",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "9m, Alvo: Uma criatura por custo",
+        "duracao": "1d10 turnos",
+        "resistencia": "Misticismo",
+        "descricao": "Você evoca a influência de Aizã sobre o espírito de todos os alvos na área, fazendo-os reavaliar a moralidade de suas ações. Todos os alvos dentro da área fazem um teste de Misticismo para não sofrerem uma penalidade de -6 nos testes de ataque."
+      },
+      {
+        "numero": 8,
+        "nome": "Condutor",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "Toque",
+        "descricao": "Incorpora o espírito de Ayida que energiza seu espírito, adicionando um dado de dano elemental elétrico. Para cada custo de magia gasto o dado aumenta 1 categoria, para um máximo de d12 (10 pontos). Essa magia só tem efeito em golpes corpo a corpo."
+      },
+      {
+        "numero": 9,
+        "nome": "Golpe Incandescente",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "4,5 metros (em cone)",
+        "descricao": "Você incorpora Lebá que abre uma fissura para o mundo dos espíritos. Dessa fissura sai um cone de vapor incandescente, alvejando todas as criaturas dentro da área de efeito em um único ataque. Adicione 1d6 de dano de fogo em sua rolagem de ataque corpo-a-corpo (2d6, caso o ataque seja desarmado)."
+      },
+      {
+        "numero": 10,
+        "nome": "Espírito de Gelo",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "4,5 metros (em cone)",
+        "resistencia": "Atletismo",
+        "descricao": "O espírito de Ayida cria um cone de ar gélido que irrompe do corpo do evocador. Todas as criaturas dentro da área devem fazer um teste de resistência.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "A criatura toma 1 de dano no 6B e perde 1 ação por 1d6 turnos.",
+          "falha": "A criatura toma 1d4 de dano no 6B e perde 2 ações por 1d6 turnos.",
+          "falha_critica": "A criatura toma 1d4 de dano no 6B e fica paralisada por 1d6 turnos."
+        }
+      },
+      {
+        "numero": 11,
+        "nome": "Dança do Desencanto",
+        "acoes": "Três",
+        "custo": "3",
+        "alcance": "9m, Alvo: Uma criatura por custo",
+        "resistencia": "Misticismo",
+        "descricao": "Você evoca o espírito de Maman Brigitte para libertar um alvo de maldições ou magias. A magia pode remover uma condição ou efeitos mágico ativo no alvo."
+      },
+      {
+        "numero": 12,
+        "nome": "Visão do Loa",
+        "acoes": "Uma",
+        "custo": "1",
+        "alcance": "Pessoal",
+        "duracao": "1 minuto por custo",
+        "descricao": "Você pede a um Loa que lhe conceda a visão dos espíritos. O místico pode enxergar criaturas e objetos invisíveis ou etéreos, além de rastros de energia mística no ambiente."
+      },
+      {
+        "numero": 13,
+        "nome": "Coração de Pedra",
+        "acoes": "Duas",
+        "custo": "3",
+        "alcance": "Toque",
+        "descricao": "Você toca um aliado e o protege com a bênção de Erzulie. O alvo recebe +5 de defesa e +2 em testes de resistência contra efeitos mentais. A magia dura até o fim do combate."
+      },
+      {
+        "numero": 14,
+        "nome": "Maldição da Lentidão",
+        "acoes": "Três",
+        "custo": "4",
+        "alcance": "6m",
+        "resistencia": "Atletismo",
+        "descricao": "Você amaldiçoa o espírito de um alvo com a influência de Guédé. O alvo tem seu movimento reduzido pela metade e -3 em todos os testes de Acrobacia e Atletismo por 1d4 turnos."
+      },
+      {
+        "numero": 15,
+        "nome": "Pacto Sanguíneo",
+        "acoes": "Uma",
+        "custo": "Varia",
+        "alcance": "Toque",
+        "descricao": "Você sela um pacto de sangue com um aliado, unindo seus espíritos por um momento. O místico e o aliado podem trocar até 3 pontos de energia mística ou 6B entre si. O aliado deve aceitar o pacto para que a magia funcione."
+      }
+    ],
+    "Xamânica": [
+      {
+        "numero": 1,
+        "nome": "Fôlego Ancestral",
+        "acoes": "Duas",
+        "custo": "Variado",
+        "area": "9m",
+        "descricao": "Canaliza a energia dos ancestrais, produzindo um efeito em área que elimina um ponto de fadiga dos aliados para cada ponto de magia gasto."
+      },
+      {
+        "numero": 2,
+        "nome": "Orientação Animal",
+        "acoes": "Duas",
+        "custo": "1",
+        "area": "9m",
+        "duracao": "1 minuto por ponto de magia.",
+        "descricao": "Comunga com o espírito livre de um animal, podendo guiar-se por seus sentidos e percepções. Para realizar essa magia o animal deve estar presente dentro da área de efeito. Essa magia não pode ser usada para comunicar-se de qualquer forma com os animais."
+      },
+      {
+        "numero": 3,
+        "nome": "Comunicação Selvagem",
+        "acoes": "Duas",
+        "custo": "3",
+        "area": "9m",
+        "duracao": "1 minuto por custo de magia",
+        "descricao": "Comunga com o espírito livre de um animal, abrindo um canal de comunicação mental com a criatura. É possível extrair informações de um animal, desde que tenha sucesso num teste de Natureza para saber lidar com a criatura."
+      },
+      {
+        "numero": 4,
+        "nome": "Aliados Selvagens",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "6m",
+        "resistencia": "Acrobacia ou Atletismo",
+        "descricao": "Comunga com pequenos espíritos de insetos e outras criaturas menores, fazendo-os vir em seu auxílio. O enxame de insetos ataca um único alvo dentro da área de efeito, picando, e entrando nos orifícios do rosto.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo fica Enjoado.",
+          "falha": "O alvo fica Enjoado e toma 1 de dano no 6B.",
+          "falha_critica": "O alvo fica Enjoado e toma 1d4 de dano no 6B."
+        }
+      },
+      {
+        "numero": 5,
+        "nome": "Antecipação",
+        "acoes": "Duas",
+        "custo": "3",
+        "duracao": "1 minuto por custo de magia",
+        "descricao": "O mundo espiritual se projeta à sua frente e seus antepassados lhe dão dicas do que poderia estar por vir. Durante o combate, adiciona 1d6 de proteção."
+      },
+      {
+        "numero": 6,
+        "nome": "Animal Atlético",
+        "acoes": "Duas",
+        "custo": "5",
+        "alcance": "Toque, Alvo: Uma criatura",
+        "duracao": "8 horas",
+        "descricao": "Você evoca espíritos de animais para aprimorar as capacidades atléticas de uma criatura. Adiciona um dado extra em testes de Atletismo. Para cada custo de magia gasto, o dado aumenta 1 categoria, para um máximo de d12 (10 pontos)."
+      },
+      {
+        "numero": 7,
+        "nome": "Cobertura de Terra",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "3m",
+        "duracao": "1 Minuto",
+        "descricao": "A própria mãe terra se levanta em seu auxílio. Você ergue uma barreira de terra e pedras capaz de fornecer cobertura parcial (+2) para duas criaturas ou grande (+4) para uma criatura."
+      },
+      {
+        "numero": 8,
+        "nome": "Transformação Animal",
+        "acoes": "Três",
+        "custo": "5",
+        "duracao": "4 horas",
+        "descricao": "Você incorpora o espírito de um animal, transmutando sua forma para uma forma híbrida ou totalmente animalesca e assumindo parte ou a totalidade das habilidades desse animal."
+      },
+      {
+        "numero": 9,
+        "nome": "Vingança Ancestral",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "4,5 metros (em cone)",
+        "resistencia": "Acrobacia",
+        "descricao": "Você incorpora o espírito dos ancestrais que foram queimados vivos e solta um jato em cone de saliva fervente, alvejando todas as criaturas dentro da área de efeito em um único ataque. Esse ataque causa 1d4 de dano no 6B (teste de resistência para reduzir pela metade)."
+      },
+      {
+        "numero": 10,
+        "nome": "Arma Trovejante",
+        "acoes": "Duas",
+        "custo": "3",
+        "descricao": "Invoca o grande espírito do pássaro trovão para aprimorar seus ataques. Adiciona 2d6 de dano elétrico no seu próximo ataque."
+      },
+      {
+        "numero": 11,
+        "nome": "Espírito de Gelo",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "4,5 metros (em cone)",
+        "resistencia": "Atletismo",
+        "descricao": "O espírito das geadas cria um cone de ar gélido que irrompe do corpo do evocador. Todas as criaturas dentro da área devem fazer um teste de resistência.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "A criatura toma 1 de dano no 6B e perde 1 ação por 1d6 turnos.",
+          "falha": "A criatura toma 1 de dano no 6B e perde 2 ações por 1d6 turnos.",
+          "falha_critica": "A criatura toma 1d4 de dano no 6B e perde 3 ações por 1d6 turnos."
+        }
+      },
+      {
+        "numero": 12,
+        "nome": "Bênção da Floresta",
+        "acoes": "Duas",
+        "custo": "3",
+        "alcance": "6m, Alvo: Uma criatura",
+        "duracao": "Até o final do combate",
+        "descricao": "Você evoca o espírito da floresta para proteger um aliado. O alvo ganha um bônus de +5 na sua defesa."
+      },
+      {
+        "numero": 13,
+        "nome": "Calmaria da Natureza",
+        "acoes": "Duas",
+        "custo": "4",
+        "alcance": "9m, Alvo: Um animal por custo",
+        "resistencia": "Misticismo",
+        "descricao": "Você exala uma aura de paz que tranquiliza os animais, fazendo-os ter uma atitude amistosa em relação a você e seus aliados por 1d4 turnos. A magia falha em animais com a condição Apavorado ou Confuso."
+      },
+      {
+        "numero": 14,
+        "nome": "Raízes da Terra",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "9m",
+        "resistencia": "Atletismo ou Acrobacia",
+        "descricao": "Você evoca os espíritos da terra para erguer raízes e vinhas que se entrelaçam nos pés dos alvos. Todas as criaturas na área devem fazer um teste de resistência para não serem imobilizadas por 1d4 turnos."
+      },
+      {
+        "numero": 15,
+        "nome": "Manto de Fumaça",
+        "acoes": "Duas",
+        "custo": "1",
+        "area": "3m",
+        "duracao": "1 turno por custo",
+        "descricao": "Você comunga com o espírito do vento para criar uma nuvem de fumaça densa e escura. A nuvem bloqueia a linha de visão de todos os alvos dentro da área, adicionando um bônus de +2 em na defesa contra ataques à distância."
+      }
+    ],
+    "Trevas": [
+      {
+        "numero": 1,
+        "nome": "Olhos Negros",
+        "acoes": "Duas",
+        "custo": "Variado",
+        "alcance": "3m",
+        "resistencia": "Misticismo",
+        "duracao": "Varia",
+        "descricao": "Obscurece a visão de um alvo, deixando-o cego por 1 turno para cada ponto de magia gasto."
+      },
+      {
+        "numero": 2,
+        "nome": "Mensagem dos Mortos",
+        "acoes": "Duas",
+        "custo": "3",
+        "alcance": "Toque",
+        "duracao": "1 minuto",
+        "descricao": "Reanima um cadáver com o toque por tempo suficiente para que ele responda 3 perguntas."
+      },
+      {
+        "numero": 3,
+        "nome": "Pesadelo Vivo",
+        "acoes": "Duas",
+        "custo": "3",
+        "alcance": "9m",
+        "resistencia": "Misticismo",
+        "duracao": "1 minuto",
+        "descricao": "Cria uma ilusão mental que afeta apenas um alvo. O alvo agora passa a enxergar todos à sua volta como uma projeção de seu pior pesadelo.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo está Confuso.",
+          "falha": "O alvo está Atordoado.",
+          "falha_critica": "O alvo está Atordoado e toma 1 ponto de dano mental no 6B."
+        }
+      },
+      {
+        "numero": 4,
+        "nome": "Comandar os Mortos",
+        "acoes": "Três",
+        "custo": "Variado",
+        "alcance": "Toque",
+        "duracao": "Sustentado",
+        "descricao": "Reanima um corpo sem vida usando espíritos do submundo sob seu comando. O Nível da criatura é 1 por ponto de magia gasto no ato da criação. A cada turno, você precisa gastar pelo menos uma ação sustentando a magia. O morto-vivo possui apenas uma ação que é realizada no seu turno. Você pode usar suas ações para comandar o morto-vivo, dando-lhe ações extras."
+      },
+      {
+        "numero": 5,
+        "nome": "Corvo do Submundo",
+        "acoes": "Duas",
+        "custo": "2",
+        "area": "100m",
+        "duracao": "1 hora por custo",
+        "descricao": "Invoca um corvo do submundo, mantendo um link mental que pode ser usado para sobrevoar uma região e coletar informações."
+      },
+      {
+        "numero": 6,
+        "nome": "Ordem Sombria",
+        "acoes": "Duas",
+        "custo": "3",
+        "alcance": "9m, Alvo: Uma criatura",
+        "resistencia": "Misticismo",
+        "duracao": "1 turno",
+        "descricao": "Você reúne um poder descomunal vindo do submundo e profere uma ordem para uma criatura que seja capaz de entender sua língua. O comando deve ser algo simples que possa ser realizado em uma única ação ou menos e que não atente contra a segurança do alvo.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo usa sua primeira ação para obedecer sua ordem.",
+          "falha": "O alvo usa a primeira ação para obedecer sua ordem e fica Confuso por 1d6 turnos. Enquanto está confuso, o alvo fica imune ao efeito dessa magia.",
+          "falha_critica": "O alvo usa a primeira ação para obedecer sua ordem e fica Atordoado por 1d6 turnos. Enquanto está atordoado, o alvo fica mais suscetível à Ordem Sombria tendo -3 de penalidade nos testes de resistência à essa magia."
+        }
+      },
+      {
+        "numero": 7,
+        "nome": "Vocabulário Maldito",
+        "acoes": "Varia",
+        "custo": "2 por ação",
+        "alcance": "9m, Alvo: Varia",
+        "resistencia": "Misticismo",
+        "duracao": "1 turno",
+        "descricao": "Você lança impropérios hediondos, conhecidos apenas por criaturas do submundo, capazes de ferir mentalmente quem os escuta. O número de ações gastas nessa magia determina os alvos, alcance e área.",
+        "efeitos": {
+          "uma_acao": "O efeito causa 1 de dano no 6B de uma única criatura dentro do alcance.",
+          "duas_acoes": "O efeito causa 1 de dano no 6B em todos os alvos numa área de 3m.",
+          "tres_acoes": "O efeito causa 1d4 de dano no 6B em todos os alvos numa área de 6m."
+        }
+      },
+      {
+        "numero": 8,
+        "nome": "Isca Sobrenatural",
+        "acoes": "Duas",
+        "custo": "3",
+        "area": "18m, Alvo: Uma criatura",
+        "resistencia": "Misticismo",
+        "duracao": "1 minuto por custo de magia",
+        "descricao": "Você escolhe um alvo para que ele lhe perceba como a maior ameaça. Esse efeito só pode ser colocado em um alvo por vez.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O efeito dura apenas um turno.",
+          "falha": "O alvo recebe 1 de dano no 6B e tem penalidade de -3 em todos os ataques que ele faz direcionado a outro alvo que não seja você.",
+          "falha_critica": "O alvo recebe 1 de dano no 6B e tem penalidade de -6 em todos os ataques que ele faz direcionado a outro alvo que não seja você."
+        }
+      },
+      {
+        "numero": 9,
+        "nome": "Silvo Ressonante",
+        "acoes": "Três",
+        "custo": "4",
+        "area": "6m",
+        "resistencia": "Acrobacia",
+        "descricao": "Você solta um silvo agudo e contínuo que faz a pólvora contida nas armas de fogo dentro da área explodirem.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "A arma esquenta mas não explode, fazendo o alvo largá-la.",
+          "falha": "As armas esquentam a ponto de fundir o metal e ficarem com defeito.",
+          "falha_critica": "As armas explodem causando 1 de dano no 6B e a arma é completamente destruída."
+        }
+      },
+      {
+        "numero": 10,
+        "nome": "Personificar",
+        "acoes": "Três",
+        "custo": "3",
+        "area": "Toque, Alvo: Uma criatura humanoide",
+        "resistencia": "não",
+        "duracao": "Variada",
+        "descricao": "Você faz uma rolagem passiva de misticismo para roubar a forma e a personalidade de outra pessoa que esteja tocando, podendo se passar por ela.",
+        "efeitos": {
+          "sucesso_critico": "Você rouba a aparência e os trejeitos do alvo. A duração é de 1 hora e você recebe um bônus de 2d6 nos testes de Blefe para se passar por essa pessoa.",
+          "sucesso": "Você rouba a aparência do alvo, mas não os trejeitos. Adicione 1d6 nos testes de Blefe para se passar por essa pessoa. Duração de 10 minutos.",
+          "falha": "Sem efeito.",
+          "falha_critica": "O místico assume uma aparência grotesca com um par de membros atrofiados, olhos e orelhas extras e não consegue reverter a forma até realizar um descanso curto e gastar 3 pontos de magia."
+        }
+      },
+      {
+        "numero": 11,
+        "nome": "Manto de Sombras",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "Pessoal",
+        "duracao": "1 turno por custo",
+        "descricao": "Você envolve seu corpo em sombras do submundo. Você ganha +3 em todos os testes de Furtividade e recebe 1d4 de dano necrótico em qualquer ataque corpo a corpo que realizar."
+      },
+      {
+        "numero": 12,
+        "nome": "Visão do Submundo",
+        "acoes": "Uma",
+        "custo": "1",
+        "alcance": "Pessoal",
+        "duracao": "10 minutos",
+        "descricao": "Você temporariamente permite que o submundo invada sua visão. Você pode enxergar através das trevas e identificar a presença de criaturas e objetos amaldiçoados."
+      },
+      {
+        "numero": 13,
+        "nome": "Pacto de Sangue",
+        "acoes": "Três",
+        "custo": "4",
+        "alcance": "Toque",
+        "descricao": "Você sela um pacto com um espírito menor. No próximo ataque, o alvo recebe 1 ponto de dano extra no 6b, mas o místico ganha 1 de fatiga imediatamente."
+      },
+      {
+        "numero": 14,
+        "nome": "Drenar Vida",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "3m, Alvo: Uma criatura",
+        "resistencia": "Misticismo",
+        "descricao": "Você drena a vitalidade de uma criatura para curar a si mesmo. O alvo sofre 1 de dano no 6B, e o místico recupera 1 de dano no 6B."
+      },
+      {
+        "numero": 15,
+        "nome": "Anel de Ossos",
+        "acoes": "Três",
+        "custo": "3",
+        "area": "3m (raio)",
+        "duracao": "1d6 turnos",
+        "descricao": "Você invoca um círculo de ossos que se eleva do chão, protegendo a área. Qualquer criatura que tentar entrar ou sair da área deve ser bem-sucedida em um teste passivo de Atletismo ou ficará imobilizada."
+      }
+    ],
+    "Fé": [
+      {
+        "numero": 1,
+        "nome": "Proteção Divina",
+        "acoes": "Três",
+        "custo": "Variado",
+        "alcance": "6m",
+        "duracao": "1 Minuto",
+        "descricao": "Adiciona um dado extra de proteção na defesa do alvo. Para cada ponto de magia gasto, o dado aumenta 1 categoria, para um máximo de d12 (5 pontos)."
+      },
+      {
+        "numero": 2,
+        "nome": "Cura Celestial",
+        "acoes": "Três",
+        "custo": "3",
+        "area": "6m por custo de magia.",
+        "descricao": "Gera um feixe de luz que cura 1 do 6B de todas as criaturas dentro da área. Veteranos dentro da área de efeito tomam 1 de dano no 6B."
+      },
+      {
+        "numero": 3,
+        "nome": "Luz Purificadora",
+        "acoes": "Três",
+        "custo": "3",
+        "area": "6m por custo de magia.",
+        "descricao": "Evoca uma luz divina e providencial que cura 1 do 6B de todos que estão na área e remove imediatamente efeitos de doença e envenenamento. Veteranos ficam atordoados pela luz por 1d4 turnos."
+      },
+      {
+        "numero": 4,
+        "nome": "Comunicação Mental",
+        "acoes": "Três",
+        "custo": "3",
+        "alcance": "Toque",
+        "area": "30m",
+        "duracao": "1 hora por custo",
+        "descricao": "Estabelece uma conexão mental entre os alvos tocados. Com essa conexão é possível enviar e receber mensagens."
+      },
+      {
+        "numero": 5,
+        "nome": "Bênção",
+        "acoes": "Três",
+        "custo": "3",
+        "area": "3m por custo de magia.",
+        "duracao": "1 minuto",
+        "descricao": "Você e seus aliados são tocados por uma força divina que aprimora suas capacidades, adicionando +2 em todos os resultados da próxima rolagem do 6B."
+      },
+      {
+        "numero": 6,
+        "nome": "Comando Divino",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "9m, Alvo: Uma criatura",
+        "resistencia": "Misticismo",
+        "duracao": "1 turno",
+        "descricao": "Você reúne todo o poder divino dentro de si e profere um comando para uma criatura que seja capaz de entender sua língua. O comando deve ser algo simples que possa ser realizado em uma única ação ou menos e que não atente contra a segurança do alvo.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "O alvo usa sua primeira ação para realizar o comando.",
+          "falha": "O alvo usa a primeira ação para realizar o comando e fica incapaz de realizar outras ações.",
+          "falha_critica": "Pelo próximo turno do alvo ele obedecerá seus comandos."
+        }
+      },
+      {
+        "numero": 7,
+        "nome": "Demanda Divina",
+        "acoes": "Varia",
+        "custo": "1 por ação",
+        "alcance": "9m, Alvo: Varia",
+        "resistencia": "Misticismo",
+        "duracao": "1 turno",
+        "descricao": "Você recita salmos sagrados letais para a maior parte das criaturas do submundo e mortos-vivos. O número de ações gastas nessa magia determina os alvos, alcance, área e demais parâmetros.",
+        "efeitos": {
+          "uma_acao": "O efeito causa 1 de dano no 6B de uma única criatura dentro do alcance.",
+          "duas_acoes": "O efeito causa 2 de dano no 6B em todos os alvos numa área de 3m.",
+          "tres_acoes": "O efeito causa 1d4 de dano no 6B em todos os alvos numa área de 9m."
+        }
+      },
+      {
+        "numero": 8,
+        "nome": "Purificar Água",
+        "acoes": "Duas",
+        "custo": "1",
+        "descricao": "Você pode purificar até 3 litros de água, removendo qualquer impureza, toxinas e patógenos presentes nela."
+      },
+      {
+        "numero": 9,
+        "nome": "Pacifista",
+        "acoes": "Três",
+        "custo": "4",
+        "area": "9m",
+        "resistencia": "Misticismo",
+        "descricao": "Você faz um teste passivo de misticismo que pode operar um pequeno milagre, emperrando todas as armas de fogo dentro da área.",
+        "efeitos": {
+          "sucesso_critico": "As armas são consideradas quebradas e precisam de reparos.",
+          "sucesso": "As armas ficam emperradas e precisam de uma ação para ser reparada.",
+          "falha": "Nada acontece.",
+          "falha_critica": "As armas ganham um bônus de +3 no dano."
+        }
+      },
+      {
+        "numero": 10,
+        "nome": "Opressão Divina",
+        "acoes": "Três",
+        "custo": "2",
+        "area": "9m, Alvo: 1 por custo",
+        "resistencia": "Misticismo",
+        "duracao": "Variada",
+        "descricao": "Você cria uma aura opressora, imputando medo no coração dos seus inimigos.",
+        "efeitos": {
+          "sucesso_critico": "Sem Efeito.",
+          "sucesso": "Você deixa os alvos Atordoados por 1d4 turnos (Veteranos e criaturas do submundo sofrem o mesmo efeito pelo dobro do tempo).",
+          "falha": "Você deixa os alvos Assustados por 1 turno (Veteranos e criaturas do submundo sofrem o mesmo efeito pelo dobro do tempo).",
+          "falha_critica": "Você enxerga no inimigo o verdadeiro coração do terror e fica Atordoado por 1d4 turnos."
+        }
+      },
+      {
+        "numero": 11,
+        "nome": "Flecha da Luz",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "9m",
+        "descricao": "Você invoca um raio de luz sagrada que atinge um alvo causando 1 de dano no 6B, criaturas do submundo e Veteranos tomam dano dobrado."
+      },
+      {
+        "numero": 12,
+        "nome": "Barreira Sagrada",
+        "acoes": "Duas",
+        "custo": "3",
+        "area": "3m (raio)",
+        "duracao": "1d6 turnos",
+        "descricao": "Você cria uma barreira de luz purificadora que bloqueia a passagem de criaturas do submundo e Veteranos."
+      },
+      {
+        "numero": 13,
+        "nome": "Toque Restaurador",
+        "acoes": "Duas",
+        "custo": "2",
+        "alcance": "Toque",
+        "descricao": "Você remove uma condição de Doente ou Envenenado de um aliado."
+      },
+      {
+        "numero": 14,
+        "nome": "Súplica Divina",
+        "acoes": "Três",
+        "custo": "4",
+        "area": "9m",
+        "duracao": "Até o final do combate",
+        "descricao": "Você implora por misericórdia divina. Durante a duração da magia, todos os seus aliados na área recebem um bônus de +2 na defesa contra ataques de criaturas do submundo e veteranos."
+      },
+      {
+        "numero": 15,
+        "nome": "Santuário",
+        "acoes": "Três (sustentado)",
+        "custo": "5",
+        "area": "9m (raio)",
+        "duracao": "1d6 turnos",
+        "descricao": "Você consagra uma área, tornando-a um refúgio seguro. Dentro da área, todos os aliados se curam 1 do 6B por turno, e criaturas do submundo e Veteranos sofrem 1 de dano no 6B por turno."
+      }
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "titulo": "Itens e Equipamentos",
+  "descricao_geral": "No Oeste Sombrio, o equipamento certo pode ser a diferença entre a vida e a morte. Este capítulo detalha os recursos que os personagens podem adquirir e usar para se defender, sobreviver e prosperar nas terras de Nova Jordana.",
+  "dinheiro_inicial": {
+    "regra_base": "Personagens de Nível 1 iniciam com $10.",
+    "valor_inicial_nivel_1": 10,
+    "regra_por_nivel_adicional": "Para cada nível adicional acima do primeiro, o personagem recebe $5 extras.",
+    "valor_extra_por_nivel_adicional": 5,
+    "primeira_compra": {
+      "regra": "O primeiro item que um jogador adquire custa metade do valor listado na tabela de equipamentos.",
+      "fracao_do_preco_tabelado": 0.5,
+      "nota": "Essa regra representa o acesso facilitado a um item que o personagem já possuía, herdou ou conseguiu de forma não convencional."
+    }
+  },
+  "regras_de_carga": {
+    "descricao": "A capacidade de carga de um personagem é determinada por sua resistência física. Um personagem pode carregar um número limitado de itens sem ficar sobrecarregado.",
+    "capacidade_base_itens": 2,
+    "bonus_por_ponto_de_atletismo": {
+      "pericia": "Atletismo",
+      "itens_adicionais_por_ponto": 2
+    },
+    "equipamentos_de_carga": "Mochilas, coldres e outros equipamentos semelhantes podem ser usados para aumentar essa capacidade ou evitar que um item seja considerado carga.",
+    "efeito_de_sobrecarga": {
+      "descricao": "Quando um personagem ultrapassa o limite de carga, ele está sobrecarregado e o peso extra implica em dificuldades adicionais.",
+      "penalidades": [
+        "Perde duas ações bônus determinadas pela iniciativa, mas nunca a ação padrão.",
+        "Movimenta-se mais lentamente, perdendo 3m de movimento por ação.",
+        "Tem uma penalidade de 5 em sua defesa."
+      ],
+      "penalidade_movimento_metros_por_acao": 3,
+      "penalidade_defesa": 5,
+      "acoes_bonus_perdidas": 2
+    }
+  },
+  "categorias_de_itens": [
+    {
+      "nome": "Serviços",
+      "descricao": "Mais do que simples comodidades, os serviços são uma parte essencial da vida em Nova Jordana. Eles representam a ajuda de médicos, o conforto de uma estadia segura, o transporte em diligências ou trens e a proteção de seguranças. Contratar um serviço é uma forma de garantir a sobrevivência em um mundo que não perdoa."
+    },
+    {
+      "nome": "Vestuário",
+      "descricao": "Em um mundo onde a poeira e o perigo são constantes, o vestuário vai além da aparência. Ele oferece proteção contra os elementos e ajuda a definir o personagem, seja um elegante terno para negociar com figuras influentes ou roupas simples para se misturar à multidão."
+    },
+    {
+      "nome": "Equipamentos",
+      "descricao": "Esta categoria abrange todas as ferramentas e itens utilitários essenciais para a sobrevivência em terras hostis. De mapas que podem salvar o grupo de se perderem no deserto a kits de acampamento para passar a noite em segurança, esses equipamentos são tão importantes quanto as armas que os personagens carregam."
+    },
+    {
+      "nome": "Animais e Equipamentos de Sela",
+      "descricao": "Em Nova Jordana, os animais são mais que companheiros — são o principal meio de transporte e uma valiosa fonte de poder de carga. Cavalos e mulas são essenciais para viagens longas e para carregar suprimentos e tesouros. Cuidar de sua montaria é tão vital quanto cuidar de si mesmo."
+    },
+    {
+      "nome": "Itens e Componentes Alquímicos",
+      "descricao": "O mundo de Oeste Sombrio está cheio de segredos alquímicos, e esta categoria inclui os frutos dessa pesquisa. Tônicos e elixires podem restaurar a vitalidade e curar doenças, enquanto mutagênicos oferecem poderes arriscados, e venenos são uma arma letal nas mãos de um especialista."
+    },
+    {
+      "nome": "Armas",
+      "descricao": "No Oeste Sombrio, as armas são uma necessidade. De pistolas ágeis para duelos a rifles precisos para combates de longa distância, elas são a defesa final contra os horrores que espreitam nas sombras."
+    }
+  ],
+  "uso_excessivo_de_tonicos": {
+    "descricao": "Quando um personagem ingere muitos tônicos em um curto espaço de tempo, o corpo pode entrar em um estado de sobrecarga, resultando em náusea.",
+    "regras": [
+      "Para cada tônico além do primeiro que o personagem ingerir antes de um descanso curto, um teste de resistência de Atletismo deve ser feito para evitar que ele fique Enjoado.",
+      "A dificuldade do teste é a Dificuldade Base (DB) somada à quantidade de tônicos ingeridos antes de um descanso curto."
+    ],
+    "regra_falha_estando_enjoado": {
+      "descricao": "Caso um personagem que já esteja Enjoado falhe novamente neste teste, ele perde 1 ponto de vida do 6B e não pode mais ingerir nenhum tipo de tônico até fazer um descanso curto.",
+      "dano_6b": 1,
+      "regra_tentativa_apos_bloqueio": "Se ele tentar ingerir mesmo assim, o personagem vomita imediatamente e, se estiver em combate, perde seu turno inteiro."
+    }
+  }
+}

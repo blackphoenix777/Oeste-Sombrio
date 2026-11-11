@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Dark West Character Manager</title>
+  <link rel="icon" href="assets/img/oeste-sombrio-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-wrap">
+    <!-- [PROVISÓRIO — Autenticação Local sem Backend] Tela de Login -->
+    <div id="login-screen" class="home-screen auth-screen">
+      <span class="pin pin-tl" aria-hidden="true"></span>
+      <span class="pin pin-tr" aria-hidden="true"></span>
+      <div class="home-box auth-box">
+        <header class="home-header">
+          <h1 class="logo logo-home">
+            <img src="assets/img/oeste-sombrio-icon.png" class="logo-crow" alt="Oeste Sombrio">
+            <span class="logo-text"><span class="logo-o">O</span>ESTE SOMBRIO</span>
+          </h1>
+          <p class="home-subtitle">Dark West Character Manager</p>
+        </header>
+
+        <section class="auth-card" aria-labelledby="login-section-title">
+          <h2 id="login-section-title" class="section-title auth-title">Login</h2>
+
+          <form id="login-form" class="auth-form" novalidate>
+            <div class="auth-field-group">
+              <label class="field-label" for="login-username">E-mail</label>
+              <input type="email" id="login-username" name="login-username" class="field-line field-rope" placeholder="Digite seu e-mail" autocomplete="email">
+            </div>
+
+            <div class="auth-field-group">
+              <label class="field-label" for="login-password">Senha</label>
+              <input type="password" id="login-password" name="login-password" class="field-line field-rope" placeholder="Digite sua senha" autocomplete="current-password">
+            </div>
+
+            <div class="auth-options-row">
+              <label class="veterano-toggle-label auth-remember-label" for="login-remember-me">
+                <input type="checkbox" id="login-remember-me" name="login-remember-me">
+                <span>Lembre-me</span>
+              </label>
+
+              <button type="button" id="btn-forgot-password" class="auth-link-btn">Esqueci minha senha</button>
+            </div>
+
+            <div id="login-feedback" class="auth-feedback" role="alert" aria-live="polite" hidden></div>
+
+            <div class="auth-actions">
+              <button type="submit" id="btn-login-submit" class="btn btn-danger btn-large auth-submit-btn">Entrar</button>
+            </div>
+          </form>
+
+          <div class="auth-footer-links">
+            <button type="button" id="btn-open-signup" class="auth-link-btn">Cadastre-se</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- [PROVISÓRIO — Apenas Visual, sem Backend] Tela de Recuperação de Senha -->
+    <div id="recovery-screen" class="home-screen auth-screen" style="display: none;">
+      <span class="pin pin-tl" aria-hidden="true"></span>
+      <span class="pin pin-tr" aria-hidden="true"></span>
+      <div class="home-box auth-box">
+        <header class="home-header">
+          <h1 class="logo logo-home">
+            <img src="assets/img/oeste-sombrio-icon.png" class="logo-crow" alt="Oeste Sombrio">
+            <span class="logo-text"><span class="logo-o">O</span>ESTE SOMBRIO</span>
+          </h1>
+          <p class="home-subtitle">Dark West Character Manager</p>
+        </header>
+
+        <section class="auth-card" aria-labelledby="recovery-section-title">
+          <h2 id="recovery-section-title" class="section-title auth-title">Recuperação de Senha</h2>
+          <p class="auth-desc">Informe seu e-mail ou usuário para solicitar as instruções de redefinição.</p>
+
+          <form id="recovery-form" class="auth-form" novalidate>
+            <div class="auth-field-group">
+              <label class="field-label" for="recovery-identifier">E-mail ou Usuário</label>
+              <input type="text" id="recovery-identifier" name="recovery-identifier" class="field-line field-rope" placeholder="Digite seu e-mail ou usuário" autocomplete="username">
+            </div>
+
+            <div id="recovery-feedback" class="auth-feedback" role="status" aria-live="polite" hidden></div>
+
+            <div class="auth-actions">
+              <button type="submit" id="btn-recovery-submit" class="btn btn-danger btn-large auth-submit-btn">Enviar</button>
+            </div>
+          </form>
+
+          <div class="auth-footer-links">
+            <button type="button" id="btn-back-to-login" class="auth-link-btn">&larr; Voltar para o Login</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Gerenciador Inicial (Abas: Mesas / Fichas) -->
+    <div id="home-screen" class="home-screen" style="display: none;">
+      <div class="home-auth-bar">
+        <span id="auth-user-display" class="auth-user-badge" hidden></span>
+        <button type="button" id="btn-logout-home" class="btn btn-secondary btn-small" title="Encerrar sessão local e retornar ao Login">Sair</button>
+      </div>
+      <div class="home-box home-main-box">
+        <header class="home-header">
+          <h1 class="logo logo-home">
+            <img src="assets/img/oeste-sombrio-icon.png" class="logo-crow" alt="Oeste Sombrio">
+            <span class="logo-text"><span class="logo-o">O</span>ESTE SOMBRIO</span>
+          </h1>
+          <p class="home-subtitle">Dark West Character Manager</p>
+        </header>
+
+        <!-- Navegação Principal da Página Inicial: Mesas (padrão) | Fichas -->
+        <nav class="home-tabs" role="tablist" aria-label="Navegação da página inicial">
+          <button type="button" class="home-tab active" role="tab" id="home-tab-btn-mesas" data-home-tab="mesas" aria-selected="true" aria-controls="home-panel-mesas">Mesas</button>
+          <button type="button" class="home-tab" role="tab" id="home-tab-btn-fichas" data-home-tab="fichas" aria-selected="false" aria-controls="home-panel-fichas">Fichas</button>
+        </nav>
+
+        <!-- ABA 1 (PADRÃO): MESAS -->
+        <div class="home-tab-panel active" id="home-panel-mesas" role="tabpanel" aria-labelledby="home-tab-btn-mesas">
+          <div class="mesas-top-bar">
+            <p class="mesas-top-desc">Acompanhe as mesas que você conduz como GM e aquelas em que participa como convidado.</p>
+            <div class="mesas-top-actions">
+              <button type="button" id="btn-entrar-mesa" class="btn btn-secondary btn-large">Entrar com Código</button>
+              <button type="button" id="btn-criar-mesa" class="btn btn-danger btn-large">Criar Mesa</button>
+            </div>
+          </div>
+
+          <section class="mesas-section" id="section-minhas-mesas" aria-labelledby="titulo-minhas-mesas">
+            <div class="mesas-section-header">
+              <h2 id="titulo-minhas-mesas" class="section-title">Minhas Mesas</h2>
+              <span class="mesas-section-sub">Mesas onde você é GM</span>
+            </div>
+            <div id="mesas-gm-grid" class="mesas-grid" aria-live="polite">
+              <!-- Cards visuais (mock) gerados via JS -->
+            </div>
+          </section>
+
+          <section class="mesas-section" id="section-mesas-player" aria-labelledby="titulo-mesas-player">
+            <div class="mesas-section-header">
+              <h2 id="titulo-mesas-player" class="section-title">Mesas como Player</h2>
+              <span class="mesas-section-sub">Mesas em que você foi convidado</span>
+            </div>
+            <div id="mesas-player-grid" class="mesas-grid" aria-live="polite">
+              <!-- Cards visuais (mock) gerados via JS -->
+            </div>
+          </section>
+        </div>
+
+        <!-- ABA 2: FICHAS — duas colunas separadas por linha divisória vermelha -->
+        <div class="home-tab-panel" id="home-panel-fichas" role="tabpanel" aria-labelledby="home-tab-btn-fichas" hidden>
+          <div class="fichas-split-layout" id="fichas-split-layout">
+            <section class="fichas-column fichas-column-mesa" id="fichas-col-mesa" aria-labelledby="titulo-fichas-mesa">
+              <h2 id="titulo-fichas-mesa" class="section-title fichas-col-title">Fichas de Mesa</h2>
+              <p class="fichas-col-sub">Vinculadas a uma mesa</p>
+              <div id="characters-list-mesa" class="characters-list">
+                <!-- Gerado dinamicamente -->
+              </div>
+            </section>
+
+            <div class="fichas-red-divider" id="fichas-red-divider" role="separator" aria-orientation="vertical"></div>
+
+            <section class="fichas-column fichas-column-sem-mesa" id="fichas-col-sem-mesa" aria-labelledby="titulo-fichas-sem-mesa">
+              <h2 id="titulo-fichas-sem-mesa" class="section-title fichas-col-title">Fichas sem Mesa</h2>
+              <p class="fichas-col-sub">Fichas avulsas</p>
+              <div id="characters-list-sem-mesa" class="characters-list">
+                <!-- Gerado dinamicamente -->
+              </div>
+            </section>
+          </div>
+
+          <div class="home-actions">
+            <button type="button" id="btn-novo-personagem" class="btn btn-danger btn-large">Criar Novo Personagem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tela de Mesa dividida entre Palco do Mapa (#mesa-main-area > #mesa-map-stage) e Lateral Direita (#mesa-sidebar-feed) -->
+    <div id="mesa-screen" class="mesa-screen" style="display: none;">
+      <header class="mesa-screen-topbar">
+        <div class="mesa-topbar-left">
+          <button type="button" id="btn-mesa-voltar" class="btn btn-secondary btn-small" title="Voltar para a lista de Mesas">&larr; Voltar às Mesas</button>
+          <div class="mesa-topbar-titles">
+            <h2 id="mesa-header-title" class="mesa-header-title">Mesa</h2>
+            <span id="mesa-header-code" class="mesa-invite-badge" title="Código de convite da mesa"></span>
+          </div>
+        </div>
+        <div class="mesa-topbar-right">
+          <button type="button" id="btn-mesa-combat-open" class="btn btn-secondary btn-small" title="Abrir rastreador de turnos" aria-label="Abrir rastreador de turnos" hidden>⚔️</button>
+          <div id="mesa-topbar-gm-tools" class="mesa-topbar-gm-tools" role="toolbar" aria-label="Ferramentas do Mestre" hidden>
+            <button type="button" id="btn-mesa-magias" class="btn btn-secondary btn-small">Magias</button>
+            <button type="button" id="btn-mesa-regras" class="btn btn-secondary btn-small">Regras</button>
+            <button type="button" id="btn-mesa-equipamentos" class="btn btn-secondary btn-small">Equipamentos</button>
+            <div class="mesa-terror-control">
+              <label class="field-label" for="mesa-terror-input">Nível de Terror</label>
+              <input type="number" id="mesa-terror-input" class="field-line field-short" min="0" max="6" value="0">
+            </div>
+          </div>
+          <span id="mesa-header-role-badge" class="mesa-role-badge badge-gm">Mestre</span>
+        </div>
+      </header>
+
+      <div class="mesa-layout-2col">
+        <!-- Coluna central permanente (#mesa-main-area): Palco do Mapa + Grade (#mesa-map-stage) -->
+        <main id="mesa-main-area" class="mesa-main-area">
+          <section id="mesa-map-stage" class="mesa-map-stage" aria-label="Mapa da Mesa">
+            <nav id="mesa-map-tabs" class="mesa-map-tabs" aria-label="Mapas da mesa" hidden></nav>
+            <dialog id="mesa-map-settings" class="mesa-map-settings">
+              <h3 id="mesa-map-settings-title">Configurar mapa</h3>
+              <label id="mesa-map-name-label">Nome <input id="mesa-map-name" maxlength="80" autocomplete="off"></label>
+              <p id="mesa-map-settings-error" role="alert"></p>
+              <div class="mesa-map-settings-actions">
+                <button type="button" id="mesa-map-delete" class="btn btn-danger">Excluir mapa…</button>
+                <button type="button" id="mesa-map-cancel" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="mesa-map-confirm" class="btn btn-primary">Confirmar</button>
+              </div>
+            </dialog>
+            <div id="mesa-map-toolbar" class="mesa-map-toolbar" hidden>
+              <div class="mesa-map-toolbar-left">
+                <input type="file" id="mesa-map-file-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                <button type="button" id="btn-mesa-map-upload" class="btn btn-secondary btn-small">Enviar / Trocar Mapa</button>
+                <span id="mesa-map-upload-status" class="mesa-map-upload-status" aria-live="polite" hidden></span>
+              </div>
+              <div class="mesa-map-toolbar-right">
+                <span class="mesa-grid-control-label">Grade:</span>
+                <button type="button" id="btn-mesa-grid-minus" class="btn btn-secondary btn-small" title="Diminuir colunas da grade" aria-label="Diminuir colunas da grade">&minus;</button>
+                <span id="mesa-grid-cols-value" class="mesa-grid-cols-value">24 col</span>
+                <button type="button" id="btn-mesa-grid-plus" class="btn btn-secondary btn-small" title="Aumentar colunas da grade" aria-label="Aumentar colunas da grade">+</button>
+              </div>
+            </div>
+
+            <div id="mesa-map-sync-bar" class="mesa-map-sync-bar">
+              <span id="mesa-map-sync-hint" class="mesa-map-sync-hint is-connecting" data-realtime-state="connecting" role="status" aria-live="polite">🟡 Conectando em tempo real...</span>
+              <button type="button" id="btn-mesa-tokens-refresh" class="btn btn-secondary btn-small" title="Atualização manual de reforço">↻ Atualizar</button>
+            </div>
+
+            <div id="mesa-map-viewport" class="mesa-map-viewport">
+              <div id="mesa-map-canvas" class="mesa-map-canvas">
+                <img id="mesa-map-image" class="mesa-map-image" alt="Mapa da Mesa" hidden>
+                <div id="mesa-map-grid-overlay" class="mesa-map-grid-overlay" data-grid-cols="24" aria-hidden="true"></div>
+                <div id="mesa-map-tokens-layer" class="mesa-map-tokens-layer" aria-label="Tokens em cena"></div>
+                <div id="mesa-map-empty-state" class="mesa-map-empty-state">
+                  <p id="mesa-map-empty-text" class="mesa-map-empty-text">Nenhum mapa enviado para esta mesa ainda.</p>
+                  <button type="button" id="btn-mesa-map-empty-upload" class="btn btn-danger btn-small" hidden>Enviar Mapa</button>
+                </div>
+              </div>
+            </div>
+            <div class="mesa-map-zoom-controls" role="group" aria-label="Câmera do mapa">
+              <button type="button" id="btn-mesa-map-zoom-in" class="btn btn-secondary btn-small" aria-label="Aumentar zoom">+</button>
+              <button type="button" id="btn-mesa-map-zoom-out" class="btn btn-secondary btn-small" aria-label="Diminuir zoom">−</button>
+              <button type="button" id="btn-mesa-map-zoom-reset" class="btn btn-secondary btn-small" title="Restaurar zoom e posição">100%</button>
+              <button type="button" id="btn-mesa-map-zoom-fit" class="btn btn-secondary btn-small" title="Enquadrar o mapa inteiro">Ajustar</button>
+            </div>
+          </section>
+        </main>
+
+        <!-- Coluna lateral direita (#mesa-sidebar-feed): 2 botões de alternância (💬 Chat | 👤 Fichas) -->
+        <aside id="mesa-sidebar-feed" class="mesa-sidebar-feed" aria-label="Painel lateral da mesa">
+          <div class="mesa-sidebar-tabs" role="tablist" aria-label="Alternar entre Chat e Fichas">
+            <button type="button" id="btn-mesa-tab-chat" class="mesa-sidebar-tab-btn active" data-mesa-tab="chat" role="tab" aria-selected="true">💬 Chat</button>
+            <button type="button" id="btn-mesa-tab-fichas" class="mesa-sidebar-tab-btn" data-mesa-tab="fichas" role="tab" aria-selected="false">👤 Fichas</button>
+          </div>
+
+          <!-- Painel 1: Feed / Chat da Mesa -->
+          <div id="mesa-sidebar-panel-chat" class="mesa-sidebar-panel">
+            <div class="mesa-feed-header">
+              <h3 class="section-title mesa-feed-title">Feed da Mesa</h3>
+              <button type="button" id="btn-mesa-feed-refresh" class="btn btn-secondary btn-small" title="Atualizar eventos">↻</button>
+            </div>
+            <div id="mesa-feed-list" class="mesa-feed-list" aria-live="polite">
+              <p class="characters-empty">Nenhum evento registrado ainda.</p>
+            </div>
+            <form id="mesa-feed-form" class="mesa-feed-form" novalidate>
+              <div id="mesa-feed-vis-row" class="mesa-feed-vis-row" hidden>
+                <label class="field-label" for="mesa-feed-visibilidade">Visibilidade:</label>
+                <select id="mesa-feed-visibilidade" class="field-line">
+                  <option value="todos">Todos na mesa</option>
+                  <option value="mestre">Somente Mestre</option>
+                </select>
+              </div>
+              <div class="mesa-feed-input-row">
+                <input type="text" id="mesa-feed-input" class="field-line field-rope" placeholder="Mensagem ou anotação de cena..." autocomplete="off">
+                <button type="submit" id="btn-mesa-feed-send" class="btn btn-danger btn-small">Enviar</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Painel 2: Fichas (3 listas simultâneas para o Mestre OU ficha direta para o Jogador) -->
+          <div id="mesa-sidebar-panel-fichas" class="mesa-sidebar-panel mesa-sidebar-panel-fichas" hidden>
+            <div id="mesa-gm-lists-view" class="mesa-gm-lists-view" hidden>
+              <!-- 1. Em Cena (sincronizada 1:1 com public.mesa_tokens) -->
+              <section class="mesa-list-section" id="mesa-em-cena-section">
+                <div class="mesa-list-section-header">
+                  <h3 class="section-title">Em Cena</h3>
+                  <div class="mesa-scene-header-actions">
+                    <span id="mesa-em-cena-count-badge" class="mesa-info-pill">0 em cena</span>
+                    <button type="button" id="btn-toggle-all-scene-cards" class="btn btn-secondary btn-small" hidden>Expandir Todos</button>
+                    <button type="button" id="btn-mesa-scene-refresh" class="btn btn-secondary btn-small" title="Atualizar fichas e tokens em cena">↻ Atualizar</button>
+                    <button type="button" id="btn-mesa-start-combat" class="btn btn-primary btn-small">⚔️ Iniciar Combate</button>
+                  </div>
+                </div>
+                <div id="mesa-em-cena-list" class="mesa-em-cena-dropzone is-empty" aria-label="Zona Em Cena">
+                  <p class="mesa-dropzone-placeholder">Nenhuma ficha ou criatura em cena. Use "Colocar em Cena" nas listas abaixo.</p>
+                </div>
+              </section>
+
+              <!-- 2. Players -->
+              <section class="mesa-list-section" id="mesa-players-section">
+                <div class="mesa-list-section-header">
+                  <h3 class="section-title">Players</h3>
+                  <div class="mesa-scene-header-actions">
+                    <span id="mesa-players-count-badge" class="mesa-info-pill">0 na mesa</span>
+                    <button type="button" id="btn-mesa-players-refresh" class="btn btn-secondary btn-small" title="Atualizar lista de jogadores">↻ Atualizar</button>
+                  </div>
+                </div>
+                <div id="mesa-players-grid" class="mesa-compact-list" aria-live="polite"></div>
+              </section>
+
+              <!-- 3. NPCs/Monstros (mesas.npcs_mesa) -->
+              <section class="mesa-list-section" id="mesa-npcs-mesa-section">
+                <div class="mesa-list-section-header">
+                  <h3 class="section-title">NPCs/Monstros</h3>
+                  <div class="mesa-scene-header-actions">
+                    <span id="mesa-npcs-count-badge" class="mesa-info-pill">0 na mesa</span>
+                    <button type="button" id="btn-mesa-add-npc" class="btn btn-danger btn-small" title="Adicionar criatura ou NPC à mesa">+</button>
+                  </div>
+                </div>
+                <div id="mesa-npcs-mesa-list" class="mesa-compact-list" aria-live="polite"></div>
+              </section>
+            </div>
+
+            <!-- Host reutilizável para #ficha + .toolbar (Ficha direta do Jogador OU Visualização/Edição pelo Mestre) -->
+            <div id="mesa-sheet-slot" class="mesa-sheet-slot" hidden>
+              <div id="mesa-gm-sheet-bar" class="mesa-gm-sheet-bar" hidden>
+                <span id="mesa-gm-sheet-context-label" class="mesa-gm-sheet-context-label">Modo Edição Livre — Criatura / NPC</span>
+                <div class="mesa-gm-sheet-bar-actions">
+                  <div id="gm-bar-portrait-wrap" class="gm-bar-portrait-wrap">
+                    <img id="gm-bar-portrait-preview" class="gm-bar-portrait-preview" alt="Retrato / Token" hidden>
+                    <button type="button" id="btn-gm-bar-portrait-upload" class="btn btn-secondary btn-small">Enviar Retrato / Token</button>
+                    <span id="gm-bar-portrait-feedback" class="gm-bar-portrait-feedback" aria-live="polite" hidden></span>
+                  </div>
+                  <button type="button" id="btn-mesa-fechar-ficha" class="btn btn-danger btn-small">&larr; Salvar e Voltar às Listas</button>
+                </div>
+              </div>
+              <div id="mesa-sheet-container"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Camada de Fichas Flutuantes (.mesa-floating-popup) e Hub do Mestre (#mesa-popups-hub) -->
+      <div id="mesa-floating-popups-layer" class="mesa-floating-popups-layer" aria-label="Popups flutuantes de criaturas" hidden></div>
+      <div id="mesa-popups-hub" class="mesa-popups-hub" aria-label="Hub de popups de criaturas" hidden></div>
+      <section id="mesa-turn-tracker" class="mesa-floating-popup mesa-turn-tracker" aria-label="Rastreador de turnos" hidden>
+        <header id="mesa-tracker-drag" class="mesa-floating-popup-header" tabindex="0">
+          <strong id="mesa-tracker-round">Round 1</strong>
+          <div class="mesa-tracker-actions">
+            <button type="button" id="btn-tracker-end" class="btn btn-danger btn-small" hidden>Encerrar Combate</button>
+            <button type="button" id="btn-tracker-minimize" class="btn btn-secondary btn-small" aria-label="Minimizar rastreador">_</button>
+          </div>
+        </header>
+        <p id="mesa-tracker-current" class="mesa-tracker-status" aria-live="polite"></p>
+        <ol id="mesa-tracker-order" class="mesa-tracker-order"></ol>
+        <p id="mesa-tracker-feedback" class="mesa-tracker-status" role="status"></p>
+        <footer id="mesa-tracker-footer" hidden><button type="button" id="btn-tracker-next" class="btn btn-primary">Próximo Turno ➔</button></footer>
+      </section>
+      <dialog id="modal-setup-combate" class="mesa-combat-dialog" aria-labelledby="combat-setup-title">
+        <form id="form-setup-combate">
+          <h2 id="combat-setup-title">Preparar combate</h2>
+          <p>Selecione os participantes. Para a cascata, a menor prioridade age primeiro: 1d20 + número de monstros, diminuindo 1 por monstro seguinte.</p>
+          <div id="combat-setup-list" class="combat-setup-list"></div>
+          <p id="combat-setup-error" role="alert"></p>
+          <div class="combat-dialog-actions"><button type="button" id="btn-combat-setup-cancel" class="btn btn-secondary">Cancelar</button><button type="submit" id="btn-combat-confirm" class="btn btn-primary">⚔️ Iniciar Combate</button></div>
+        </form>
+      </dialog>
+      <dialog id="modal-end-combate" class="mesa-combat-dialog mesa-combat-confirm" aria-labelledby="combat-end-title">
+        <h2 id="combat-end-title">Encerrar combate?</h2>
+        <p>O rastreador será fechado para todos. Fichas, condições, tokens, mapa e chat serão preservados.</p>
+        <p id="combat-end-error" role="alert"></p>
+        <div class="combat-dialog-actions"><button type="button" id="btn-combat-end-cancel" class="btn btn-secondary">Continuar combate</button><button type="button" id="btn-combat-end-confirm" class="btn btn-danger">Encerrar Combate</button></div>
+      </dialog>
+    </div>
+
+    <div id="ficha-home-slot">
+    <article class="ficha" id="ficha" style="display: none;">
+      <span class="pin pin-tl" aria-hidden="true"></span>
+      <span class="pin pin-tr" aria-hidden="true"></span>
+      <span class="pin pin-bc" aria-hidden="true"></span>
+
+      <!-- CABEÇALHO -->
+      <header class="ficha-header">
+        <div class="logo-block">
+          <h1 class="logo">
+            <span class="logo-text"><span class="logo-o">O</span>ESTE SOMBRIO</span>
+          </h1>
+          <p class="logo-sub">2.0 Beta</p>
+
+          <div class="destino-header-widget" id="destino-header-widget" aria-label="Fichas do Destino">
+            <div class="destino-cards-square" id="destino-cards-square">
+              <div class="destino-mini-card" data-color="vermelha" tabindex="0" title="Vermelha: • Recupera 1 ponto de fadiga do usuário. • Permite rolar novamente o dado de perícia. (O segundo resultado é obrigatório, mesmo que seja pior.)">
+                <img class="destino-mini-card-art" src="assets/cards/carta-vermelha.png" alt="Carta Vermelha">
+                <span class="destino-mini-card-count" id="header-destino-count-vermelha" data-color="vermelha">0</span>
+                <div class="destino-card-tooltip" id="destino-tooltip-vermelha" role="tooltip">
+                  <strong>Vermelha</strong>
+                  <ul>
+                    <li>Recupera 1 ponto de fadiga do usuário.</li>
+                    <li>Permite rolar novamente o dado de perícia. (O segundo resultado é obrigatório, mesmo que seja pior.)</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="destino-mini-card" data-color="azul" tabindex="0" title="Azul: • Recupera 2 pontos de fadiga do usuário. • Recupera 1 ponto de fadiga de um aliado. • Permite rolar novamente qualquer dado de perícia do grupo de jogadores. (O segundo resultado é obrigatório.)">
+                <img class="destino-mini-card-art" src="assets/cards/carta-azul.png" alt="Carta Azul">
+                <span class="destino-mini-card-count" id="header-destino-count-azul" data-color="azul">0</span>
+                <div class="destino-card-tooltip" id="destino-tooltip-azul" role="tooltip">
+                  <strong>Azul</strong>
+                  <ul>
+                    <li>Recupera 2 pontos de fadiga do usuário.</li>
+                    <li>Recupera 1 ponto de fadiga de um aliado.</li>
+                    <li>Permite rolar novamente qualquer dado de perícia do grupo de jogadores. (O segundo resultado é obrigatório.)</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="destino-mini-card" data-color="verde" tabindex="0" title="Verde: • Recupera 3 pontos de fadiga do usuário. • Recupera 1 ponto de fadiga de todos os aliados. • Permite rolar um dado de perícia adicional e somar ao resultado final.">
+                <img class="destino-mini-card-art" src="assets/cards/carta-verde.png" alt="Carta Verde">
+                <span class="destino-mini-card-count" id="header-destino-count-verde" data-color="verde">0</span>
+                <div class="destino-card-tooltip" id="destino-tooltip-verde" role="tooltip">
+                  <strong>Verde</strong>
+                  <ul>
+                    <li>Recupera 3 pontos de fadiga do usuário.</li>
+                    <li>Recupera 1 ponto de fadiga de todos os aliados.</li>
+                    <li>Permite rolar um dado de perícia adicional e somar ao resultado final.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="destino-mini-card" data-color="preta" tabindex="0" title="Preta: • Recupera todos os pontos de fadiga do usuário. • Recupera 3 pontos de fadiga de todos os aliados. • Concede sucesso automático em um teste, sem gastar valores do 6B.">
+                <img class="destino-mini-card-art" src="assets/cards/carta-preta.png" alt="Carta Preta">
+                <span class="destino-mini-card-count" id="header-destino-count-preta" data-color="preta">0</span>
+                <div class="destino-card-tooltip" id="destino-tooltip-preta" role="tooltip">
+                  <strong>Preta</strong>
+                  <ul>
+                    <li>Recupera todos os pontos de fadiga do usuário.</li>
+                    <li>Recupera 3 pontos de fadiga de todos os aliados.</li>
+                    <li>Concede sucesso automático em um teste, sem gastar valores do 6B.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="btn-gastar-destino" class="btn btn-secondary btn-small btn-gastar-destino">Gastar</button>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="header-session-row">
+            <button type="button" id="btn-nova-sessao" class="btn btn-secondary btn-small" title="Zera Fichas do Destino não usadas, sorteia 1 ficha da pool do personagem e reseta o 6B para a rolagem inicial da sessão">Nova Sessão</button>
+            <button type="button" id="btn-tempo-livre" class="btn btn-secondary btn-small" title="Abrir atividades de Tempo Livre (Retreinar, Trabalhar, Fabricar)">Tempo Livre</button>
+            <button type="button" id="btn-buffs" class="btn btn-secondary btn-small" title="Ver e gerenciar buffs de magias ativos">Buff<span class="buff-btn-badge" id="btn-buffs-badge" hidden>0</span></button>
+            <label class="veterano-toggle-label" for="is-veterano" title="Personagem Veterano (morto-vivo consciente — Defesa mínima e REM máximo escalam com o Nível de Terror)">
+              <input type="checkbox" id="is-veterano" name="is-veterano">
+              <span>Veterano</span>
+            </label>
+          </div>
+
+          <div class="info-row info-row-top">
+            <div class="field-group nome-group">
+              <label class="field-label" for="nome">NOME</label>
+              <input type="text" id="nome" name="nome" class="field-line field-nome" autocomplete="off">
+            </div>
+            <div class="field-group alcunha-group">
+              <label class="field-label" for="alcunha">ALCUNHA</label>
+              <input type="text" id="alcunha" name="alcunha" class="field-line field-alcunha" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="info-row info-row-bottom">
+            <div class="field-group nivel-group">
+              <label class="field-label" for="nivel">NÍVEL</label>
+              <div class="nivel-control-row">
+                <input type="text" id="nivel" name="nivel" class="field-line field-short" inputmode="numeric" autocomplete="off">
+                <button type="button" id="btn-level-up" class="btn btn-secondary btn-small btn-level-up" title="Subir de nível">Subir de nível</button>
+              </div>
+            </div>
+            <div class="field-group rem-group">
+              <span class="field-label">REM</span>
+              <div class="rem-inputs">
+                <label class="sr-only" for="rem-atual">REM Atual</label>
+                <input type="text" id="rem-atual" name="rem-atual" class="field-line field-rem" placeholder="Atual" inputmode="numeric" autocomplete="off">
+                <span class="rem-sep">/</span>
+                <label class="sr-only" for="rem-total">REM Total</label>
+                <input type="text" id="rem-total" name="rem-total" class="field-line field-rem" placeholder="Total" inputmode="numeric" autocomplete="off" readonly>
+              </div>
+            </div>
+            <div class="field-group config-6b-group">
+              <label class="field-label" for="config-6b">DADOS 6B</label>
+              <input type="text" id="config-6b" name="config-6b" class="field-line field-6b" value="6d6" autocomplete="off" readonly title="Configuração de dados do 6B pelo nível">
+            </div>
+            <div class="field-group dinheiro-group">
+              <label class="field-label" for="dinheiro">DINHEIRO ($)</label>
+              <input type="text" id="dinheiro" name="dinheiro" class="field-line field-short" value="10" inputmode="decimal" autocomplete="off" title="Dinheiro atual do personagem ($)">
+            </div>
+          </div>
+
+          <div class="info-row info-row-extra">
+            <!-- NÍVEL DE TERROR DA CENA (abaixo de Nível / Subir de Nível) -->
+            <div class="terror-scene-box header-terror-box" id="terror-scene-box">
+              <div class="terror-scene-header">
+                <label class="field-label" for="scene-terror-slider">Nível de Terror da Cena</label>
+                <div class="terror-scene-controls">
+                  <input type="range" id="scene-terror-slider" name="scene-terror-slider" min="0" max="6" step="1" value="0" aria-label="Nível de Terror da Cena (0 a 6)">
+                  <input type="number" id="scene-terror-input" name="scene-terror-input" class="field-line field-short terror-num-input" min="0" max="6" step="1" value="0" aria-label="Valor numérico do Nível de Terror">
+                </div>
+              </div>
+              <div class="terror-veterano-note" id="terror-veterano-note" aria-live="polite"></div>
+              <div class="descanso-actions" style="margin-top: 8px; display: flex; gap: 8px;">
+                <button type="button" id="btn-descanso-curto" class="btn btn-secondary btn-small" title="Recupera 1 Fadiga">Descanso Curto</button>
+                <button type="button" id="btn-descanso-longo" class="btn btn-secondary btn-small" title="Recupera toda a Fadiga">Descanso Longo</button>
+              </div>
+            </div>
+
+            <!-- CONDIÇÕES ATIVAS DO PERSONAGEM (entre Nível de Terror e o tambor do 6B) -->
+            <div class="condicoes-ativas-block header-condicoes-box" id="condicoes-ativas-block" aria-label="Condições Ativas">
+              <div class="condicoes-header-row">
+                <span class="field-label">Condições Ativas</span>
+                <button type="button" class="btn-catalog-add btn-add-condicao" id="btn-add-condicao" title="Adicionar condição" aria-label="Adicionar condição">+</button>
+              </div>
+              <div class="condicao-selector-panel" id="condicao-selector-panel" hidden>
+                <div class="condicao-selector-row">
+                  <select id="condicao-select" class="field-line condicao-select" aria-label="Selecionar condição"></select>
+                  <label class="condicao-grau-wrap" id="condicao-grau-wrap">
+                    <span>Grau:</span>
+                    <input type="number" id="condicao-grau-input" class="field-line field-short" value="1" min="1" max="20">
+                  </label>
+                  <button type="button" class="btn btn-danger btn-small" id="btn-confirm-add-condicao">Aplicar</button>
+                </div>
+                <p class="condicao-preview-effect" id="condicao-preview-effect"></p>
+              </div>
+              <div class="condicoes-ativas-list" id="condicoes-ativas-list" aria-live="polite"></div>
+              <div class="condicoes-penalidade-summary" id="condicoes-penalidade-summary" aria-live="polite"></div>
+              <div class="condicoes-feedback" id="condicoes-feedback" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cylinder-block" aria-label="Tambor do revólver — valores numéricos por câmara">
+          <div class="cylinder" id="cylinder">
+            <div class="chamber" style="--i:0">
+              <div class="chamber-body">
+                <input type="text" class="chamber-input" id="chamber-0" name="chamber-0" inputmode="numeric" maxlength="2" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Câmara 1 — valor">
+              </div>
+              <label class="chamber-toggle" for="chamber-0-mark" title="Destacar câmara 1">
+                <input type="checkbox" class="chamber-mark" id="chamber-0-mark" name="chamber-0-mark" aria-label="Destacar câmara 1">
+                <span class="chamber-toggle-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="chamber" style="--i:1">
+              <div class="chamber-body">
+                <input type="text" class="chamber-input" id="chamber-1" name="chamber-1" inputmode="numeric" maxlength="2" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Câmara 2 — valor">
+              </div>
+              <label class="chamber-toggle" for="chamber-1-mark" title="Destacar câmara 2">
+                <input type="checkbox" class="chamber-mark" id="chamber-1-mark" name="chamber-1-mark" aria-label="Destacar câmara 2">
+                <span class="chamber-toggle-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="chamber" style="--i:2">
+              <div class="chamber-body">
+                <input type="text" class="chamber-input" id="chamber-2" name="chamber-2" inputmode="numeric" maxlength="2" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Câmara 3 — valor">
+              </div>
+              <label class="chamber-toggle" for="chamber-2-mark" title="Destacar câmara 3">
+                <input type="checkbox" class="chamber-mark" id="chamber-2-mark" name="chamber-2-mark" aria-label="Destacar câmara 3">
+                <span class="chamber-toggle-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="chamber" style="--i:3">
+              <div class="chamber-body">
+                <input type="text" class="chamber-input" id="chamber-3" name="chamber-3" inputmode="numeric" maxlength="2" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Câmara 4 — valor">
+              </div>
+              <label class="chamber-toggle" for="chamber-3-mark" title="Destacar câmara 4">
+                <input type="checkbox" class="chamber-mark" id="chamber-3-mark" name="chamber-3-mark" aria-label="Destacar câmara 4">
+                <span class="chamber-toggle-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="chamber" style="--i:4">
+              <div class="chamber-body">
+                <input type="text" class="chamber-input" id="chamber-4" name="chamber-4" inputmode="numeric" maxlength="2" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Câmara 5 — valor">
+              </div>
+              <label class="chamber-toggle" for="chamber-4-mark" title="Destacar câmara 5">
+                <input type="checkbox" class="chamber-mark" id="chamber-4-mark" name="chamber-4-mark" aria-label="Destacar câmara 5">
+                <span class="chamber-toggle-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="chamber" style="--i:5">
+              <div class="chamber-body">
+                <input type="text" class="chamber-input" id="chamber-5" name="chamber-5" inputmode="numeric" maxlength="2" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Câmara 6 — valor">
+              </div>
+              <label class="chamber-toggle" for="chamber-5-mark" title="Destacar câmara 6">
+                <input type="checkbox" class="chamber-mark" id="chamber-5-mark" name="chamber-5-mark" aria-label="Destacar câmara 6">
+                <span class="chamber-toggle-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="cylinder-core" aria-hidden="true"></div>
+          </div>
+          <button type="button" id="btn-roll" class="btn btn-roll" aria-label="Rolar 6 Bullets">Rolar 6 Bullets</button>
+        </div>
+      </header>
+
+      <!-- ABAS -->
+      <nav class="ficha-tabs" role="tablist" aria-label="Seções da ficha">
+        <button type="button" class="ficha-tab active" role="tab" id="tab-btn-ficha" data-tab="ficha" aria-selected="true" aria-controls="tab-panel-ficha">Ficha</button>
+        <button type="button" class="ficha-tab" role="tab" id="tab-btn-equipamentos" data-tab="equipamentos" aria-selected="false" aria-controls="tab-panel-equipamentos">Equipamentos</button>
+        <button type="button" class="ficha-tab" role="tab" id="tab-btn-magias" data-tab="magias" aria-selected="false" aria-controls="tab-panel-magias">Magias</button>
+        <button type="button" class="ficha-tab" role="tab" id="tab-btn-historia" data-tab="historia" aria-selected="false" aria-controls="tab-panel-historia">História</button>
+        <button type="button" class="ficha-tab" role="tab" id="tab-btn-anotacoes" data-tab="anotacoes" aria-selected="false" aria-controls="tab-panel-anotacoes">Anotações</button>
+      </nav>
+
+      <!-- PÁGINA 1: FICHA MECÂNICA -->
+      <div class="ficha-tab-panel active" id="tab-panel-ficha" role="tabpanel" aria-labelledby="tab-btn-ficha">
+      <!-- CORPO PRINCIPAL -->
+      <div class="ficha-body">
+        <!-- COLUNA ESQUERDA: PERÍCIAS -->
+        <section class="col-pericias" aria-labelledby="titulo-pericias">
+          <h2 id="titulo-pericias" class="section-title">PERÍCIAS</h2>
+
+          <div class="dice-header" aria-hidden="true">
+            <span class="skill-name-col"></span>
+            <span class="die-col" title="d4">d4</span>
+            <span class="die-col" title="d6">d6</span>
+            <span class="die-col" title="d8">d8</span>
+            <span class="die-col" title="d10">d10</span>
+            <span class="die-col" title="d12">d12</span>
+          </div>
+
+          <div class="skills-list" id="skills-list">
+            <!-- Gerado via JS para manter HTML enxuto; fallback estático abaixo -->
+          </div>
+
+          <noscript>
+            <p class="noscript-warn">Ative JavaScript para exibir as perícias e o salvamento automático.</p>
+          </noscript>
+        </section>
+
+        <!-- COLUNA DIREITA -->
+        <section class="col-direita">
+          <div class="stats-top">
+            <div class="stat-box">
+              <label class="field-label" for="defesa">Defesa</label>
+              <input type="text" id="defesa" name="defesa" class="field-line field-rope" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="stat-box">
+              <label class="field-label" for="iniciativa">Iniciativa</label>
+              <input type="text" id="iniciativa" name="iniciativa" class="field-line field-rope" inputmode="numeric" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="magias-status-bar ficha-combat-status-bar" id="ficha-combat-derived-bar">
+            <div class="magias-stat-box">
+              <span class="field-label">Ações / Turno</span>
+              <span class="magias-stat-val" id="acoes-turno-display">1</span>
+            </div>
+            <div class="magias-stat-box">
+              <span class="field-label">Mov. / Ação</span>
+              <span class="magias-stat-val" id="movimento-acao-display">6m</span>
+            </div>
+            <div class="magias-stat-box">
+              <span class="field-label">Carga Solta</span>
+              <span class="magias-stat-val" id="ficha-carga-solta-display">0 / 2 itens</span>
+            </div>
+          </div>
+          <div class="magias-limit-alert" id="ficha-overload-alert" role="alert" hidden></div>
+
+          <section class="combate-block" aria-labelledby="titulo-combate">
+            <h2 id="titulo-combate" class="section-title">COMBATE</h2>
+
+            <div class="protecao-row" id="protecao-block">
+              <label class="field-label" for="protecao">Proteção</label>
+              <input type="hidden" id="protecao" name="protecao" value="0">
+              <div class="inv-item-list ficha-equip-list protecao-equip-list" id="ficha-equip-vestuario"></div>
+              <div class="protecao-total-row" id="protecao-total-row">
+                <span class="protecao-total-label">Total de Proteção:</span>
+                <strong class="protecao-total-value" id="protecao-total-value">0</strong>
+              </div>
+            </div>
+
+            <div class="dice-header combate-dice-header" aria-hidden="true">
+              <span class="skill-name-col"></span>
+              <span class="die-col">d4</span>
+              <span class="die-col">d6</span>
+              <span class="die-col">d8</span>
+              <span class="die-col">d10</span>
+              <span class="die-col">d12</span>
+            </div>
+
+            <div class="combate-skills" id="combate-skills"></div>
+          </section>
+        </section>
+      </div>
+      </div>
+
+      <!-- PÁGINA 2: EQUIPAMENTOS / NARRATIVA -->
+      <div class="ficha-tab-panel" id="tab-panel-equipamentos" role="tabpanel" aria-labelledby="tab-btn-equipamentos" hidden>
+        <div class="narrative-page">
+          <div class="magias-status-bar" id="inv-capacity-status-bar">
+            <div class="magias-stat-box">
+              <span class="field-label">Carga Solta</span>
+              <span class="magias-stat-val" id="inv-loose-load-display">0 / 2 itens</span>
+            </div>
+            <div class="magias-stat-box">
+              <span class="field-label">Mochila</span>
+              <span class="magias-stat-val" id="inv-backpack-vol-display">0 / 15 volumes</span>
+            </div>
+            <div class="magias-stat-box">
+              <span class="field-label">Alforje</span>
+              <span class="magias-stat-val" id="inv-saddlebag-vol-display">Sem alforje</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-small" id="btn-open-transfer-modal" title="Transferir itens entre Mochila e Alforje do Cavalo" disabled>Transferir Mochila ↔ Alforje</button>
+          </div>
+
+          <div class="magias-limit-alert" id="inv-overload-alert" role="alert" hidden></div>
+          <div class="magias-use-feedback" id="inv-storage-feedback" role="status" aria-live="polite"></div>
+
+          <div class="equipamentos-block">
+            <label class="equip-label" for="equipamentos">Equipamentos</label>
+            <textarea id="equipamentos" name="equipamentos" class="equipamentos-area" spellcheck="false" wrap="soft"></textarea>
+          </div>
+
+          <div class="equipamentos-block inventarios-block">
+            <label class="equip-label" for="inventario">Inventário (Itens Soltos &amp; Companheiros)</label>
+            <div class="inv-header-actions"><button type="button" class="btn btn-secondary btn-small btn-loot" id="btn-loot" title="Loot — adicionar item sem descontar dinheiro">Loot</button><button type="button" class="btn-catalog-add" id="btn-catalogo" title="Comprar item do catálogo" aria-label="Adicionar item do catálogo">+</button></div>
+            <div class="inv-item-list" id="inv-item-list" aria-live="polite"></div>
+            <textarea id="inventario" name="inventario" class="equipamentos-area" spellcheck="false" wrap="soft" hidden aria-hidden="true" tabindex="-1"></textarea>
+          </div>
+
+          <div class="equipamentos-block inventarios-block" id="mochila-block">
+            <label class="equip-label">Mochila do Personagem</label>
+            <div class="inv-storage-subcontent">
+              <div class="magias-status-bar">
+                <div class="magias-stat-box">
+                  <span class="field-label">Volume Ocupado</span>
+                  <span class="magias-stat-val" id="mochila-bar-display">0 / 15 volumes</span>
+                </div>
+                <div class="magias-stat-box">
+                  <span class="field-label">Espaço Livre</span>
+                  <span class="magias-stat-val" id="mochila-free-display">15 volumes</span>
+                </div>
+              </div>
+              <div class="inv-item-list inv-subcontainer-list" id="mochila-item-list" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div class="equipamentos-block inventarios-block" id="montaria-block">
+            <label class="equip-label">Cavalo / Montaria</label>
+            <div class="inv-storage-subcontent">
+              <p class="inv-empty" id="montaria-locked-msg">Nenhum Cavalo no inventário. Adquira um item “Cavalo” em Animais &amp; Montaria para habilitar os slots de Sela, Alforje e Barda.</p>
+
+              <div id="montaria-active-panel" hidden>
+                <div class="magias-status-bar" id="montaria-slots-bar">
+                  <div class="magias-stat-box">
+                    <span class="field-label">Montaria</span>
+                    <span class="magias-stat-val" id="montaria-horse-name">Cavalo</span>
+                  </div>
+                  <div class="magias-stat-box">
+                    <span class="field-label">Sela</span>
+                    <span class="magias-stat-val" id="montaria-slot-sela">Nenhuma</span>
+                  </div>
+                  <div class="magias-stat-box">
+                    <span class="field-label">Alforje</span>
+                    <span class="magias-stat-val" id="montaria-slot-alforge">Nenhum</span>
+                  </div>
+                  <div class="magias-stat-box">
+                    <span class="field-label">Barda</span>
+                    <span class="magias-stat-val" id="montaria-slot-barda">Nenhuma</span>
+                  </div>
+                </div>
+
+                <div class="inv-item-list inv-subcontainer-list" id="montaria-gear-list" aria-label="Equipamentos de montaria possuídos"></div>
+
+                <div id="alforge-container-panel" hidden>
+                  <div class="magias-status-bar inv-alforge-bar">
+                    <div class="magias-stat-box">
+                      <span class="field-label">Alforje Equipado</span>
+                      <span class="magias-stat-val" id="alforge-bar-display">0 / 0 volumes</span>
+                    </div>
+                    <div class="magias-stat-box">
+                      <span class="field-label">Espaço Livre</span>
+                      <span class="magias-stat-val" id="alforge-free-display">0 volumes</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-small" id="btn-montaria-transfer">Mochila ↔ Alforje</button>
+                  </div>
+                  <div class="inv-item-list inv-subcontainer-list" id="alforge-item-list" aria-live="polite"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PÁGINA 3: MAGIAS -->
+      <div class="ficha-tab-panel" id="tab-panel-magias" role="tabpanel" aria-labelledby="tab-btn-magias" hidden>
+        <div class="narrative-page magias-page">
+          <div class="magias-status-bar">
+            <div class="magias-stat-box">
+              <span class="field-label">REM (Atual / Máx)</span>
+              <span class="magias-stat-val" id="magias-rem-display">0 / 0</span>
+            </div>
+            <div class="magias-stat-box">
+              <span class="field-label">Limite do Repertório</span>
+              <span class="magias-stat-val" id="magias-limit-display">0 / 2</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-small" id="btn-magias-descanso-longo" title="Recupera REM igual ao nível de Misticismo">Descanso Longo</button>
+          </div>
+
+          <div class="magias-limit-alert" id="magias-limit-alert" role="alert" hidden></div>
+          <div class="magias-use-feedback" id="magias-use-feedback" aria-live="polite"></div>
+
+          <div class="equipamentos-block inventarios-block magias-repertorio-block">
+            <label class="equip-label">Repertório de Magias Conhecidas</label>
+            <button type="button" class="btn-catalog-add" id="btn-magias-catalogo" title="Adicionar magia do catálogo" aria-label="Adicionar magia do catálogo">+</button>
+            <div class="inv-item-list magias-item-list" id="magias-item-list" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PÁGINA 4: HISTÓRIA -->
+      <div class="ficha-tab-panel" id="tab-panel-historia" role="tabpanel" aria-labelledby="tab-btn-historia" hidden>
+        <div class="narrative-page historia-page">
+          <div class="historia-portrait-box" id="historia-portrait-box">
+            <div class="historia-portrait-frame">
+              <img id="historia-portrait-preview" class="historia-portrait-preview" alt="Retrato do Personagem" hidden>
+              <div id="historia-portrait-placeholder" class="historia-portrait-placeholder">Sem retrato</div>
+            </div>
+            <div class="historia-portrait-controls">
+              <span class="equip-label">Retrato do Personagem</span>
+              <p class="historia-portrait-hint">Imagem de retrato (e futuro token de mesa). Formatos aceitos: JPG, PNG, WEBP ou GIF (máx. 5 MB).</p>
+              <input type="file" id="historia-portrait-input" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+              <div class="historia-portrait-actions">
+                <button type="button" id="btn-historia-portrait-upload" class="btn btn-secondary btn-small">Enviar / Trocar Retrato (máx. 5 MB)</button>
+              </div>
+              <p id="historia-portrait-feedback" class="historia-portrait-feedback" aria-live="polite" hidden></p>
+            </div>
+          </div>
+          <div class="narrative-fields">
+            <div class="narrative-field">
+              <label class="equip-label" for="historia">História</label>
+              <textarea id="historia" name="historia" class="notas-area" rows="8" placeholder="Origem, passado, motivações..." spellcheck="false"></textarea>
+            </div>
+            <div class="narrative-field">
+              <label class="equip-label" for="notas">Observações</label>
+              <textarea id="notas" name="notas" class="notas-area" rows="8" placeholder="Anotações, detalhes, lembretes..." spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PÁGINA 5: ANOTAÇÕES -->
+      <div class="ficha-tab-panel" id="tab-panel-anotacoes" role="tabpanel" aria-labelledby="tab-btn-anotacoes" hidden>
+        <div class="narrative-page anotacoes-page">
+          <div class="narrative-fields">
+            <div class="narrative-field">
+              <label class="equip-label" for="anotacoes-npcs">NPCs</label>
+              <textarea id="anotacoes-npcs" name="anotacoes-npcs" class="notas-area" rows="6" placeholder="Contatos, aliados, rivais e figuras importantes..." spellcheck="false"></textarea>
+            </div>
+            <div class="narrative-field">
+              <label class="equip-label" for="anotacoes-acontecimentos">Acontecimentos Importantes</label>
+              <textarea id="anotacoes-acontecimentos" name="anotacoes-acontecimentos" class="notas-area" rows="6" placeholder="Eventos marcantes, pistas e descobertas..." spellcheck="false"></textarea>
+            </div>
+            <div class="narrative-field">
+              <label class="equip-label" for="anotacoes-resumos">Resumos de Sessão</label>
+              <textarea id="anotacoes-resumos" name="anotacoes-resumos" class="notas-area" rows="6" placeholder="Registros e resumos das sessões..." spellcheck="false"></textarea>
+            </div>
+            <div class="narrative-field">
+              <label class="equip-label" for="anotacoes-soltas">Notas Soltas</label>
+              <textarea id="anotacoes-soltas" name="anotacoes-soltas" class="notas-area" rows="6" placeholder="Anotações rápidas, lembretes gerais..." spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div class="toolbar" style="display: none;">
+      <button type="button" id="btn-voltar-home" class="btn btn-secondary" title="Voltar ao Menu Principal">Voltar ao Menu</button>
+      <button type="button" id="btn-salvar" class="btn btn-secondary" title="Salvar manualmente">Salvar</button>
+      <button type="button" id="btn-limpar-rolagens" class="btn btn-secondary" title="Limpar apenas a última rolagem de cada perícia">Limpar Rolagens</button>
+      <button type="button" id="btn-limpar" class="btn btn-danger">Limpar ficha</button>
+      <button type="button" id="btn-logout-toolbar" class="btn btn-secondary" title="Encerrar sessão local e retornar ao Login">Sair</button>
+      <span class="save-status" id="save-status" aria-live="polite"></span>
+    </div>
+    </div>
+  </div>
+
+  <!-- Modal: rolagem e seleção de defesa -->
+  <div class="modal-overlay" id="defense-modal" role="dialog" aria-modal="true" aria-labelledby="defense-modal-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="defense-modal-title">Ritual do Tambor — Defesa</h3>
+      <p class="modal-sub" id="defense-modal-sub">Selecione exatamente <strong>3</strong> resultados para defesa.</p>
+
+      <div class="roll-grid" id="defense-roll-grid" aria-label="Resultados rolados"></div>
+
+      <div class="modal-hint" id="defense-modal-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="defense-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="defense-confirm" disabled>Confirmar seleção</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: rolagem de perícias/armas -->
+  <div class="modal-overlay" id="roll-modal" role="dialog" aria-modal="true" aria-labelledby="roll-modal-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="roll-modal-title">Rolagem</h3>
+      <p class="modal-sub" id="roll-modal-sub">Dados rolados e resultados.</p>
+
+      <div class="roll-details" id="roll-modal-details" aria-label="Detalhes da rolagem"></div>
+
+      <div class="roll-total">
+        <span class="roll-total-label">Maior Resultado</span>
+        <span class="roll-total-value" id="roll-modal-total">0</span>
+      </div>
+
+      <div id="roll-modal-test-calc-slot" class="modal-test-calc-slot"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="roll-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: seleção de câmaras do tambor -->
+  <div class="modal-overlay" id="chamber-modal" role="dialog" aria-modal="true" aria-labelledby="chamber-modal-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="chamber-modal-title">Ritual do Tambor</h3>
+      <p class="modal-sub" id="chamber-modal-sub">Selecione as câmaras para adicionar ao teste.</p>
+
+      <div class="chamber-roll-summary" id="chamber-roll-summary" aria-live="polite"></div>
+
+      <div id="chamber-modal-test-calc-slot" class="modal-test-calc-slot">
+        <div class="test-calc-box" id="test-calc-box" aria-label="Calculadora de Dificuldade de Teste">
+          <span class="field-label">Dificuldade do Teste (DB + Terror + Mod)</span>
+          <div class="test-calc-row">
+            <label class="test-calc-field">
+              <span>DB</span>
+              <input type="number" id="test-calc-db" name="test-calc-db" class="field-line field-short" value="6" min="0" max="50">
+            </label>
+            <span class="test-calc-op">+</span>
+            <label class="test-calc-field">
+              <span>Terror</span>
+              <input type="number" id="test-calc-terror" class="field-line field-short" value="0" readonly tabindex="-1">
+            </label>
+            <span class="test-calc-op">+</span>
+            <label class="test-calc-field">
+              <span>Mod. Mestre</span>
+              <input type="number" id="test-calc-mod" name="test-calc-mod" class="field-line field-short" value="0" min="-20" max="30">
+            </label>
+            <span class="test-calc-op">=</span>
+            <div class="test-calc-total-box">
+              <span>Dif. Total</span>
+              <strong id="test-calc-total" class="test-calc-total-val">6</strong>
+            </div>
+          </div>
+          <div id="test-calc-result-badge" class="test-calc-result-badge" aria-live="polite">Aguardando rolagem...</div>
+        </div>
+      </div>
+
+      <div class="chamber-grid" id="chamber-grid" aria-label="Câmaras disponíveis"></div>
+
+      <div class="modal-hint" id="chamber-modal-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="chamber-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="chamber-confirm">Confirmar seleção</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: escolha após explosão de dados -->
+  <div class="modal-overlay" id="explosion-modal" role="dialog" aria-modal="true" aria-labelledby="explosion-modal-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="explosion-modal-title">Estouro de Dados</h3>
+      <p class="modal-sub">Escolha o resultado base do teste.</p>
+      <div class="explosion-choice-grid" id="explosion-choice-grid"></div>
+      <div class="modal-hint" id="explosion-modal-hint" aria-live="polite"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger" id="explosion-confirm" disabled>Confirmar resultado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: seleção inicial de 6 perícias -->
+  <div class="modal-overlay" id="initial-skills-modal" role="dialog" aria-modal="true" aria-labelledby="initial-skills-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="initial-skills-title">Escolha suas Perícias</h3>
+      <p class="modal-sub">Selecione exatamente <strong>6</strong> perícias (normais e/ou combate).</p>
+      <div class="initial-skills-grid" id="initial-skills-grid"></div>
+      <div class="modal-hint" id="initial-skills-hint" aria-live="polite">Selecionadas: 0/6</div>
+      
+      <div class="master-values-section">
+        <p class="modal-sub">Valores informados pelo mestre:</p>
+        <div class="master-values-inputs">
+          <input type="number" id="master-value-1" class="field-line field-short" placeholder="Valor 1" min="1" max="20">
+          <input type="number" id="master-value-2" class="field-line field-short" placeholder="Valor 2" min="1" max="20">
+          <input type="number" id="master-value-3" class="field-line field-short" placeholder="Valor 3" min="1" max="20">
+        </div>
+        <p class="modal-sub" style="margin-top: 12px;">Escolha 2 valores para perícias gerais (soma mínima: 7):</p>
+        <div class="master-values-selection">
+          <label><input type="checkbox" id="select-val-1" value="1"> Valor 1</label>
+          <label><input type="checkbox" id="select-val-2" value="2"> Valor 2</label>
+          <label><input type="checkbox" id="select-val-3" value="3"> Valor 3</label>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger" id="initial-skills-confirm" disabled>Confirmar 6 perícias</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: distribuição de pontos de perícia -->
+  <div class="modal-overlay" id="skill-points-modal" role="dialog" aria-modal="true" aria-labelledby="skill-points-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="skill-points-title">Distribuir Pontos de Perícia</h3>
+      <p class="modal-sub" id="skill-points-sub">Distribua os pontos entre suas perícias selecionadas.</p>
+      
+      <div class="points-summary">
+        <div class="points-general" id="points-general-box">
+          <span class="points-label" id="points-general-label">Pontos Gerais:</span>
+          <span class="points-value" id="points-general-available">0</span>
+        </div>
+        <div class="points-combat" id="points-combat-box">
+          <span class="points-label">Pontos Combate:</span>
+          <span class="points-value" id="points-combat-available">0</span>
+        </div>
+      </div>
+      
+      <div class="skill-points-grid" id="skill-points-grid"></div>
+      <div class="modal-hint" id="skill-points-hint" aria-live="polite"></div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="skill-points-back">Voltar</button>
+        <button type="button" class="btn btn-danger" id="skill-points-confirm" disabled>Confirmar Distribuição</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: catálogo de equipamentos -->
+  <div class="modal-overlay" id="catalog-modal" role="dialog" aria-modal="true" aria-labelledby="catalog-modal-title">
+    <div class="modal-box modal-box-wide modal-box-catalog">
+      <div class="catalog-header-row">
+        <div>
+          <h3 class="modal-title" id="catalog-modal-title">Catálogo</h3>
+          <p class="modal-sub" id="catalog-modal-sub">Consulte um item e adicione-o ao inventário.</p>
+        </div>
+        <div class="catalog-header-controls">
+          <span class="catalog-money-badge" id="catalog-money-display">Saldo: $10</span>
+          <button type="button" class="btn btn-secondary btn-small" id="catalog-cancel">Fechar</button>
+        </div>
+      </div>
+
+      <div class="catalog-create-form" id="catalog-create-form" hidden>
+        <h4 class="catalog-create-title">Criar Novo Item</h4>
+        <div class="catalog-create-grid">
+          <label class="catalog-create-field"><span>Nome *</span><input type="text" id="create-item-nome" class="field-line" placeholder="Ex: Revólver de Prata"></label>
+          <label class="catalog-create-field"><span>Categoria</span>
+            <select id="create-item-group" class="field-line">
+              <option value="equipamentos" selected>Equipamentos</option>
+              <option value="itens">Itens</option>
+              <option value="armas">Armas</option>
+              <option value="vestuario">Vestuário</option>
+              <option value="animais e equipamentos">Animais &amp; Montaria</option>
+            </select>
+          </label>
+          <label class="catalog-create-field"><span>Tipo / Uso</span>
+            <select id="create-item-subtipo" class="field-line">
+              <option value="equipamentos_comuns" selected>Geral / Outro</option>
+              <option value="revolveres">Arma à Distância</option>
+              <option value="armas_corpo_a_corpo">Arma Corpo a Corpo</option>
+              <option value="ambos">Uso Duplo (Corpo a Corpo e Distância)</option>
+              <option value="vestuario">Vestuário</option>
+            </select>
+          </label>
+          <label class="catalog-create-field"><span>Preço ($)</span><input type="text" id="create-item-preco" class="field-line" placeholder="Ex: 5 ou 50¢"></label>
+          <label class="catalog-create-field"><span>Volume</span><input type="text" id="create-item-volume" class="field-line" placeholder="Padrão: 1 (provisório)"></label>
+          <label class="catalog-create-field"><span>Dano</span><input type="text" id="create-item-dano" class="field-line" placeholder="Ex: d6, 2d6"></label>
+          <label class="catalog-create-field"><span>Alcance</span><input type="text" id="create-item-alcance" class="field-line" placeholder="Ex: 15m/10q ou corpo-a-corpo"></label>
+          <label class="catalog-create-field"><span>Recarga</span><input type="text" id="create-item-recarga" class="field-line" placeholder="Ex: 2 ações ou X"></label>
+          <label class="catalog-create-field"><span>Tambor / Munição</span><input type="text" id="create-item-tambor" class="field-line" placeholder="Ex: 6 ou X"></label>
+          <label class="catalog-create-field"><span>Proteção</span><input type="text" id="create-item-protecao" class="field-line" placeholder="Ex: +1"></label>
+          <label class="catalog-create-field"><span>Duração</span><input type="text" id="create-item-duracao" class="field-line" placeholder="Ex: 10m"></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Detalhes</span><input type="text" id="create-item-detalhes" class="field-line" placeholder="Propriedades ou bônus adicionais"></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Descrição</span><textarea id="create-item-descricao" class="notas-area" rows="2" placeholder="Descrição do item..."></textarea></label>
+        </div>
+        <div class="catalog-create-actions">
+          <button type="button" class="btn btn-secondary btn-small" id="btn-cancel-created-item">Cancelar</button>
+          <button type="button" class="btn btn-danger btn-small" id="btn-save-created-item">Salvar Item</button>
+        </div>
+      </div>
+
+      <div class="catalog-tabs" id="catalog-group-tabs" role="tablist" aria-label="Categorias"></div>
+      <div class="catalog-tabs catalog-tabs-lists" id="catalog-list-tabs" role="tablist" aria-label="Listas"></div>
+
+      <input type="search" class="catalog-search" id="catalog-search" placeholder="Pesquisar pelo nome" autocomplete="off">
+
+      <div class="catalog-body">
+        <div class="catalog-list" id="catalog-item-list" aria-label="Itens"></div>
+        <div class="catalog-detail" id="catalog-item-detail">
+          <p class="catalog-detail-empty">Selecione um item para ver os atributos.</p>
+        </div>
+      </div>
+
+      <div class="catalog-add-row">
+        <label id="catalog-recipient-label" hidden>Destinatário <select id="catalog-recipient" aria-label="Jogador destinatário"></select></label>
+        <label class="catalog-qty-label" for="catalog-qty">Quantidade</label>
+        <input type="number" class="catalog-qty" id="catalog-qty" min="1" step="1" value="1">
+        <label class="catalog-qty-label" for="catalog-dest-select">Destino</label>
+        <select id="catalog-dest-select" class="field-line catalog-dest-select">
+          <option value="solto">Inventário (Solto)</option>
+          <option value="mochila">Mochila</option>
+          <option value="alforge">Alforje do Cavalo</option>
+        </select>
+      </div>
+
+      <div class="modal-hint" id="catalog-modal-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-catalog-create-item">Criar</button>
+        <button type="button" class="btn btn-danger" id="catalog-confirm" disabled>Adicionar ao inventário</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: catálogo de magias -->
+  <div class="modal-overlay" id="magias-catalog-modal" role="dialog" aria-modal="true" aria-labelledby="magias-catalog-title">
+    <div class="modal-box modal-box-wide modal-box-catalog">
+      <div class="catalog-header-row">
+        <div>
+          <h3 class="modal-title" id="magias-catalog-title">Catálogo de Magias</h3>
+          <p class="modal-sub">Consulte uma magia por caminho e adicione-a ao repertório.</p>
+        </div>
+        <div class="catalog-header-controls">
+          <button type="button" class="btn btn-secondary btn-small" id="magias-catalog-cancel">Fechar</button>
+        </div>
+      </div>
+
+      <div class="catalog-create-form" id="magias-create-form" hidden>
+        <h4 class="catalog-create-title">Criar Nova Magia</h4>
+        <div class="catalog-create-grid">
+          <label class="catalog-create-field"><span>Nome *</span><input type="text" id="create-spell-nome" class="field-line" placeholder="Ex: Chama Espectral"></label>
+          <label class="catalog-create-field"><span>Caminho</span>
+            <select id="create-spell-caminho" class="field-line">
+              <option value="Gerais">Gerais</option>
+              <option value="Vodu">Vodu</option>
+              <option value="Xamânica">Xamânica</option>
+              <option value="Trevas">Trevas</option>
+              <option value="Fé">Fé</option>
+            </select>
+          </label>
+          <label class="catalog-create-field"><span>Ações</span><input type="text" id="create-spell-acoes" class="field-line" placeholder="Ex: 1 ação"></label>
+          <label class="catalog-create-field"><span>Custo (REM)</span><input type="text" id="create-spell-custo" class="field-line" placeholder="Ex: 1 ponto de energia mística"></label>
+          <label class="catalog-create-field"><span>Alcance</span><input type="text" id="create-spell-alcance" class="field-line" placeholder="Ex: 9m ou Pessoal"></label>
+          <label class="catalog-create-field"><span>Área</span><input type="text" id="create-spell-area" class="field-line" placeholder="Ex: Alvo único"></label>
+          <label class="catalog-create-field"><span>Resistência</span><input type="text" id="create-spell-resistencia" class="field-line" placeholder="Ex: Nenhuma ou Misticismo"></label>
+          <label class="catalog-create-field"><span>Duração</span><input type="text" id="create-spell-duracao" class="field-line" placeholder="Ex: Instantânea"></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Descrição</span><textarea id="create-spell-descricao" class="notas-area" rows="2" placeholder="Descrição da magia..."></textarea></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Efeito — Sucesso Crítico</span><input type="text" id="create-spell-ef-critico" class="field-line" placeholder="Efeito em sucesso crítico"></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Efeito — Sucesso</span><input type="text" id="create-spell-ef-sucesso" class="field-line" placeholder="Efeito em sucesso"></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Efeito — Falha</span><input type="text" id="create-spell-ef-falha" class="field-line" placeholder="Efeito em falha"></label>
+          <label class="catalog-create-field catalog-create-wide"><span>Efeito — Falha Crítica</span><input type="text" id="create-spell-ef-falha-critica" class="field-line" placeholder="Efeito em falha crítica"></label>
+        </div>
+        <div class="catalog-create-actions">
+          <button type="button" class="btn btn-secondary btn-small" id="btn-cancel-created-spell">Cancelar</button>
+          <button type="button" class="btn btn-danger btn-small" id="btn-save-created-spell">Salvar Magia</button>
+        </div>
+      </div>
+
+      <div class="catalog-tabs" id="magias-caminho-tabs" role="tablist" aria-label="Caminhos da Magia"></div>
+      <div class="magias-caminho-desc" id="magias-caminho-desc" hidden></div>
+
+      <input type="search" class="catalog-search" id="magias-catalog-search" placeholder="Pesquisar magia pelo nome" autocomplete="off">
+
+      <div class="catalog-body">
+        <div class="catalog-list" id="magias-catalog-list" aria-label="Magias"></div>
+        <div class="catalog-detail" id="magias-catalog-detail">
+          <p class="catalog-detail-empty">Selecione uma magia para ver os atributos.</p>
+        </div>
+      </div>
+
+      <div class="modal-hint" id="magias-catalog-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-magias-create-spell">Criar</button>
+        <button type="button" class="btn btn-danger" id="magias-catalog-confirm" disabled>Adicionar ao repertório</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: rolagem de subida de nível -->
+  <div class="modal-overlay" id="levelup-roll-modal" role="dialog" aria-modal="true" aria-labelledby="levelup-modal-title">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="levelup-modal-title">Subir de Nível</h3>
+      <p class="modal-sub" id="levelup-modal-sub">Role o dado da sua faixa de nível para obter pontos de perícia.</p>
+
+      <div class="levelup-roll-box">
+        <div class="levelup-die-info">
+          <span class="points-label">Dado da Faixa:</span>
+          <span class="points-value" id="levelup-die-label">1d6</span>
+        </div>
+        <button type="button" class="btn btn-danger" id="btn-levelup-roll">Rolar 1d6</button>
+        <div class="levelup-result-info">
+          <span class="points-label">Pontos Obtidos:</span>
+          <span class="points-value" id="levelup-roll-result">—</span>
+        </div>
+      </div>
+
+      <div class="modal-hint" id="levelup-modal-hint" aria-live="polite">Role o dado para determinar os pontos de perícia.</div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="levelup-roll-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="levelup-roll-confirm" disabled>Distribuir Pontos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Gastar Fichas do Destino (reaproveita o painel #destino-block sem o botão Nova Sessão) -->
+  <div class="modal-overlay" id="destino-modal" role="dialog" aria-modal="true" aria-labelledby="titulo-destino">
+    <div class="modal-box modal-box-wide destino-modal-box">
+      <section class="destino-block" id="destino-block" aria-labelledby="titulo-destino">
+        <div class="destino-header-row">
+          <h2 id="titulo-destino" class="section-title">FICHAS DO DESTINO</h2>
+        </div>
+        <div id="destino-pool-summary" class="destino-pool-summary"></div>
+        <div id="destino-feedback" class="destino-feedback" aria-live="polite"></div>
+        <div class="destino-grid" id="destino-grid">
+          <div class="destino-card destino-vermelha" data-color="vermelha">
+            <div class="destino-card-top">
+              <span class="destino-color-label">Vermelha</span>
+              <div class="destino-counter">
+                <button type="button" class="btn btn-secondary btn-small btn-destino-minus" data-color="vermelha" id="btn-destino-minus-vermelha" aria-label="Remover ficha vermelha">-</button>
+                <span class="destino-count" id="destino-count-vermelha" data-color="vermelha">0</span>
+                <button type="button" class="btn btn-secondary btn-small btn-destino-plus" data-color="vermelha" id="btn-destino-plus-vermelha" aria-label="Adicionar ficha vermelha">+</button>
+              </div>
+            </div>
+            <div class="destino-actions">
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="vermelha" data-effect="fadiga_usuario_1" id="btn-destino-vermelha-fadiga">Recuperar 1 Fadiga</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="vermelha" data-effect="rerolar_pericia" id="btn-destino-vermelha-rerolar">Rolar Novamente Perícia</button>
+            </div>
+          </div>
+          <div class="destino-card destino-azul" data-color="azul">
+            <div class="destino-card-top">
+              <span class="destino-color-label">Azul</span>
+              <div class="destino-counter">
+                <button type="button" class="btn btn-secondary btn-small btn-destino-minus" data-color="azul" id="btn-destino-minus-azul" aria-label="Remover ficha azul">-</button>
+                <span class="destino-count" id="destino-count-azul" data-color="azul">0</span>
+                <button type="button" class="btn btn-secondary btn-small btn-destino-plus" data-color="azul" id="btn-destino-plus-azul" aria-label="Adicionar ficha azul">+</button>
+              </div>
+            </div>
+            <div class="destino-actions">
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="azul" data-effect="fadiga_usuario_2" id="btn-destino-azul-fadiga">Recuperar 2 Fadiga</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="azul" data-effect="fadiga_aliado_1" id="btn-destino-azul-aliado">Recuperar 1 Fadiga (Aliado)</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="azul" data-effect="rerolar_grupo" id="btn-destino-azul-rerolar">Rolar Novamente (Grupo)</button>
+            </div>
+          </div>
+          <div class="destino-card destino-verde" data-color="verde">
+            <div class="destino-card-top">
+              <span class="destino-color-label">Verde</span>
+              <div class="destino-counter">
+                <button type="button" class="btn btn-secondary btn-small btn-destino-minus" data-color="verde" id="btn-destino-minus-verde" aria-label="Remover ficha verde">-</button>
+                <span class="destino-count" id="destino-count-verde" data-color="verde">0</span>
+                <button type="button" class="btn btn-secondary btn-small btn-destino-plus" data-color="verde" id="btn-destino-plus-verde" aria-label="Adicionar ficha verde">+</button>
+              </div>
+            </div>
+            <div class="destino-actions">
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="verde" data-effect="fadiga_usuario_3" id="btn-destino-verde-fadiga">Recuperar 3 Fadiga</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="verde" data-effect="fadiga_aliados_1" id="btn-destino-verde-aliados">Recuperar 1 Fadiga (Aliados)</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="verde" data-effect="dado_adicional" id="btn-destino-verde-dado">Dado Adicional (+Soma)</button>
+            </div>
+          </div>
+          <div class="destino-card destino-preta" data-color="preta">
+            <div class="destino-card-top">
+              <span class="destino-color-label">Preta</span>
+              <div class="destino-counter">
+                <button type="button" class="btn btn-secondary btn-small btn-destino-minus" data-color="preta" id="btn-destino-minus-preta" aria-label="Remover ficha preta">-</button>
+                <span class="destino-count" id="destino-count-preta" data-color="preta">0</span>
+                <button type="button" class="btn btn-secondary btn-small btn-destino-plus" data-color="preta" id="btn-destino-plus-preta" aria-label="Adicionar ficha preta">+</button>
+              </div>
+            </div>
+            <div class="destino-actions">
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="preta" data-effect="fadiga_usuario_total" id="btn-destino-preta-fadiga">Recuperar Toda Fadiga</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="preta" data-effect="fadiga_aliados_3" id="btn-destino-preta-aliados">Recuperar 3 Fadiga (Aliados)</button>
+              <button type="button" class="btn btn-secondary btn-small btn-destino-use" data-color="preta" data-effect="sucesso_automatico" id="btn-destino-preta-sucesso">Sucesso Automático</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="modal-actions" style="margin-top: 12px;">
+        <button type="button" class="btn btn-secondary" id="destino-modal-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Tempo Livre (tempo_livre.json) -->
+  <div class="modal-overlay" id="tempo-livre-modal" role="dialog" aria-modal="true" aria-labelledby="tempo-livre-title">
+    <div class="modal-box modal-box-wide tempo-livre-modal-box">
+      <div class="catalog-header-row">
+        <div>
+          <h3 class="modal-title" id="tempo-livre-title">Tempo Livre</h3>
+          <p class="modal-sub" id="tempo-livre-sub">Atividades entre aventuras: Retreinar perícia, Trabalhar (Profissão) e Fabricar item.</p>
+        </div>
+        <div class="downtime-counter-bar">
+          <label class="downtime-counter-item">
+            <span>Semanas:</span>
+            <input type="number" id="downtime-weeks" name="downtime-weeks" class="field-line field-short" value="0" min="0">
+          </label>
+          <label class="downtime-counter-item">
+            <span>Dias:</span>
+            <input type="number" id="downtime-days" name="downtime-days" class="field-line field-short" value="0" min="0">
+          </label>
+        </div>
+      </div>
+
+      <div class="tempo-livre-sections">
+        <!-- 1. Retreinar Perícia -->
+        <section class="tempo-livre-card" id="tl-section-retreinar">
+          <h4 class="tempo-livre-card-title">1. Retreinar Perícia (1 semana)</h4>
+          <p class="tempo-livre-card-desc">Transfere 1 ponto de uma perícia (mínimo 0) para outra perícia.</p>
+          <div class="tempo-livre-form-row">
+            <label class="tempo-livre-field">
+              <span>Perder 1 ponto (-1):</span>
+              <select id="retrain-source-skill" class="field-line"></select>
+            </label>
+            <label class="tempo-livre-field">
+              <span>Ganhar 1 ponto (+1):</span>
+              <select id="retrain-target-skill" class="field-line"></select>
+            </label>
+            <button type="button" class="btn btn-danger btn-small" id="btn-exec-retreinar">Retreinar</button>
+          </div>
+        </section>
+
+        <!-- 2. Trabalhar (Profissão) -->
+        <section class="tempo-livre-card" id="tl-section-trabalhar">
+          <h4 class="tempo-livre-card-title">2. Trabalhar — Profissão (1 semana)</h4>
+          <p class="tempo-livre-card-desc">Teste passivo de Profissão (maior valor disponível do 6B + rolagem de Profissão). O resultado é creditado em $ na ficha.</p>
+          <div class="tempo-livre-form-row">
+            <button type="button" class="btn btn-danger btn-small" id="btn-exec-trabalhar">Realizar Teste Passivo de Profissão</button>
+          </div>
+        </section>
+
+        <!-- 3. Fabricar Item -->
+        <section class="tempo-livre-card" id="tl-section-fabricar">
+          <h4 class="tempo-livre-card-title">3. Fabricar Item (Alquimia / Engenharia)</h4>
+          <p class="tempo-livre-card-desc">Custo em materiais: 50% do preço tabelado. Tempo: 1 dia + 1 dia a cada $10. Alquimia rende 4 doses em caso de sucesso.</p>
+          <div class="tempo-livre-form-row">
+            <label class="tempo-livre-field">
+              <span>Perícia:</span>
+              <select id="craft-skill-select" class="field-line">
+                <option value="alquimia">Alquimia (Itens — rende 4 doses)</option>
+                <option value="engenharia">Engenharia (Armas / Equipamentos — 1 un.)</option>
+              </select>
+            </label>
+            <label class="tempo-livre-field tempo-livre-field-wide">
+              <span>Item do Catálogo:</span>
+              <select id="craft-catalog-item-select" class="field-line"></select>
+            </label>
+            <button type="button" class="btn btn-secondary btn-small" id="btn-craft-pick-catalog" title="Abrir catálogo para escolher item">Catálogo</button>
+          </div>
+          <div class="craft-summary-bar" id="craft-summary-bar"></div>
+          <div class="tempo-livre-form-row" style="margin-top: 8px;">
+            <label class="tempo-livre-field">
+              <span>DB da Receita:</span>
+              <input type="number" id="craft-db-input" class="field-line field-short" value="6" min="0" max="50">
+            </label>
+            <span class="craft-diff-preview" id="craft-diff-preview">Dif. Total (com Terror + Mod): 6</span>
+            <button type="button" class="btn btn-danger btn-small" id="btn-exec-fabricar">Fabricar Item</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal-hint" id="tempo-livre-feedback" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="tempo-livre-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Aprimorar Equipamento (Item 6) -->
+  <div class="modal-overlay" id="upgrade-item-modal" role="dialog" aria-modal="true" aria-labelledby="upgrade-item-title">
+    <div class="modal-box modal-box-wide upgrade-item-modal-box">
+      <h3 class="modal-title" id="upgrade-item-title">Aprimorar Equipamento</h3>
+      <p class="modal-sub" id="upgrade-item-sub">Realize um teste de Engenharia ou Alquimia usando a calculadora de dificuldade para aprimorar este item.</p>
+
+      <div class="upgrade-test-bar">
+        <label class="tempo-livre-field">
+          <span>Perícia:</span>
+          <select id="upgrade-skill-select" class="field-line">
+            <option value="engenharia">Engenharia</option>
+            <option value="alquimia">Alquimia</option>
+          </select>
+        </label>
+        <label class="tempo-livre-field">
+          <span>DB:</span>
+          <input type="number" id="upgrade-db-input" class="field-line field-short" value="6" min="0" max="50">
+        </label>
+        <label class="tempo-livre-field">
+          <span>Mod. Mestre:</span>
+          <input type="number" id="upgrade-mod-input" class="field-line field-short" value="0" min="-20" max="30">
+        </label>
+        <div class="upgrade-diff-display">
+          <span>Dif. Total (c/ Terror):</span>
+          <strong id="upgrade-total-diff">6</strong>
+        </div>
+        <button type="button" class="btn btn-danger btn-small" id="btn-upgrade-roll-test">Rolar Teste</button>
+      </div>
+
+      <div class="modal-hint" id="upgrade-test-feedback" aria-live="polite"></div>
+
+      <div class="upgrade-comparison-section" id="upgrade-comparison-section" hidden>
+        <h4 class="tempo-livre-card-title">Atributos do Item (Valor Original &rarr; Novo Valor)</h4>
+        <div class="upgrade-attrs-list" id="upgrade-attrs-list"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="upgrade-item-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="upgrade-item-confirm" disabled>Salvar Aprimoramento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Buffs Ativos (magias_buffs.json) -->
+  <div class="modal-overlay" id="buffs-modal" role="dialog" aria-modal="true" aria-labelledby="buffs-modal-title">
+    <div class="modal-box modal-box-wide buffs-modal-box">
+      <h3 class="modal-title" id="buffs-modal-title">Buffs Ativos</h3>
+      <p class="modal-sub" id="buffs-modal-sub">Buffs de magias sustentados nesta ficha. Marque <strong>Desativar</strong> e clique em <strong>Confirmar</strong> para remover.</p>
+
+      <div class="buffs-modal-list" id="buffs-modal-list" aria-live="polite"></div>
+
+      <details class="buff-ally-receive-box" id="buff-ally-receive-box">
+        <summary class="buff-ally-receive-summary">Receber buff lançado por aliado (ficha isolada)</summary>
+        <div class="buff-ally-receive-form">
+          <label class="tempo-livre-field tempo-livre-field-wide">
+            <span>Magia de aliado:</span>
+            <select id="buff-ally-select" class="field-line"></select>
+          </label>
+          <label class="tempo-livre-field" id="buff-ally-cost-wrap" hidden>
+            <span>Pontos gastos pelo conjurador:</span>
+            <input type="number" id="buff-ally-cost-input" class="field-line field-short" value="1" min="1" max="30">
+          </label>
+          <button type="button" class="btn btn-secondary btn-small" id="btn-apply-ally-buff">Ativar nesta ficha</button>
+        </div>
+      </details>
+
+      <div class="modal-hint" id="buffs-modal-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="buffs-modal-close">Fechar</button>
+        <button type="button" class="btn btn-danger" id="buffs-modal-confirm" disabled>Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Parâmetros ao Lançar Magia de Buff (custo escalonado / alvo escolha / Condutor) -->
+  <div class="modal-overlay" id="buff-cast-modal" role="dialog" aria-modal="true" aria-labelledby="buff-cast-title">
+    <div class="modal-box buffs-cast-modal-box">
+      <h3 class="modal-title" id="buff-cast-title">Lançar Magia</h3>
+      <p class="modal-sub" id="buff-cast-sub"></p>
+
+      <div class="buff-cast-fields">
+        <label class="tempo-livre-field" id="buff-cast-cost-wrap">
+          <span id="buff-cast-cost-label">Pontos de magia gastos:</span>
+          <input type="number" id="buff-cast-cost-input" class="field-line field-short" value="1" min="1" max="30">
+        </label>
+
+        <label class="tempo-livre-field" id="buff-cast-target-wrap" hidden>
+          <span>Alvo do buff:</span>
+          <select id="buff-cast-target-select" class="field-line">
+            <option value="proprio">Próprio personagem (aplicar nesta ficha)</option>
+            <option value="aliado">Aliado (outra ficha — apenas desconta REM aqui)</option>
+          </select>
+        </label>
+
+        <label class="tempo-livre-field" id="buff-cast-duration-wrap" hidden>
+          <span>Duração (configurável pelo Mestre/Xerife):</span>
+          <input type="text" id="buff-cast-duration-input" class="field-line" value="Até o fim do combate">
+        </label>
+      </div>
+
+      <div class="buff-cast-preview" id="buff-cast-preview" aria-live="polite"></div>
+      <div class="modal-hint" id="buff-cast-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="buff-cast-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="buff-cast-confirm">Lançar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Transferência instantânea entre Mochila e Alforje do Cavalo -->
+  <div class="modal-overlay" id="transfer-storage-modal" role="dialog" aria-modal="true" aria-labelledby="transfer-modal-title">
+    <div class="modal-box modal-box-wide modal-box-catalog">
+      <h3 class="modal-title" id="transfer-modal-title">Transferência — Mochila ↔ Alforje do Cavalo</h3>
+      <p class="modal-sub" id="transfer-modal-sub">Clique em um item para transferi-lo instantaneamente entre a Mochila e o Alforje (para pilhas com mais de 1 unidade, ajuste a quantidade na linha se quiser dividir).</p>
+
+      <div class="fichas-split-layout transfer-split-layout">
+        <section class="fichas-column">
+          <h4 class="section-title fichas-col-title">Mochila</h4>
+          <div class="magias-status-bar">
+            <div class="magias-stat-box">
+              <span class="field-label">Volume</span>
+              <span class="magias-stat-val" id="transfer-mochila-vol">0 / 15 volumes</span>
+            </div>
+          </div>
+          <div class="inv-item-list inv-subcontainer-list" id="transfer-mochila-list" aria-live="polite"></div>
+        </section>
+
+        <div class="fichas-red-divider" role="separator" aria-orientation="vertical"></div>
+
+        <section class="fichas-column">
+          <h4 class="section-title fichas-col-title" id="transfer-alforge-title">Alforje do Cavalo</h4>
+          <div class="magias-status-bar">
+            <div class="magias-stat-box">
+              <span class="field-label">Volume</span>
+              <span class="magias-stat-val" id="transfer-alforge-vol">0 / 0 volumes</span>
+            </div>
+          </div>
+          <div class="inv-item-list inv-subcontainer-list" id="transfer-alforge-list" aria-live="polite"></div>
+        </section>
+      </div>
+
+      <div class="modal-hint" id="transfer-modal-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="transfer-modal-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cadastro de conta -->
+  <div class="modal-overlay" id="signup-modal" role="dialog" aria-modal="true" aria-labelledby="signup-modal-title">
+    <div class="modal-box modal-box-wide signup-modal-box">
+      <h3 class="modal-title" id="signup-modal-title">Criar conta</h3>
+      <p class="modal-sub">Informe um e-mail e uma senha que atendam aos requisitos abaixo.</p>
+
+      <form id="signup-form" class="auth-form" novalidate>
+        <div class="auth-field-group">
+          <label class="field-label" for="signup-email">E-mail</label>
+          <input type="email" id="signup-email" name="signup-email" class="field-line field-rope" placeholder="Digite seu e-mail" autocomplete="email">
+        </div>
+
+        <div class="auth-field-group">
+          <label class="field-label" for="signup-password">Senha</label>
+          <input type="password" id="signup-password" name="signup-password" class="field-line field-rope" placeholder="Crie uma senha" autocomplete="new-password">
+        </div>
+
+        <div class="auth-field-group">
+          <label class="field-label" for="signup-password-confirm">Repita a senha</label>
+          <input type="password" id="signup-password-confirm" name="signup-password-confirm" class="field-line field-rope" placeholder="Repita a senha" autocomplete="new-password">
+        </div>
+
+        <ul class="signup-checklist" id="signup-checklist" aria-live="polite">
+          <li data-rule="length">✗ mínimo de 8 caracteres</li>
+          <li data-rule="lower">✗ letra minúscula</li>
+          <li data-rule="upper">✗ letra maiúscula</li>
+          <li data-rule="number">✗ número</li>
+          <li data-rule="special">✗ caractere especial</li>
+          <li data-rule="match">✗ senhas iguais</li>
+        </ul>
+
+        <div id="signup-feedback" class="auth-feedback" role="alert" aria-live="polite" hidden></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="signup-cancel">Cancelar</button>
+          <button type="submit" class="btn btn-danger" id="signup-submit" disabled>Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Confirme seu e-mail -->
+  <div class="modal-overlay" id="signup-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="signup-confirm-title">
+    <div class="modal-box signup-confirm-box">
+      <button type="button" class="modal-close-x" id="signup-confirm-close" aria-label="Fechar">×</button>
+      <h3 class="modal-title" id="signup-confirm-title">Confirme seu e-mail</h3>
+      <p class="modal-sub" id="signup-confirm-sub">Confirme seu e-mail para continuar. Enviamos um link de confirmação para o endereço cadastrado. Você só poderá entrar depois de confirmar.</p>
+    </div>
+  </div>
+
+  <!-- Modal: Bestiário Oficial & Meus NPCs/Monstros (Item 5) -->
+  <div class="modal-overlay" id="bestiario-modal" role="dialog" aria-modal="true" aria-labelledby="bestiario-modal-title">
+    <div class="modal-box modal-box-wide modal-box-catalog">
+      <div class="catalog-header-row">
+        <div>
+          <h3 class="modal-title" id="bestiario-modal-title">Bestiário &amp; NPCs</h3>
+          <p class="modal-sub" id="bestiario-modal-sub">Consulte o Bestiário Oficial ou gerencie seus NPCs e Monstros customizados.</p>
+        </div>
+        <div class="catalog-header-controls">
+          <button type="button" class="btn btn-secondary btn-small" id="bestiario-modal-close">Fechar</button>
+        </div>
+      </div>
+
+      <div class="catalog-tabs" id="bestiario-tabs" role="tablist" aria-label="Fontes de Criaturas e NPCs">
+        <button type="button" class="catalog-tab-btn active" role="tab" id="bestiario-tab-oficial" data-bestiario-tab="oficial" aria-selected="true">Bestiário Oficial</button>
+        <button type="button" class="catalog-tab-btn" role="tab" id="bestiario-tab-custom" data-bestiario-tab="custom" aria-selected="false">Meus NPCs &amp; Monstros</button>
+      </div>
+
+      <input type="search" class="catalog-search" id="bestiario-search" placeholder="Pesquisar criatura ou NPC pelo nome..." autocomplete="off">
+
+      <div class="catalog-body">
+        <div class="catalog-list" id="bestiario-list" aria-label="Lista de criaturas e NPCs"></div>
+        <div class="catalog-detail" id="bestiario-detail">
+          <p class="catalog-detail-empty">Selecione uma criatura ou NPC para ver os atributos e ações.</p>
+        </div>
+      </div>
+
+      <div class="modal-hint" id="bestiario-modal-hint" aria-live="polite"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-bestiario-criar">Criar</button>
+        <button type="button" class="btn btn-secondary" id="btn-bestiario-duplicar" hidden>Duplicar para Meus NPCs</button>
+        <button type="button" class="btn btn-secondary" id="btn-bestiario-editar" disabled>Editar Ficha Completa</button>
+        <button type="button" class="btn btn-danger" id="btn-bestiario-colocar-cena" disabled>Adicionar à Mesa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Resumo de Regras (Item 7) -->
+  <div class="modal-overlay" id="regras-modal" role="dialog" aria-modal="true" aria-labelledby="regras-modal-title">
+    <div class="modal-box modal-box-wide modal-box-catalog">
+      <div class="catalog-header-row">
+        <div>
+          <h3 class="modal-title" id="regras-modal-title">Resumo de Regras</h3>
+          <p class="modal-sub" id="regras-modal-sub">Consulte as regras oficiais do sistema e filtre por termos.</p>
+        </div>
+      </div>
+
+      <div class="catalog-tabs" id="regras-tabs" role="tablist" aria-label="Arquivos de Regras"></div>
+
+      <input type="search" class="catalog-search" id="regras-search" placeholder="Buscar texto dentro da regra selecionada..." autocomplete="off">
+
+      <div class="catalog-body">
+        <div class="catalog-list" id="regras-sections-list" aria-label="Seções da Regra"></div>
+        <div class="catalog-detail" id="regras-detail">
+          <p class="catalog-detail-empty">Selecione uma aba de regra acima.</p>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="regras-modal-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/vendor/supabase.js"></script>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

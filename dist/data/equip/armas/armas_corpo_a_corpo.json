@@ -1,0 +1,97 @@
+{
+  "categoria": "Armas Corpo-a-Corpo",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "FOICE",
+      "dano": "d8",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 7,
+      "volume": 2
+    },
+    {
+      "nome": "MARRETA",
+      "dano": "d8",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 7,
+      "volume": 2
+    },
+    {
+      "nome": "LANÇA DE COMBATE",
+      "dano": "d8",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 5,
+      "volume": 2
+    },
+    {
+      "nome": "LÂMINAS CURTAS",
+      "dano": "d4",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 1,
+      "volume": 1
+    },
+    {
+      "nome": "FACA DE CAÇA",
+      "dano": "d6",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 2,
+      "volume": 1
+    },
+    {
+      "nome": "MACHETE",
+      "dano": "d8",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 7,
+      "volume": 1
+    },
+    {
+      "nome": "ARMA IMPROVISADA",
+      "dano": "d4-2 (min 1)",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": "X",
+      "volume": 1
+    },
+    {
+      "nome": "PICARETA",
+      "dano": "d8",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 5,
+      "volume": 2
+    },
+    {
+      "nome": "MACHADINHA",
+      "dano": "d6",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 5,
+      "volume": 1
+    },
+    {
+      "nome": "MACHADO",
+      "dano": "d8",
+      "alcance": "corpo-a-corpo",
+      "recarga": "X",
+      "tambor": "X",
+      "preco": 7,
+      "volume": 2
+    }
+  ]
+}

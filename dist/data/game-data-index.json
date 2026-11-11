@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "basePath": "data",
+  "files": [
+    { "id": "lista_magias", "group": "magias", "path": "magias/lista_magias.json" },
+    { "id": "caminhos_magia", "group": "magias", "path": "magias/caminhos_magia.json" },
+    { "id": "reservatorio_energia_mistica", "group": "magias", "path": "magias/reservatorio_energia_mistica.json" },
+    { "id": "progressao_6b", "group": "progressao", "path": "progressao/progressao_6b.json" },
+    { "id": "pontos_pericia", "group": "progressao", "path": "progressao/pontos_pericia.json" }
+  ]
+}

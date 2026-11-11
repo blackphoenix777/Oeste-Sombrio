@@ -1,0 +1,58 @@
+{
+  "categoria": "Equipamentos de Montaria",
+  "descricao": null,
+  "notas": [],
+  "itens": [
+    {
+      "nome": "Sela de Batalha",
+      "preco": 50,
+      "volume": 4.0,
+      "detalhes": "Uma sela feita sob medida para montaria com um aprimoramento que impede o vaqueiro de cair dela mesmo estando inconsciente."
+    },
+    {
+      "nome": "Alforjes 2 bolsos",
+      "preco": "30¢",
+      "volume": 0,
+      "capacidade_volumes": 5,
+      "detalhes": "Vendidos em par. Capacidade de 5 volumes para o cavalo."
+    },
+    {
+      "nome": "Alforjes 4 bolsos",
+      "preco": 1,
+      "volume": 0,
+      "capacidade_volumes": 10,
+      "detalhes": "Vendidos em par. Capacidade de 10 volumes para o cavalo."
+    },
+    {
+      "nome": "Alforjes 6 bolsos",
+      "preco": 4,
+      "volume": 0,
+      "capacidade_volumes": 15,
+      "detalhes": "Vendidos em par. Capacidade de 15 volumes para o cavalo."
+    },
+    {
+      "nome": "Barda Pequena Leve",
+      "preco": 10,
+      "volume": 2.0,
+      "detalhes": "Conjunto de peças leves que garantem proteção para animais de médio porte"
+    },
+    {
+      "nome": "Barda Grande Leve",
+      "preco": 20,
+      "volume": 3.0,
+      "detalhes": "Conjunto de peças leves que garantem proteção para Montarias"
+    },
+    {
+      "nome": "Barda Pequena Pesada",
+      "preco": 25,
+      "volume": 3.0,
+      "detalhes": "Conjunto de peças leves que garantem proteção para animais de médio porte"
+    },
+    {
+      "nome": "Barda Grande Pesada",
+      "preco": 50,
+      "volume": 4.0,
+      "detalhes": "Conjunto de peças leves que garantem proteção pesada para Montarias"
+    }
+  ]
+}

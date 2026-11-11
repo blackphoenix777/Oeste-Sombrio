@@ -1,0 +1,335 @@
+{
+  "titulo": "Regras de Buffs de Magias",
+  "descricao_geral": "Mapeamento das magias de lista_magias.json que concedem efeitos mecânicos sustentados (buffs) ou bônus de curta duração a um ataque/rolagem específica, para aplicação automática na ficha quando a magia é castada. Magias de dano direto, cura instantânea, controle de inimigo e utilidade pura não entram nesta lista.",
+  "tipos_de_efeito": [
+    {
+      "tipo": "buff_defesa",
+      "descricao": "Aumenta a Defesa do alvo (ou concede proteção/resistência específica) enquanto ativo."
+    },
+    {
+      "tipo": "buff_ataque",
+      "descricao": "Adiciona dado(s) de dano extra a ataques realizados pelo alvo enquanto ativo."
+    },
+    {
+      "tipo": "buff_iniciativa",
+      "descricao": "Aumenta a Iniciativa do alvo enquanto ativo."
+    },
+    {
+      "tipo": "buff_pericia",
+      "descricao": "Adiciona dado extra (ou bônus fixo) em uma ou mais perícias específicas enquanto ativo."
+    },
+    {
+      "tipo": "buff_geral",
+      "descricao": "Adiciona bônus a todos os testes do alvo enquanto ativo."
+    },
+    {
+      "tipo": "bonus_proximo_ataque",
+      "descricao": "Bônus de uso único, consumido no próximo ataque/rolagem realizado pelo alvo após o cast, não é um buff de duração contínua."
+    }
+  ],
+  "buffs": [
+    {
+      "caminho": "Gerais",
+      "nome": "Pele Grossa",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "proprio",
+      "valor_base": "+4 de defesa",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Até acabar (decai com dano)",
+        "estruturada": null
+      },
+      "efeito_reativo": {
+        "gatilho": "cada ponto de dano sofrido pelo alvo enquanto o buff estiver ativo",
+        "efeito": "reduz 1 ponto do bônus de defesa concedido pela magia",
+        "regra_termino": "quando o bônus chegar a 0, o buff é removido automaticamente"
+      }
+    },
+    {
+      "caminho": "Gerais",
+      "nome": "Projetar Sombra",
+      "tipo_efeito": "buff_pericia",
+      "alvo": "proprio",
+      "pericias_afetadas": [
+        "Furtividade"
+      ],
+      "valor_base": "+2",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "10 minutos",
+        "estruturada": {
+          "unidade": "minutos",
+          "valor": 10
+        }
+      }
+    },
+    {
+      "caminho": "Gerais",
+      "nome": "Sentir Perigo",
+      "tipo_efeito": "buff_iniciativa",
+      "alvo": "proprio",
+      "valor_base": "+2 por ponto de magia gasto",
+      "escala_com_custo": true,
+      "regra_escala": "o bônus de iniciativa é igual a 2 x o custo de magia pago pelo jogador no momento do cast",
+      "duracao": {
+        "texto": "1 minuto por ponto de magia gasto",
+        "estruturada": {
+          "unidade": "minutos_por_custo",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Gerais",
+      "nome": "Toque Ácido",
+      "tipo_efeito": "bonus_proximo_ataque",
+      "alvo": "proprio",
+      "restricao": "apenas ataque desarmado",
+      "valor_base": "+1d6 de dano",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Consumido no próximo ataque desarmado realizado",
+        "estruturada": {
+          "unidade": "usos",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Gerais",
+      "nome": "Velocidade de Projétil",
+      "tipo_efeito": "bonus_proximo_ataque",
+      "alvo": "proprio",
+      "restricao": "arma de projétil (disparada ou arremessada)",
+      "valor_base": "+1d6 de dano",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Consumido no próximo disparo/arremesso",
+        "estruturada": {
+          "unidade": "usos",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Vodu",
+      "nome": "Proteção Elemental",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "escolha (pode ser próprio ou aliado)",
+      "valor_base": "Proteção/imunidade total contra dano elemental (não é bônus numérico de defesa)",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "1 turno por ponto de magia gasto",
+        "estruturada": {
+          "unidade": "turnos_por_custo",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Vodu",
+      "nome": "Orientação Espiritual",
+      "tipo_efeito": "buff_geral",
+      "alvo": "proprio",
+      "valor_base": "+1d6 em todos os testes",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "1 minuto por ponto de custo de magia",
+        "estruturada": {
+          "unidade": "minutos_por_custo",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Vodu",
+      "nome": "Avatar do Caçador",
+      "tipo_efeito": "buff_pericia",
+      "alvo": "proprio",
+      "pericias_afetadas": [
+        "Atletismo",
+        "Acrobacia",
+        "Sobrevivência"
+      ],
+      "valor_base": "+1 dado extra, começando em categoria base",
+      "escala_com_custo": true,
+      "regra_escala": "para cada custo de magia gasto, o dado extra sobe 1 categoria (d4→d6→d8→d10→d12), máximo d12 com 10 pontos",
+      "categoria_maxima": "d12",
+      "duracao": {
+        "texto": "1 hora",
+        "estruturada": {
+          "unidade": "horas",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Vodu",
+      "nome": "Condutor",
+      "tipo_efeito": "buff_ataque",
+      "alvo": "proprio",
+      "restricao": "apenas golpes corpo a corpo",
+      "valor_base": "+1 dado de dano elementar elétrico, começando em categoria base",
+      "escala_com_custo": true,
+      "regra_escala": "para cada custo de magia gasto, o dado extra sobe 1 categoria, máximo d12 com 10 pontos",
+      "categoria_maxima": "d12",
+      "duracao": {
+        "texto": "Não especificada no texto original — necessário definir junto ao mestre/Xerife (sugestão: tratar como 'até o fim do combate', por analogia a outras magias de combate corpo a corpo sem duração explícita)",
+        "estruturada": null
+      },
+      "nota_ambiguidade": true
+    },
+    {
+      "caminho": "Vodu",
+      "nome": "Coração de Pedra",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "aliado (toque)",
+      "valor_base": "+5 de defesa e +2 em testes de resistência contra efeitos mentais",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Até o fim do combate",
+        "estruturada": {
+          "unidade": "fim_de_combate",
+          "valor": null
+        }
+      }
+    },
+    {
+      "caminho": "Xamânica",
+      "nome": "Antecipação",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "proprio",
+      "valor_base": "+1d6 de proteção durante o combate",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "1 minuto por custo de magia",
+        "estruturada": {
+          "unidade": "minutos_por_custo",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Xamânica",
+      "nome": "Animal Atlético",
+      "tipo_efeito": "buff_pericia",
+      "alvo": "escolha (toque)",
+      "pericias_afetadas": [
+        "Atletismo"
+      ],
+      "valor_base": "+1 dado extra, começando em categoria base",
+      "escala_com_custo": true,
+      "regra_escala": "para cada custo de magia gasto, o dado extra sobe 1 categoria, máximo d12 com 10 pontos",
+      "categoria_maxima": "d12",
+      "duracao": {
+        "texto": "8 horas",
+        "estruturada": {
+          "unidade": "horas",
+          "valor": 8
+        }
+      }
+    },
+    {
+      "caminho": "Xamânica",
+      "nome": "Arma Trovejante",
+      "tipo_efeito": "bonus_proximo_ataque",
+      "alvo": "proprio",
+      "valor_base": "+2d6 de dano elétrico",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Consumido no próximo ataque",
+        "estruturada": {
+          "unidade": "usos",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Xamânica",
+      "nome": "Bênção da Floresta",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "aliado",
+      "valor_base": "+5 de defesa",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Até o fim do combate",
+        "estruturada": {
+          "unidade": "fim_de_combate",
+          "valor": null
+        }
+      }
+    },
+    {
+      "caminho": "Trevas",
+      "nome": "Manto de Sombras",
+      "tipo_efeito": "buff_pericia",
+      "alvo": "proprio",
+      "pericias_afetadas": [
+        "Furtividade"
+      ],
+      "valor_base": "+3",
+      "escala_com_custo": false,
+      "efeito_adicional": "+1d4 de dano necrótico em qualquer ataque corpo a corpo realizado enquanto ativo (tratar como buff_ataque somado ao buff_pericia)",
+      "duracao": {
+        "texto": "1 turno por custo de magia",
+        "estruturada": {
+          "unidade": "turnos_por_custo",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Fé",
+      "nome": "Proteção Divina",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "escolha",
+      "valor_base": "+1 dado extra de proteção na defesa, começando em categoria base",
+      "escala_com_custo": true,
+      "regra_escala": "para cada ponto de magia gasto, o dado sobe 1 categoria, máximo d12 com 5 pontos",
+      "categoria_maxima": "d12",
+      "duracao": {
+        "texto": "1 minuto",
+        "estruturada": {
+          "unidade": "minutos",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Fé",
+      "nome": "Bênção",
+      "tipo_efeito": "bonus_proximo_ataque",
+      "alvo": "proprio e aliados em área",
+      "valor_base": "+2 em todos os resultados da próxima rolagem do 6B",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Consumido na próxima rolagem do 6B de cada alvo",
+        "estruturada": {
+          "unidade": "usos",
+          "valor": 1
+        }
+      }
+    },
+    {
+      "caminho": "Fé",
+      "nome": "Súplica Divina",
+      "tipo_efeito": "buff_defesa",
+      "alvo": "aliados em área",
+      "valor_base": "+2 de defesa, aplicado apenas contra ataques de criaturas do submundo e Veteranos",
+      "escala_com_custo": false,
+      "duracao": {
+        "texto": "Até o fim do combate",
+        "estruturada": {
+          "unidade": "fim_de_combate",
+          "valor": null
+        }
+      }
+    }
+  ],
+  "regras_gerais_de_aplicacao": {
+    "gatilho_de_cast": "Ao usar (clicar) uma magia do repertório que esteja nesta lista, o sistema deve: 1) se a magia tiver custo variável/escala_com_custo=true, perguntar quantos pontos de magia estão sendo gastos (respeitando o custo mínimo da magia em lista_magias.json); 2) calcular o valor do bônus conforme regra_escala; 3) criar uma entrada de 'buff ativo' na ficha do alvo (próprio ou aliado, conforme o campo alvo).",
+    "ausencia_de_timer_automatico": "Nenhum buff expira sozinho por tempo/turnos — a duração é apenas informativa, exibida no modal de Buff. A desativação é sempre manual, pelo botão 'Desativar' no modal.",
+    "tipo_bonus_proximo_ataque": "Buffs do tipo 'bonus_proximo_ataque' devem ser consumidos (removidos automaticamente da lista de buffs ativos) assim que o próximo ataque/rolagem elegível do alvo for realizado, em vez de esperar desativação manual.",
+    "pilha_de_efeitos": "Dois buffs de tipos diferentes (ex: buff_defesa + buff_pericia) podem estar ativos ao mesmo tempo no mesmo personagem. Duas instâncias do mesmo buff na mesma magia não se acumulam — recastar substitui a instância anterior."
+  }
+}

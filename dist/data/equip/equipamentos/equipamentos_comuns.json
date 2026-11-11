@@ -1,0 +1,561 @@
+[
+  {
+    "nome": "Velas comuns",
+    "preco": "10¢",
+    "volume": 0.2,
+    "detalhes": "Caixa com 5"
+  },
+  {
+    "nome": "Caixa de giz",
+    "preco": "10¢",
+    "volume": 0.2,
+    "detalhes": "10 peças"
+  },
+  {
+    "nome": "Argila",
+    "preco": "10¢",
+    "volume": 2.0,
+    "detalhes": "2 quilos de argila"
+  },
+  {
+    "nome": "Cata-Vento",
+    "preco": "5¢",
+    "volume": 0.1,
+    "detalhes": "Feito de papel e madeira. Indica a direção do vento"
+  },
+  {
+    "nome": "Agarras de escalada",
+    "preco": "10¢",
+    "volume": 0.2,
+    "detalhes": "Caixa com 5"
+  },
+  {
+    "nome": "Vara longa",
+    "preco": "5¢",
+    "volume": 0.3,
+    "detalhes": "Vara de madeira com 3 metros"
+  },
+  {
+    "nome": "Tocha",
+    "preco": "20¢",
+    "volume": 0.2,
+    "detalhes": "Par de tochas"
+  },
+  {
+    "nome": "Saco de Dormir",
+    "preco": "20¢",
+    "volume": 0.5,
+    "detalhes": null
+  },
+  {
+    "nome": "Sabão",
+    "preco": "2¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Bola de couro",
+    "preco": "3¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Escada",
+    "preco": "90¢",
+    "volume": 1.0,
+    "detalhes": "3 Metros"
+  },
+  {
+    "nome": "Pipa",
+    "preco": "4¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Ioiô",
+    "preco": "5¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Pederneira",
+    "preco": "5¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Cantil",
+    "preco": "5¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Apito",
+    "preco": "8¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Balão de Mergulho",
+    "preco": "60¢",
+    "volume": 0.3,
+    "detalhes": "Ar suficiennte para 1 minuto"
+  },
+  {
+    "nome": "Mochila",
+    "preco": "30¢",
+    "volume": 0.0,
+    "detalhes": null,
+    "capacidade_volumes": 15
+  },
+  {
+    "nome": "Manual de engenharia",
+    "preco": "50¢",
+    "volume": 0.1,
+    "detalhes": "Instruções para manufatura de um item comum"
+  },
+  {
+    "nome": "Manual de engenharia Avançado",
+    "preco": 2.0,
+    "volume": 0.1,
+    "detalhes": "Instruções para manufatura de um item avançado ou armas de fogo"
+  },
+  {
+    "nome": "Boneca",
+    "preco": "10¢",
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Boneca Surpresa",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": "Possui um compartimento interno capaz de guardar um item pequeno"
+  },
+  {
+    "nome": "Boneca Requintada",
+    "preco": 10.0,
+    "volume": 0.1,
+    "detalhes": "Uma boneca surpresa muito bem feita. Itens escondidos dentro dela são mais difíceis de ser encontrados"
+  },
+  {
+    "nome": "Lata de óleo",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "10 doses de óleo"
+  },
+  {
+    "nome": "Gancho de escalada",
+    "preco": "10¢",
+    "volume": 0.1,
+    "detalhes": "Corda vendida separadamente"
+  },
+  {
+    "nome": "Martelo",
+    "preco": "10¢",
+    "volume": 0.2,
+    "detalhes": null
+  },
+  {
+    "nome": "Saco de pó",
+    "preco": "20¢",
+    "volume": 0.1,
+    "detalhes": "Qualquer tipo de material pulverizado"
+  },
+  {
+    "nome": "Simbolo Religioso",
+    "preco": "20¢",
+    "volume": 0.1,
+    "detalhes": "Feito de madeira"
+  },
+  {
+    "nome": "Cofre simples",
+    "preco": 2.0,
+    "volume": 1.0,
+    "detalhes": "Um cofre com tranca simples (DB)"
+  },
+  {
+    "nome": "Cofre bom",
+    "preco": 15.0,
+    "volume": 1.5,
+    "detalhes": "Cofre com uma boa tranca (DB+3)"
+  },
+  {
+    "nome": "Cofre Superior",
+    "preco": 100.0,
+    "volume": 3.0,
+    "detalhes": "Cofre com tranca complexa (DB+6)"
+  },
+  {
+    "nome": "Caixa Forte",
+    "preco": 200.0,
+    "volume": 6.0,
+    "detalhes": "Cofre grande e seguro com excelente tranca e armadilha (DB+12)"
+  },
+  {
+    "nome": "Bolas de Gude",
+    "preco": 20.0,
+    "volume": 0.3,
+    "detalhes": "Saco com 200"
+  },
+  {
+    "nome": "Alvos de papel",
+    "preco": "20¢",
+    "volume": 0.1,
+    "detalhes": "Pacote com 10"
+  },
+  {
+    "nome": "Caixa Enigma",
+    "preco": "20¢",
+    "volume": 0.2,
+    "detalhes": "Uma caixa engenhosa com um segredo para montar (DB)"
+  },
+  {
+    "nome": "Caixa Enigma Complexa",
+    "preco": 2.0,
+    "volume": 0.3,
+    "detalhes": "Uma caixa engenhosa ainda mais complexa (DB+3)"
+  },
+  {
+    "nome": "Caixa Enigma Secreta",
+    "preco": 10.0,
+    "volume": 0.4,
+    "detalhes": "Uma caixa engenhosa com um compartimento secreto (DB+6)"
+  },
+  {
+    "nome": "Tripé",
+    "preco": "20¢",
+    "volume": 0.3,
+    "detalhes": "Para sustentar uma câmera ou a mira de um rifle"
+  },
+  {
+    "nome": "Estojo à prova dágua",
+    "preco": "20¢",
+    "volume": 0.1,
+    "detalhes": "Espaço para carregar um punhado de qualquer coisa"
+  },
+  {
+    "nome": "Estrepes",
+    "preco": "30¢",
+    "volume": 0.2,
+    "detalhes": "Estrelas de ferro usadas para furar os pés. Acrobacia DB (1d4 de sangramento por turno)"
+  },
+  {
+    "nome": "Algemas básicas",
+    "preco": "30¢",
+    "volume": 0.2,
+    "detalhes": "Feitas de madeira. DB"
+  },
+  {
+    "nome": "Algemas Simples",
+    "preco": 3.0,
+    "volume": 0.2,
+    "detalhes": "Algemas feitas de Ferro. DB+3"
+  },
+  {
+    "nome": "Algemas Padrão",
+    "preco": 20.0,
+    "volume": 0.3,
+    "detalhes": "Algemas reforçadas de ferro . DB+6"
+  },
+  {
+    "nome": "Algemas Seguras",
+    "preco": 250.0,
+    "volume": 0.4,
+    "detalhes": "Algemas de ferro seguras quase impossível de abrir sem chave. DB+12"
+  },
+  {
+    "nome": "Algemas Estranhas",
+    "preco": 5000.0,
+    "volume": 0.5,
+    "detalhes": "Algemas feitas com ferro e pó de carvão. Indestrutíveis e só abrem com chave. Tentar removê-las de outra forma causa 1 de dano no 6B"
+  },
+  {
+    "nome": "Ferramentas de ofício",
+    "preco": "40¢",
+    "volume": 0.3,
+    "detalhes": "Ferramentas para trabalhos comuns (carpintaria, trabalhos no campo etc)"
+  },
+  {
+    "nome": "Pé de cabra",
+    "preco": "50¢",
+    "volume": 0.3,
+    "detalhes": null
+  },
+  {
+    "nome": "Pé de cabra aprimorado",
+    "preco": 20.0,
+    "volume": 0.4,
+    "detalhes": "1d6 para testes de arrombamento forçado"
+  },
+  {
+    "nome": "Caneca de fundo falso",
+    "preco": "50¢",
+    "volume": 0.1,
+    "detalhes": "Geralmente usada para esconder mensagens no fundo de uma canenca."
+  },
+  {
+    "nome": "Baralhos e outros jogos",
+    "preco": "50¢ - 5$",
+    "volume": 0.1,
+    "detalhes": "Existem uma enorme variedade de cartas e outros tipos de jogos (inclusive com efeitos mágicos)"
+  },
+  {
+    "nome": "Estojo de componente mágicos",
+    "preco": "50¢",
+    "volume": 0.2,
+    "detalhes": "Usado por místicos para guardar componentes ritualísticos"
+  },
+  {
+    "nome": "Corda",
+    "preco": "50¢",
+    "volume": 0.4,
+    "detalhes": "15 metros de corda"
+  },
+  {
+    "nome": "Régua",
+    "preco": "50¢",
+    "volume": 0.1,
+    "detalhes": "Régua comum de madeira medindo 50cm"
+  },
+  {
+    "nome": "Baralho do ilusionista",
+    "preco": "50¢",
+    "volume": 0.1,
+    "detalhes": "Um baralho modificado para fazer truques de mágica"
+  },
+  {
+    "nome": "Carroça de Brinquedo",
+    "preco": "50¢",
+    "volume": 0.2,
+    "detalhes": "Miniatura de uma carroça, não acompaha cavalos"
+  },
+  {
+    "nome": "Forma de Waffle",
+    "preco": "50¢",
+    "volume": 0.1,
+    "detalhes": "Usada para fazer waffles em uma fogueira"
+  },
+  {
+    "nome": "Carrinho de Mão",
+    "preco": "50¢",
+    "volume": 3.0,
+    "detalhes": "Feito de madeira"
+  },
+  {
+    "nome": "Baú",
+    "preco": "60¢",
+    "volume": 2.0,
+    "detalhes": null
+  },
+  {
+    "nome": "Lanterna a óleo",
+    "preco": "70¢",
+    "volume": 0.2,
+    "detalhes": "Cada dose de óleo mantém acesa por 2 horas"
+  },
+  {
+    "nome": "Instrumento Musical básico",
+    "preco": "80¢",
+    "volume": 0.5,
+    "detalhes": "Tamanho máximo de um violão"
+  },
+  {
+    "nome": "Tenda Pequena",
+    "preco": "80¢",
+    "volume": 1.0,
+    "detalhes": "Tenda de acampamento para uma pessoa"
+  },
+  {
+    "nome": "Tenda Média",
+    "preco": 1.0,
+    "volume": 2.0,
+    "detalhes": "Tenda de acampamento para duas pessoas"
+  },
+  {
+    "nome": "Tenda Grande",
+    "preco": 5.0,
+    "volume": 4.0,
+    "detalhes": "Tenda de acampamento para quatro pessoas"
+  },
+  {
+    "nome": "Tenda Pavilhão",
+    "preco": 40.0,
+    "volume": 8.0,
+    "detalhes": "Tenda de acampamento para seis pessoas"
+  },
+  {
+    "nome": "Orelhudo",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": "Instrumento usado para escutar melhor através de portas e paredes finas"
+  },
+  {
+    "nome": "Bússula",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": "1d6 em testes de sobrevivência para encontrar caminho"
+  },
+  {
+    "nome": "Bússula aprimorada",
+    "preco": 20.0,
+    "volume": 0.2,
+    "detalhes": "Possui uma lente de aumento que possibilita melhor visualização. +1d8 em testes de Sobrevivência para encontrar caminho"
+  },
+  {
+    "nome": "Utensílios de cozinha",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "Preco padrão para qualquer utensílio"
+  },
+  {
+    "nome": "Sangue Falso",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Formula Química",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": "Instruções para manufatura de um item alquímico até 30$"
+  },
+  {
+    "nome": "Formula Química Avançada",
+    "preco": 30.0,
+    "volume": 0.1,
+    "detalhes": "Instruções para manufatura de um item alquímico entre 30$ e 100$"
+  },
+  {
+    "nome": "Formula Química Rara",
+    "preco": 50.0,
+    "volume": 0.1,
+    "detalhes": "Instruções para manufatura de um item alquímico acima até 100$"
+  },
+  {
+    "nome": "Espelho",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "50x30cm"
+  },
+  {
+    "nome": "Rede",
+    "preco": 1.0,
+    "volume": 0.3,
+    "detalhes": "Usada para capturar criaturas com armadilhas ou pesca"
+  },
+  {
+    "nome": "Textos Místicos",
+    "preco": 1.0,
+    "volume": 0.1,
+    "detalhes": "1d6 no teste para acumular energias místicas"
+  },
+  {
+    "nome": "Bandoleira de Atirador",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "Uma bandoleira com espaços para colocar os cartunhos de munição. Reduz o tempo de recarga completa de qualquer arma de fogo em 1 ação (mínimo 1)"
+  },
+  {
+    "nome": "Livro de Feitiços",
+    "preco": 1.0,
+    "volume": 0.2,
+    "detalhes": "Usado apra anotar rituais mágicos. (comporta até 100 rituais)"
+  },
+  {
+    "nome": "Lanterna de água-viva",
+    "preco": 2.0,
+    "volume": 0.1,
+    "detalhes": "Uma lanterna bioluminescente contendo uma ou algumas águas-vivas tão luminosas quanto uma vela. Pode vir em várias cores."
+  },
+  {
+    "nome": "Instrumento Musical fixo",
+    "preco": 2.0,
+    "volume": 40.0,
+    "detalhes": "Instrumento musical tão grande quanto um piano, não sendo possível andar com ele."
+  },
+  {
+    "nome": "Simbolo Religioso em Prata",
+    "preco": 2.0,
+    "volume": 0.1,
+    "detalhes": "Simbolo religioso feito em prata. Pode conceder proteção extra contra criaturas da noite."
+  },
+  {
+    "nome": "Escada Dobrável",
+    "preco": 3.0,
+    "volume": 0.6,
+    "detalhes": "Uma escada de 3 metros que pode ser dobrada em 3 partes para facilitar o transporte"
+  },
+  {
+    "nome": "Ampulheta",
+    "preco": 3.0,
+    "volume": 0.1,
+    "detalhes": null
+  },
+  {
+    "nome": "Correntes",
+    "preco": 4.0,
+    "volume": 0.5,
+    "detalhes": "3 metros de correntes"
+  },
+  {
+    "nome": "Binóculo",
+    "preco": 20.0,
+    "volume": 0.2,
+    "detalhes": "Enxerga 8 vezes mais longe"
+  },
+  {
+    "nome": "Binóculo Aprimorado",
+    "preco": 80.0,
+    "volume": 0.3,
+    "detalhes": "Adiciona +1d6 nos testes de percepção"
+  },
+  {
+    "nome": "Dado Viciado",
+    "preco": 5.0,
+    "volume": 0.1,
+    "detalhes": "Um dado com um peso diferente em um dos lados feito para dar o resultado desjado mais vezes. +1d6 de bônus em testes para jogos."
+  },
+  {
+    "nome": "Periscópio",
+    "preco": 25.0,
+    "volume": 0.3,
+    "detalhes": "Uma luneta angulada feita com tubos de metal e espelhos. Usada para olhar o entorno sem abandonar uma cobertura"
+  },
+  {
+    "nome": "Aríete Portátil",
+    "preco": 20.0,
+    "volume": 2.0,
+    "detalhes": "Aritete feito de madeira e ferro usado para arrombar portase fechaduras. +1d6  para testes de arrombamento forçado"
+  },
+  {
+    "nome": "Aríete Portátil Reforçado",
+    "preco": 600.0,
+    "volume": 2.5,
+    "detalhes": "O Ferro fundido com Carvão eterno garante +1d12 no teste de arrombamento forçado"
+  },
+  {
+    "nome": "Lupa",
+    "preco": 40.0,
+    "volume": 0.1,
+    "detalhes": "Uma lente de aumento que garante +1d6 em testes para analisar pequenos detalhes em documentos ou objetos."
+  },
+  {
+    "nome": "Luneta",
+    "preco": 7.0,
+    "volume": 0.2,
+    "detalhes": "Permite que um personagem utilize ações para mirar com uma arma de fogo longa adicionando 1d4 ao seu ataque"
+  },
+  {
+    "nome": "Luneta Aprimorada",
+    "preco": 80.0,
+    "volume": 0.3,
+    "detalhes": "Uma Luneta que pode ser acoplada a uma arma de fogo longa. Adiciona um dado extra (d6) ao ataque quando o presonagem usa a ação de mira. para cada ação extra mirando o dado sobe uma categoria (até o máximo de d12)"
+  },
+  {
+    "nome": "Ração",
+    "preco": "50¢",
+    "volume": 0.3,
+    "detalhes": "Raçãode viagem para uma semana"
+  }
+]

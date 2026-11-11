@@ -1,0 +1,80 @@
+{
+  "titulo": "Reservatório de Energia Mística (REM)",
+  "descricao_geral": "As magias no Oeste Sombrio costumam estar ligadas aos tipos de crenças e, portanto, apenas personagens com treinamento em Misticismo conseguem acumular pontos de magia suficientes para lançá-las. Para que isso seja feito, eles precisam ter energia mística acumulada.",
+  "definicao": "O Reservatório de Energia Mística (REM) é a capacidade que o personagem tem de armazenar poder para usar quando for mais conveniente.",
+  "regras": [
+    "A quantidade de energia mística acumulada no REM é igual à metade do nível do personagem somada ao seu nível de Misticismo.",
+    "O personagem recupera pontos de energia mística a cada descanso longo, em um valor igual ao seu nível de Misticismo."
+  ],
+  "acumulando_energia_mistica": {
+    "descricao": "O jogador pode acumular ou recarregar pontos de energia mística fazendo um teste de Misticismo com a dificuldade padrão. Este teste custa 1 ponto de ação, caso seja feito em combate.",
+    "processo": [
+      "O mestre abre 3 cartas de um baralho simples na mesa, e o jogador recebe 1 carta adicional.",
+      "Para cada teste de Misticismo adicional, após o primeiro, duas cartas adicionais são colocadas no baralho aberto na mesa, e o jogador ganha mais uma.",
+      "Para cada 10 pontos acima da dificuldade padrão, o jogador ganha uma carta a mais."
+    ],
+    "combinacao_de_cartas": {
+      "descricao": "Usando 1 ponto de ação, o personagem pode combinar as cartas para acumular energia mística de acordo com a lista abaixo, baseada em combinações de pôquer. É possível acumular mais pontos que o REM, mas pontos não utilizados são devolvidos para o mundo depois do combate.",
+      "tabela_combinacoes": [
+        {
+          "combinacao": "Par",
+          "pontos": 1
+        },
+        {
+          "combinacao": "Dois Pares",
+          "pontos": 2
+        },
+        {
+          "combinacao": "Trinca",
+          "pontos": 3
+        },
+        {
+          "combinacao": "Sequência",
+          "pontos": 4
+        },
+        {
+          "combinacao": "Mesmo Naipe (Flush)",
+          "pontos": 5
+        },
+        {
+          "combinacao": "Par + Trinca (Full House)",
+          "pontos": 6
+        },
+        {
+          "combinacao": "Quadra (Four)",
+          "pontos": 7
+        },
+        {
+          "combinacao": "Mesmo Naipe em Sequência (Straight Flush)",
+          "pontos": 8
+        },
+        {
+          "combinacao": "Mesmo Naipe em Sequência Real (Royal Straight Flush)",
+          "pontos": 9
+        }
+      ]
+    }
+  },
+  "repertorio_de_magias": {
+    "descricao": "A quantidade de magias que um personagem místico pode ter em seu repertório é limitada, representando seu nível de controle sobre a energia sobrenatural. Essa quantidade é determinada pelo menor dado de 6B do personagem, somado ao seu nível de Misticismo.",
+    "tabela_por_dado_6b": [
+      {
+        "menor_dado_6b": "d6",
+        "formula": "2 + nível de Misticismo"
+      },
+      {
+        "menor_dado_6b": "d8",
+        "formula": "4 + nível de Misticismo"
+      },
+      {
+        "menor_dado_6b": "d10",
+        "formula": "6 + nível de Misticismo"
+      },
+      {
+        "menor_dado_6b": "d12",
+        "formula": "10 + nível de Misticismo"
+      }
+    ],
+    "regra_nivel_20": "A partir do Nível 20, cada dado de 6B adicional que o personagem ganhar concede +4 magias à quantidade total de seu repertório."
+  }
+}

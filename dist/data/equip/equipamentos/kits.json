@@ -1,0 +1,162 @@
+[
+  {
+    "kit": "Kit de Higiene",
+    "preco": "30¢",
+    "detalhes": "Kit para realizar a higiene corporal diária. Dura 1 semana. 10¢ para reposição"
+  },
+  {
+    "kit": "Kit de Disfarce",
+    "preco": 2.0,
+    "detalhes": "Acessórios para disfarce (peruca, pelos faciais, maquiagem etc)"
+  },
+  {
+    "kit": "Kit de Disfarce Aprimorado",
+    "preco": 40.0,
+    "detalhes": "Garante +1d6 de bônus em testes relevantes"
+  },
+  {
+    "kit": "Kit de Limpeza de Armas de Fogo",
+    "preco": "50¢",
+    "detalhes": "Ferramentas necessárias para limpar qualquer arma de Fogo."
+  },
+  {
+    "kit": "Kit de escrivão",
+    "preco": "50¢",
+    "detalhes": "Caneta, tinta extra, caderno para anotações"
+  },
+  {
+    "kit": "Kit de escalada",
+    "preco": 1.0,
+    "detalhes": "15m de corda, polias, martelo, gancho de escalada, agarras e grampos."
+  },
+  {
+    "kit": "Kit de Escalada aprimorado",
+    "preco": 40.0,
+    "detalhes": "Ferramentas excepcionais para escalada que garantem um adicional de +1d6 nos testes"
+  },
+  {
+    "kit": "Kit de Pescaria",
+    "preco": 1.5,
+    "detalhes": "Vara, anzol, iscas artificiais e uma rede pequena"
+  },
+  {
+    "kit": "Kit de Pescaria Profissional",
+    "preco": 20.0,
+    "detalhes": "Bônus de +1d6 para testes de pescaria"
+  },
+  {
+    "kit": "Kit de Pintura",
+    "preco": 1.0,
+    "detalhes": "Pincéis, tintas, e pequenas telas. 10¢ para repor as tintas"
+  },
+  {
+    "kit": "Kit de Aventureiro",
+    "preco": 1.5,
+    "detalhes": "Mochila, saco de dormir, 05 pedaços de giz, pederneira, 10m de corda, sabão e cantil"
+  },
+  {
+    "kit": "Kit de Reparos",
+    "preco": 2.0,
+    "detalhes": "Um kit usado para fazer reparos em armas ou outros objetos quebrados."
+  },
+  {
+    "kit": "Kit de Reparos Aprimorado",
+    "preco": 25.0,
+    "detalhes": "Um kit usado para fazer reparos em armas ou outros objetos quebrados. As ferramentas e materiais desse kit são de excelente qualidade e conferem +1d6 de bônus nos testes."
+  },
+  {
+    "kit": "Kit alquímico portátil",
+    "preco": 3.0,
+    "detalhes": "Uma maleta que pode virar uma mesa com diversas ferramentas para produção de tônicos e outras substâncias químicas"
+  },
+  {
+    "kit": "Kit do Ladrão",
+    "preco": 3.0,
+    "detalhes": "Este kit permite usar engenharia para abrir fechaduras e desarmar algumas armadilhas. Não possuir esse kit aumenta a dificuldade do teste"
+  },
+  {
+    "kit": "Kit de Ladrão Aprimorado",
+    "preco": 50.0,
+    "detalhes": "Garante +1d6 nos testes para destrancar fechaduras e desarmar armadilhas"
+  },
+  {
+    "kit": "Kit de Ladrão Oculto",
+    "preco": 80.0,
+    "detalhes": "Funciona como um kit Aprimorado mas é menor, mais resistente e mais fácil de ser escondido. +1d6 para testes de furtividade para tentar escondê-lo"
+  },
+  {
+    "kit": "Kit de Artesão",
+    "preco": 4.0,
+    "detalhes": "Usado para criar os mais variados tipos de itens, esculturas, entalhes, e até jóias. É necessário identificar que tipo de kit o personagem posui"
+  },
+  {
+    "kit": "Kit de Artesão Aprimorado",
+    "preco": 50.0,
+    "detalhes": "Com ferramentas melhoradas o kit concede +1d6 de bônus nos testes."
+  },
+  {
+    "kit": "Kit de Equitação",
+    "preco": 4.0,
+    "detalhes": "Conjunto e equipamentos usados para montarias  incluindo sela, rédeas, cabresto, estribos, e outros acessórios utilizados para o manejo e controle do animal montado"
+  },
+  {
+    "kit": "Kit médico",
+    "preco": 5.0,
+    "detalhes": "Contém ferramentas e material para realizar ações de primeiros socorros, tratar venenos e feridas."
+  },
+  {
+    "kit": "Kit médico aprimorado",
+    "preco": 50.0,
+    "detalhes": "As ferramentas e materiais de qualidade excepcional garantem +1d6 nos testes."
+  },
+  {
+    "kit": "Kit de armadilheiro",
+    "preco": 5.0,
+    "detalhes": "Ferramentas e materiais utilizados no preparo de armadilhas para pequenas presas"
+  },
+  {
+    "kit": "Kit de armadilheiro especialista",
+    "preco": 55.0,
+    "detalhes": "Ferramentas e materiais utilizados no preparo de armadilhas para grandes presas ou animais específicos. além do kit comum também possui uma variedade de iscas olfativas complexas"
+  },
+  {
+    "kit": "Kit do Montanhês",
+    "preco": 50.0,
+    "detalhes": "Inclui Saco de dormir, kit de escalada, bússula, faca pequena, kit de reparos, pá de cabo curto, serra corta gelo, skis e bastôes, roupas de inverno, sapatos de neve, binóculo, óculos de neve e 20 gravetos"
+  },
+  {
+    "kit": "Kit de impressao Texturizada",
+    "preco": 1.0,
+    "detalhes": "Usando esse kit é possível rapidamente fazer cópias de texturas em relevo. o Kit contem uma folha finha de papel, carvão e pó de carvão e um estojo à prova dágua"
+  },
+  {
+    "kit": "Kit de Garimpeiro",
+    "preco": 30.0,
+    "detalhes": "Kit com ferramentas para garimpo e mineração em rios. Contém pá, peneira, picareta, lanterna a óleo, bateia, ferramentas de reparo e uma tenda pequena"
+  },
+  {
+    "kit": "Kit de Detetive",
+    "preco": 25.0,
+    "detalhes": "Bolsa de couro, frascos vazios, pinças, pequenos panos de linho, réguas e medidores, giz, caderno para anotações. A qualidade dos equipamentos é excepcional adicionando +1d6 nos testes de investigação"
+  },
+  {
+    "kit": "Kit de Impressão Digital",
+    "preco": 30.0,
+    "detalhes": "Encontrado apenas em grandes metrópolis, com esse kit é possível coletar e analizar as impressões digitais de um ambiente."
+  },
+  {
+    "kit": "Kit de Rapel",
+    "preco": 30.0,
+    "detalhes": "Contém todos os equipamentos de um kit de escalada com adição de ferramentes específicas para uma descida rápida e segura. Usar um kit de Rapel dobra a velocidade de descida normal."
+  },
+  {
+    "kit": "Kit de Cartógrafo",
+    "preco": 42.0,
+    "detalhes": "Contém um kit de escrivão, uma bússula, um astrolábio, uma égua e um mapa topográfico"
+  },
+  {
+    "kit": "Kit de Caçador de Mitos",
+    "preco": 50.0,
+    "detalhes": "Uma caixa com diversos materiais para identificar criaturas  mitológicas. Usar esse equipamento para identificar rastros de criaturas concede +1d6 de bônus."
+  }
+]
