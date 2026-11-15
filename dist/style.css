@@ -4978,6 +4978,14 @@ body {
   font-weight: 700;
 }
 
+.scene-chamber-pill.is-damaged {
+  background: rgba(180, 20, 20, 0.45);
+  border-color: #ff3333;
+  color: #ff8888;
+  text-decoration: line-through;
+  opacity: 0.8;
+}
+
 .scene-conds-list {
   display: flex;
   flex-wrap: wrap;
@@ -6637,3 +6645,157 @@ body.mesa-fullscreen-active #mesa-sidebar-feed.is-fichas-expanded {
 .mesa-note-save-status.is-error, .mesa-notes-error { color:#f09c8e; }
 .mesa-note-popup.is-minimized { height:auto; }
 .mesa-note-popup.is-minimized .mesa-note-textarea, .mesa-note-popup.is-minimized footer { display:none; }
+
+/* ─── Cards Compactos em Cena (.mesa-scene-card) ─── */
+.mesa-scene-card.mesa-compact-row {
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(28, 21, 17, 0.94), rgba(17, 12, 10, 0.94));
+  border: 1px solid rgba(180, 135, 80, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.mesa-scene-card.is-player-entity {
+  background: linear-gradient(180deg, rgba(20, 30, 24, 0.94), rgba(12, 18, 14, 0.94));
+  border-color: rgba(107, 196, 141, 0.5);
+}
+
+.mesa-compact-avatar.is-circular {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(215, 155, 95, 0.7);
+}
+
+.mesa-scene-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mesa-entity-badge {
+  font-family: sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  line-height: 1.2;
+}
+
+.mesa-entity-badge.type-player {
+  background: rgba(36, 98, 58, 0.55);
+  color: #bbf0cc;
+  border: 1px solid rgba(107, 196, 141, 0.65);
+}
+
+.mesa-entity-badge.type-creature {
+  background: rgba(120, 28, 20, 0.55);
+  color: #f5b0a4;
+  border: 1px solid rgba(220, 80, 60, 0.65);
+}
+
+.mesa-entity-badge.type-npc {
+  background: rgba(130, 85, 30, 0.55);
+  color: #ffe0b2;
+  border: 1px solid rgba(225, 160, 70, 0.65);
+}
+
+.mesa-scene-badges-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.scene-badge {
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(10, 8, 7, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f4dec4;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.3;
+}
+
+.scene-badge.badge-init {
+  color: #ffd580;
+  border-color: rgba(255, 213, 128, 0.25);
+}
+
+.scene-badge.badge-def {
+  color: #bbf0cc;
+  border-color: rgba(107, 196, 141, 0.25);
+}
+
+.scene-badge.badge-health {
+  color: #ff9999;
+  border-color: rgba(255, 120, 120, 0.25);
+}
+
+.scene-badge.badge-fadiga {
+  color: #c2a8f2;
+  border-color: rgba(180, 150, 240, 0.25);
+}
+
+.scene-badge.badge-conds {
+  color: #ffcc66;
+  border-color: rgba(255, 204, 102, 0.35);
+  background: rgba(80, 50, 10, 0.6);
+}
+
+/* Tooltip do botão desabilitado na visão do jogador */
+.btn-disabled-mesa {
+  opacity: 0.55;
+  cursor: not-allowed !important;
+  pointer-events: auto !important;
+}
+
+/* ─── Popup Flutuante de Jogador (.player-combat-card-body) ─── */
+.player-combat-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-combat-card-body .player-stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-combat-card-body .player-fate-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.player-fate-pill {
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.player-fate-pill.pill-vermelha { background: rgba(140, 25, 25, 0.4); color: #ff9999; border-color: rgba(220, 50, 50, 0.5); }
+.player-fate-pill.pill-azul { background: rgba(25, 75, 140, 0.4); color: #99ccff; border-color: rgba(50, 130, 220, 0.5); }
+.player-fate-pill.pill-verde { background: rgba(30, 110, 45, 0.4); color: #99ff99; border-color: rgba(60, 180, 80, 0.5); }
+.player-fate-pill.pill-preta { background: rgba(20, 20, 20, 0.6); color: #cccccc; border-color: rgba(120, 120, 120, 0.5); }
+

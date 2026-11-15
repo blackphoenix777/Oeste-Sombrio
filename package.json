@@ -1,12 +1,13 @@
 {
   "name": "ficha-dark-westy",
-  "version": "1.4.1",
+  "version": "1.4.3",
   "description": "",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tauri": "tauri",
-    "signer:generate": "tauri signer generate"
+    "signer:generate": "tauri signer generate",
+    "release:local": "powershell -ExecutionPolicy Bypass -File ./scripts/build-release.ps1"
   },
   "keywords": [],
   "author": "",

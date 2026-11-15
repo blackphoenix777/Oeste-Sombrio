@@ -28,8 +28,10 @@ const test = async function () {
     for (const n of [7, 8]) {
       creature.data['config-6b'] = n + 'd6';
       OS.rollSceneCreature6B(creature.instanceId);
+      const disp = OS.getCreature6BDisplayInfo(creature.data);
+      check(disp.count === n && disp.vidaText === n + '/' + n, 'displayInfo ' + n + ' dados');
       check(Array.from({length:n}, (_,i) => Number(creature.data['chamber-'+i])).every(v=>v>=1&&v<=6), n+' dados rolados');
-      check(document.querySelectorAll('.scene-creature-card .scene-chamber-pill').length === n, n+' pílulas no card');
+      check(document.querySelector('.scene-creature-card .badge-health').textContent.includes(n + '/' + n), n+' vida no card compacto');
       check(document.querySelectorAll('[data-target-id="scene-test"] .scene-chamber-pill').length === n, n+' pílulas no popup');
     }
     creature.data.originalChambers = Array(8).fill(6);
@@ -43,15 +45,40 @@ const test = async function () {
     edit('[data-target-id="scene-test"]', '2d6');
     OS.rollSceneCreature6B(creature.instanceId);
     check(creature.data.config6B.d6 === 2 && creature.data['chamber-7'] === '0' && !creature.data['chamber-7-mark'] && creature.data.originalChambers[7] === '0' && creature.data.markedChambers.length === 0, 'redução 8 → 2 sanitiza excedentes');
-    check(document.querySelector('.scene-creature-card').textContent.includes('6B (2d6)'), 'texto 2d6 no card');
+    check(document.querySelector('.scene-creature-card .badge-health').textContent.includes('2/2'), 'vida 2/2 no card compacto');
     check(document.querySelector('[data-target-id="scene-test"]').textContent.includes('6B (2d6)'), 'texto 2d6 no popup');
     edit('[data-target-id="npc-test"]', '2d6'); OS.rollMesaNpc6B(npc.mesaNpcId);
     check(npc.data.config6B.d6 === 2 && npc.data['chamber-2'] === '0', 'NPC contaminado corrigido pelo botão Salvar 6B');
+    const playerSheet = {
+      id: 'player-sheet-test',
+      nome_personagem: 'Pistoleiro',
+      dados: {
+        nome: 'Pistoleiro',
+        nivel: 1,
+        defesa: '12',
+        iniciativa: '8',
+        fateTokens: { vermelha: 1, azul: 0, verde: 0, preta: 0 },
+        inventoryItems: [{ id: 'w1', group: 'armas', equipped: true, name: 'Revólver', attrs: { dano: 'd6' } }],
+        damagedChambers: []
+      }
+    };
+    st.playerSheets = [playerSheet];
+    const pDisp = OS.getCreature6BDisplayInfo(playerSheet.dados, { isPlayer: true });
+    check(pDisp.count === 6 && pDisp.cfgText === '6d6' && pDisp.vidaText === '6/6', 'displayInfo jogador 6d6');
+    OS.rollPlayerPopup6B(playerSheet.id);
+    check(Array.from({length:6}, (_,i) => Number(playerSheet.dados['chamber-'+i])).every(v=>v>=1&&v<=6), 'jogador rola 6 câmaras pelo popup');
+    const atkRes = OS.rollPlayerPopupAttack(playerSheet.id, 0);
+    check(atkRes && playerSheet.dados.usedChambers.length === 1, 'ataque popup jogador consome câmara corretamente');
+    st.mesaTokens = [{ id: 'ptoken-test', mesa_id: 'test', owner_type: 'player', owner_ref: playerSheet.id, display_name: 'Pistoleiro', visible_to_players: true }];
+    OS.renderMesaSceneCards();
+    OS.openOrFocusPlayerPopup(playerSheet.id);
+    check(document.querySelectorAll('[data-target-id="player-sheet-test"] .scene-chamber-pill').length === 6, 'popup jogador exibe 6 pílulas');
+    check(document.querySelector('.is-player-entity .badge-health').textContent.includes('6/6'), 'card jogador em cena exibe vida 6/6');
     check(saves > 0, 'edições acionam persistência (simulada)');
     const input = document.querySelector('.scene-config-6b-input'); input.value = 'inválido';
     check(!input.checkValidity(), 'entrada inválida rejeitada'); input.value = '2d6';
     st.gmPopupsHubExpanded = true; OS.renderMesaPopupsHub();
-    check(document.querySelectorAll('.mesa-popups-hub-item').length === 2, 'hub com dois popups');
+    check(document.querySelectorAll('.mesa-popups-hub-item').length === 3, 'hub com três popups');
     for (const selector of ['.mesa-popups-hub-panel-header', '.mesa-popups-hub-bulk-actions', '.mesa-popups-hub-item-main'])
       check(getComputedStyle(document.querySelector(selector)).display === 'flex', 'CSS aplicado: '+selector);
     document.querySelector('[data-hub-action="collect-all"]').click();

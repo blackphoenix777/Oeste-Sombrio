@@ -161,6 +161,7 @@ w.openCylinderChoiceModal = OS.openCylinderChoiceModal;
 w.calculateFinalRoll = OS.calculateFinalRoll;
 w.loadEquipCatalog = OS.loadEquipCatalog;
 w.getEquipCatalogEntry = OS.getEquipCatalogEntry;
+w.getCreature6BDisplayInfo = OS.getCreature6BDisplayInfo;
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", function () {

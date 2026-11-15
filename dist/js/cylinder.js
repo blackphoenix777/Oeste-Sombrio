@@ -514,6 +514,9 @@ OS.fatigueZeroAddedUsed = [];
     // Após load, zeros atuais são tratados como fadiga para restore atômico
     OS.fatigueZeroAddedUsed = (OS.fatigueZeroedChambers || []).slice();
   }
+  if (typeof OS.updateNovaSessaoButtonVisibility === "function") {
+    OS.updateNovaSessaoButtonVisibility();
+  }
 };
 
   function rand1to6() {
@@ -1702,12 +1705,50 @@ OS.fatigueZeroAddedUsed = [];
   };
 
   /**
+   * Atualiza a visibilidade/estado do botão individual de Nova Sessão na ficha do jogador:
+   * Se a ficha estiver vinculada a uma mesa ativa, desabilita o botão individual com tooltip explicativo.
+   */
+  OS.updateNovaSessaoButtonVisibility = function () {
+    var btn = OS.$("btn-nova-sessao");
+    if (!btn) return;
+    var isLinkedToMesa = false;
+    if (OS.activeMesaState && OS.activeMesaState.mesaId) {
+      isLinkedToMesa = true;
+    } else if (OS.activeCharacterState && (OS.activeCharacterState.mesa_id || OS.activeCharacterState.mesaId)) {
+      isLinkedToMesa = true;
+    } else if (typeof OS.getCharacterState === "function") {
+      var curSt = OS.getCharacterState();
+      if (curSt && (curSt.mesa_id || curSt.mesaId)) {
+        isLinkedToMesa = true;
+      }
+    }
+
+    if (isLinkedToMesa) {
+      btn.disabled = true;
+      btn.classList.add("btn-disabled-mesa");
+      btn.setAttribute("title", "A Nova Sessão é iniciada exclusivamente pelo Mestre da Mesa.");
+    } else {
+      btn.disabled = false;
+      btn.classList.remove("btn-disabled-mesa");
+      btn.setAttribute("title", "Zera Fichas do Destino não usadas, sorteia 1 ficha da pool do personagem e reseta o 6B para a rolagem inicial da sessão");
+    }
+  };
+
+  /**
    * Inicia uma Nova Sessão:
    * - Zera todas as Fichas do Destino não usadas.
    * - Sorteia 1 Ficha do Destino proporcionalmente à pool atual do personagem (pool base + bônus de nível) e credita ao jogador.
    * - Reseta o 6B para o estado de rolagem inicial da sessão (sem gerar fadiga na próxima rolagem e avaliando Jogadas Especiais iniciais).
    */
   OS.startNewSession = function () {
+    if (OS.activeMesaState && OS.activeMesaState.mesaId && !OS.activeMesaState.isMestre) {
+      if (typeof OS.showToast === "function") {
+        OS.showToast("A Nova Sessão é iniciada exclusivamente pelo Mestre da Mesa.", "info");
+      } else {
+        alert("A Nova Sessão é iniciada exclusivamente pelo Mestre da Mesa.");
+      }
+      return null;
+    }
     OS.fateTokens = {
       vermelha: 0,
       azul: 0,
@@ -1760,6 +1801,7 @@ OS.fatigueZeroAddedUsed = [];
   };
 
   OS.bindFateTokensEvents = function () {
+    if (OS.updateNovaSessaoButtonVisibility) OS.updateNovaSessaoButtonVisibility();
     var btnNovaSessao = OS.$("btn-nova-sessao");
     if (btnNovaSessao && !btnNovaSessao._bound) {
       btnNovaSessao._bound = true;

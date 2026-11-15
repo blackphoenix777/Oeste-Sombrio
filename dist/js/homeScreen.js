@@ -707,4 +707,14 @@ OS.bindHomeEvents = function () {
       OS.returnToHome();
     });
   }
+
+  var btnCheckUpdates = OS.$("btn-home-check-updates");
+  if (btnCheckUpdates && !btnCheckUpdates._bound) {
+    btnCheckUpdates._bound = true;
+    btnCheckUpdates.addEventListener("click", function () {
+      if (typeof OS.checkForUpdates === "function") {
+        OS.checkForUpdates({ silent: false });
+      }
+    });
+  }
 };

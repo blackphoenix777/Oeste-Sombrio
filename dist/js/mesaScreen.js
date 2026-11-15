@@ -245,12 +245,78 @@ function generateInviteCode() {
   return out;
 }
 
+if (typeof OS.parse6BConfigString !== "function") {
+  OS.parse6BConfigString = function (str) {
+    var raw = String(str || "").trim();
+    if (!raw) return {};
+    var result = {};
+    var regex = /(\d+)\s*(d4|d6|d8|d10|d12)/gi;
+    var m;
+    while ((m = regex.exec(raw)) !== null) {
+      var count = parseInt(m[1], 10);
+      var die = m[2].toLowerCase();
+      if (!isNaN(count) && count > 0) {
+        result[die] = (result[die] || 0) + count;
+      }
+    }
+    return result;
+  };
+}
+
+if (typeof OS.format6BConfig !== "function") {
+  OS.format6BConfig = function (config) {
+    var cfg = config && typeof config === "object" ? config : { d6: 6 };
+    var keys = Object.keys(cfg).filter(function (k) {
+      return (parseInt(String(cfg[k] || 0), 10) || 0) > 0;
+    });
+    if (!keys.length) return "1d6";
+    var order = cfg.d12 >= 6 && keys.length > 1
+      ? ["d12", "d4", "d6", "d8", "d10"]
+      : ["d4", "d6", "d8", "d10", "d12"];
+    keys.sort(function (a, b) {
+      return order.indexOf(a) - order.indexOf(b);
+    });
+    return keys
+      .map(function (k) {
+        return cfg[k] + k;
+      })
+      .join(" + ");
+  };
+}
+
+function isPlayerSheetData(d, options) {
+  if (options && options.isPlayer) return true;
+  if (!d || typeof d !== "object") return false;
+  if (
+    d.tipo_ficha === "npc" ||
+    d.tipo_ficha === "monstro" ||
+    d.isBestiaryCustom === true ||
+    d.freeEdit === true
+  ) {
+    return false;
+  }
+  return (
+    d.tipo_ficha === "jogador" ||
+    d.freeEdit === false ||
+    (Array.isArray(d.tipo_dados_6b) && d.tipo_dados_6b.length > 0) ||
+    (d.fateTokens !== undefined && d.fateTokens !== null) ||
+    (d.fatePool !== undefined && d.fatePool !== null) ||
+    d.classe !== undefined ||
+    d.antecedente !== undefined
+  );
+}
+
 /**
  * Resolve e sincroniza config-6b (string) e config6B (objeto) de uma criatura,
  * tratando config-6b (string) como fonte de verdade quando presente/válida.
  */
-OS.resolveCreature6BInfo = function (data) {
-  var d = data && typeof data === "object" ? data : {};
+OS.resolveCreature6BInfo = function (data, options) {
+  var d =
+    data && typeof data === "object" && (data.data || data.dados)
+      ? data.data || data.dados
+      : data && typeof data === "object"
+      ? data
+      : {};
   var rawStr =
     d["config-6b"] !== undefined && d["config-6b"] !== null
       ? String(d["config-6b"]).trim()
@@ -282,10 +348,35 @@ OS.resolveCreature6BInfo = function (data) {
       mutated = true;
     }
   } else {
-    cfg = { d6: 1 };
-    d.config6B = { d6: 1 };
+    var cfgFromArray = {};
+    if (Array.isArray(d.tipo_dados_6b) && d.tipo_dados_6b.length > 0) {
+      d.tipo_dados_6b.forEach(function (die) {
+        var k = String(die || "").trim().toLowerCase();
+        if (/^d(?:4|6|8|10|12)$/.test(k)) {
+          cfgFromArray[k] = (cfgFromArray[k] || 0) + 1;
+        }
+      });
+    }
+    if (Object.keys(cfgFromArray).length > 0) {
+      cfg = cfgFromArray;
+    } else if (isPlayerSheetData(d, options)) {
+      var nivelNum = parseInt(String(d.nivel || 1), 10) || 1;
+      cfg =
+        typeof OS.calculate6BConfig === "function"
+          ? deepClone(OS.calculate6BConfig(nivelNum))
+          : { d6: 6 };
+    } else {
+      cfg = { d6: 1 };
+    }
+    d.config6B = deepClone(cfg);
+    var defaultFmt =
+      typeof OS.format6BConfig === "function"
+        ? OS.format6BConfig(cfg)
+        : isPlayerSheetData(d, options)
+        ? "6d6"
+        : "1d6";
     if (!rawStr) {
-      d["config-6b"] = "1d6";
+      d["config-6b"] = defaultFmt;
     }
     mutated = true;
   }
@@ -320,17 +411,21 @@ OS.resolveCreature6BInfo = function (data) {
  * Sanitiza câmaras excedentes (ci >= N, onde N vem de config6B) e garante sincronia
  * entre config-6b e config6B para qualquer criatura/NPC em modo freeEdit.
  */
-OS.sanitizeCreature6BData = function (data) {
+OS.sanitizeCreature6BData = function (data, options) {
   if (!data || typeof data !== "object") {
+    var fallbackPlayer = !!(options && options.isPlayer);
+    var fallbackCount = fallbackPlayer ? 6 : 1;
     return {
-      cfg: { d6: 1 },
-      cfgText: "1d6",
-      diceList: ["d6"],
-      count: 1,
+      cfg: { d6: fallbackCount },
+      cfgText: fallbackCount + "d6",
+      diceList: Array.from({ length: fallbackCount }, function () {
+        return "d6";
+      }),
+      count: fallbackCount,
       mutated: false
     };
   }
-  var info = OS.resolveCreature6BInfo(data);
+  var info = OS.resolveCreature6BInfo(data, options);
   var n = info.count;
   var mutated = !!info.mutated;
 
@@ -393,6 +488,73 @@ OS.sanitizeCreature6BData = function (data) {
   }
   info.mutated = mutated;
   return info;
+};
+
+/**
+ * Retorna informações normalizadas de exibição e rolagem do tambor 6B para
+ * criaturas, NPCs e jogadores (usado em Em Cena, popups e barras de token).
+ */
+OS.getCreature6BDisplayInfo = function (targetOrData, options) {
+  var d =
+    targetOrData && typeof targetOrData === "object" && (targetOrData.data || targetOrData.dados)
+      ? targetOrData.data || targetOrData.dados
+      : targetOrData && typeof targetOrData === "object"
+      ? targetOrData
+      : {};
+  var info = OS.sanitizeCreature6BData(d, options);
+  var count = info.count;
+  var usedChambers = Array.isArray(d.usedChambers) ? d.usedChambers : [];
+  var markedChambers = Array.isArray(d.markedChambers) ? d.markedChambers : [];
+  var damagedChambers = OS.getRealDamagedChambers
+    ? OS.getRealDamagedChambers(d, count)
+    : Array.isArray(d.damagedChambers)
+    ? d.damagedChambers.filter(function (i) {
+        return Number.isInteger(i) && i >= 0 && i < count;
+      })
+    : [];
+
+  var chambers = [];
+  var availableValues = [];
+  for (var ci = 0; ci < count; ci++) {
+    var rawVal = d["chamber-" + ci];
+    var cVal =
+      rawVal !== undefined && rawVal !== null && String(rawVal) !== ""
+        ? String(rawVal)
+        : "0";
+    var isUsed = usedChambers.indexOf(ci) >= 0;
+    var isDamaged = damagedChambers.indexOf(ci) >= 0;
+    if (!isUsed && !isDamaged && cVal !== "0") {
+      availableValues.push(cVal);
+    }
+    chambers.push({
+      index: ci,
+      value: cVal,
+      die: info.diceList[ci] || "d6",
+      isUsed: isUsed,
+      isDamaged: isDamaged
+    });
+  }
+
+  var intactCount = Math.max(0, count - damagedChambers.length);
+  var vidaText = intactCount + "/" + count;
+
+  return {
+    cfg: info.cfg,
+    cfgText: info.cfgText,
+    diceList: info.diceList,
+    count: count,
+    chamberCount: count,
+    mutated: info.mutated,
+    usedChambers: usedChambers,
+    markedChambers: markedChambers,
+    damagedChambers: damagedChambers,
+    intactCount: intactCount,
+    vidaText: vidaText,
+    healthText: vidaText,
+    chambers: chambers,
+    availableValues: availableValues,
+    compactSummary: availableValues.length ? availableValues.join(",") : info.cfgText
+  };
 };
 
 function sanitizeNpcsMesaListInPlace(list) {
@@ -467,6 +629,12 @@ OS.getSceneToken = function (instanceId) {
   return (OS.activeMesaState.mesaTokens || []).find(function (t) {
     return t.owner_type === "creature" && String(t.owner_ref) === String(instanceId);
   });
+};
+
+OS.getPlayerSceneToken = function (fichaId) {
+  return (OS.activeMesaState.mesaTokens || []).find(function (t) {
+    return t.owner_type === "player" && String(t.owner_ref) === String(fichaId);
+  }) || null;
 };
 
 OS.appendTokenVisibilityButton = function (container, token) {
@@ -1922,6 +2090,31 @@ OS.subscribeMesaRealtimeChannel = function (mesaId, opts) {
     if (OS.activeMesaChannel === channel && payload.new && payload.new.mesa_id === mesaId && OS.loadMesaCombat) OS.loadMesaCombat();
   });
 
+  channel.on("postgres_changes", {
+    event: "UPDATE", schema: "public", table: "fichas", filter: "mesa_id=eq." + mesaId
+  }, function (payload) {
+    var updatedFicha = payload && payload.new;
+    if (!updatedFicha) return;
+    var st = OS.activeMesaState;
+    if (!st || OS.activeMesaChannel !== channel) return;
+    if (!st.isMestre && st.playerFichaId && String(st.playerFichaId) === String(updatedFicha.id)) {
+      if (updatedFicha.dados && typeof updatedFicha.dados === "object") {
+        OS.applyState(updatedFicha.dados, { readOnlyMode: false });
+        if (OS.renderFateTokens) OS.renderFateTokens();
+      }
+    }
+    if (st.isMestre && Array.isArray(st.playerSheets)) {
+      var idx = st.playerSheets.findIndex(function (r) {
+        return r && String(r.id) === String(updatedFicha.id);
+      });
+      if (idx >= 0) {
+        st.playerSheets[idx] = updatedFicha;
+        if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+        if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+      }
+    }
+  });
+
   // Jogadores escutam somente sinais autorizados; DELETE de Postgres Changes não aplica RLS.
   if (OS.activeMesaState.isMestre) {
   // Nota: em Supabase Realtime com RLS, eventos DELETE enviam apenas a PK (payload.old = { id })
@@ -2174,6 +2367,22 @@ OS.handleRealtimeEventoMesa = function (payload) {
   }
 
   OS.appendMesaFeedEventIfNew(ev);
+
+  // Sincronização automática quando o Mestre dispara Nova Sessão
+  if (ev.tipo === "sistema" && ev.conteudo && ev.conteudo.subtipo === "nova_sessao") {
+    if (st.isMestre) {
+      OS.loadMesaPlayersSheets().then(function () {
+        if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+        if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+      });
+    } else {
+      OS.loadPlayerSheetForMesa(st.mesaId, st.currentUserId).then(function () {
+        if (typeof OS.showToast === "function") {
+          OS.showToast("O Mestre iniciou uma Nova Sessão! Novas Fichas do Destino foram sorteadas e o 6B foi preparado.", "info");
+        }
+      });
+    }
+  }
 };
 
 OS.adjustMesaGridCols = async function (delta) {
@@ -3969,6 +4178,423 @@ OS.removeCreatureFromScene = async function (instanceId) {
   return true;
 };
 
+function resolvePlayerFichaRow(fichaId) {
+  var st = OS.activeMesaState;
+  if (!st || !fichaId) return null;
+  var fichaRow = (st.playerSheets || []).find(function (r) {
+    return r && String(r.id) === String(fichaId);
+  });
+  if (!fichaRow && st.playerFichaId && String(st.playerFichaId) === String(fichaId)) {
+    var liveData =
+      OS.activeCharacterState && typeof OS.activeCharacterState === "object"
+        ? OS.activeCharacterState
+        : OS.getCharacterState
+        ? OS.getCharacterState()
+        : {};
+    if (!st._ownPlayerFichaRow || String(st._ownPlayerFichaRow.id) !== String(fichaId)) {
+      st._ownPlayerFichaRow = {
+        id: st.playerFichaId,
+        nome_personagem: (st.mesa && st.mesa.player_nome) || liveData.nome || "Meu Personagem",
+        dados: liveData
+      };
+    } else if (liveData && st._ownPlayerFichaRow.dados !== liveData) {
+      st._ownPlayerFichaRow.dados = liveData;
+    }
+    fichaRow = st._ownPlayerFichaRow;
+  }
+  return fichaRow || null;
+}
+
+function applyFatigueTo6BValues(results, fatigue) {
+  if (typeof OS.applyFatigueTo6BRoll === "function") {
+    return OS.applyFatigueTo6BRoll(results, fatigue);
+  }
+  var values = (results || []).slice();
+  var remaining = Math.max(0, fatigue || 0);
+  var zeroedIndices = [];
+  while (remaining > 0) {
+    var highestValue = -1;
+    var highestIndex = -1;
+    for (var i = 0; i < values.length; i++) {
+      var val = values[i] || 0;
+      if (val <= 0) continue;
+      if (val > highestValue) {
+        highestValue = val;
+        highestIndex = i;
+      }
+    }
+    if (highestIndex === -1 || highestValue <= 0) break;
+    var reduction = Math.min(remaining, highestValue);
+    values[highestIndex] = highestValue - reduction;
+    remaining -= reduction;
+    if (values[highestIndex] === 0 && zeroedIndices.indexOf(highestIndex) === -1) {
+      zeroedIndices.push(highestIndex);
+    }
+  }
+  return { values: values, zeroedIndices: zeroedIndices };
+}
+
+/**
+ * Constrói o corpo de combate do jogador para exibição na ficha flutuante (.mesa-floating-popup).
+ */
+OS.buildPlayerCombatCardBody = function (fichaRow, callbacks) {
+  callbacks = callbacks || {};
+  var d = (fichaRow && fichaRow.dados && typeof fichaRow.dados === "object") ? fichaRow.dados : {};
+
+  var info6B = OS.getCreature6BDisplayInfo(d, { isPlayer: true });
+  var chamberCount = info6B.count;
+  var fadigaCount = countFadigaFromState(d);
+  var usedChambers = info6B.usedChambers;
+  var markedChambers = info6B.markedChambers;
+  var damagedChambers = info6B.damagedChambers;
+  var activeConds = Array.isArray(d.activeConditions) ? d.activeConditions : [];
+  var fateTokens = (d.fateTokens && typeof d.fateTokens === "object") ? d.fateTokens : { vermelha: 0, azul: 0, verde: 0, preta: 0 };
+
+  var remVal = d["rem-atual"] !== undefined && d["rem-atual"] !== "" ? d["rem-atual"] : (d.rem || 0);
+
+  var chambersHtml = "";
+  for (var ci = 0; ci < chamberCount; ci++) {
+    var cVal = d["chamber-" + ci] !== undefined && d["chamber-" + ci] !== "" ? d["chamber-" + ci] : "0";
+    var isUsed = usedChambers.indexOf(ci) >= 0 || markedChambers.indexOf(ci) >= 0;
+    var isDamaged = damagedChambers.indexOf(ci) >= 0;
+    var chamberClass = "scene-chamber-pill" + (isUsed ? " is-used" : "") + (isDamaged ? " is-damaged" : "");
+    var chamberTitle = isDamaged
+      ? "Câmara " + (ci + 1) + " (Bloqueada por Ferimento)"
+      : "Clique para marcar/desmarcar câmara " + (ci + 1) + " (Valor: " + cVal + ")";
+    chambersHtml +=
+      '<button type="button" class="' + chamberClass + '" data-action="toggle-chamber" data-chamber="' + ci + '" title="' + chamberTitle + '">' +
+      (isDamaged ? "✕" : escHtml(cVal)) +
+      '</button>';
+  }
+
+  var condsHtml = "";
+  if (!activeConds.length) {
+    condsHtml = '<span class="scene-cond-empty">Sem condições ativas</span>';
+  } else {
+    activeConds.forEach(function (c, cIdx) {
+      var cLabel = typeof c === "string" ? c : (c && (c.nome || c.name || c.id)) || "Condição";
+      var cDeg = typeof c === "object" && c && c.grau !== undefined && c.grau !== null ? " " + c.grau : "";
+      condsHtml +=
+        '<span class="scene-cond-tag" data-cond-index="' + cIdx + '">' +
+        escHtml(cLabel + cDeg) +
+        ' <button type="button" class="scene-cond-remove" data-action="remove-cond" data-cond-index="' + cIdx + '" aria-label="Remover condição">×</button></span>';
+    });
+  }
+
+  var attacks = OS.getSceneCreatureAttacks(d);
+  var ataquesHtml = attacks.length
+    ? attacks.map(function (atk, atkIdx) {
+        var rollBadgeHtml = atk.lastRollText
+          ? '<span class="weapon-roll-result rolled" data-attack-key="' + escHtml(atk.key) + '">' + escHtml(atk.lastRollText) + '</span>'
+          : '<span class="weapon-roll-result" data-attack-key="' + escHtml(atk.key) + '" hidden></span>';
+        return (
+          '<div class="scene-attack-line" data-attack-index="' + atkIdx + '" data-attack-key="' + escHtml(atk.key) + '">' +
+          '  <div class="scene-attack-main">' +
+          '    <span class="scene-attack-label">' + escHtml(atk.rawLine || atk.name) + '</span>' +
+          '    <button type="button" class="btn btn-secondary btn-small scene-attack-roll-btn" data-action="roll-attack" data-attack-index="' + atkIdx + '" data-attack-key="' + escHtml(atk.key) + '" title="Rolar ' + escHtml(atk.name) + '">🎲 Rolar</button>' +
+          '  </div>' +
+          rollBadgeHtml +
+          '</div>'
+        );
+      }).join("")
+    : '<div class="scene-attack-empty">Sem armas/ataques equipados</div>';
+
+  var bodyEl = document.createElement("div");
+  bodyEl.className = "player-combat-card-body";
+  bodyEl.innerHTML =
+    '<div class="scene-card-compact-summary">' +
+    '  <span>Def: <strong>' + escHtml(d.defesa || "0") + '</strong></span>' +
+    '  <span>Inic: <strong>' + escHtml(d.iniciativa || "0") + '</strong></span>' +
+    '  <span>Fadiga: <strong>' + fadigaCount + '</strong></span>' +
+    '  <span>REM: <strong>' + escHtml(remVal) + '</strong></span>' +
+    '</div>' +
+    '<div class="scene-card-stats-row">' +
+    '  <label class="scene-stat-field">' +
+    '    <span>Defesa</span>' +
+    '    <input type="number" class="field-line player-defesa-input" value="' + escHtml(d.defesa || "0") + '">' +
+    '  </label>' +
+    '  <label class="scene-stat-field">' +
+    '    <span>Iniciativa</span>' +
+    '    <input type="number" class="field-line player-init-input" value="' + escHtml(d.iniciativa || "0") + '">' +
+    '  </label>' +
+    '  <div class="scene-stat-field">' +
+    '    <span>Fadiga</span>' +
+    '    <div class="scene-fadiga-controls">' +
+    '      <button type="button" class="btn btn-secondary btn-small" data-action="fadiga-minus">-</button>' +
+    '      <strong class="scene-fadiga-val">' + fadigaCount + '</strong>' +
+    '      <button type="button" class="btn btn-secondary btn-small" data-action="fadiga-plus">+</button>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>' +
+    '<div class="player-fate-row">' +
+    '  <div class="player-fate-pill pill-vermelha" title="Fichas Vermelhas (Ataque / Ação)">' +
+    '    <span>🔴 Vermelha</span>' +
+    '    <strong>' + (fateTokens.vermelha || 0) + '</strong>' +
+    '  </div>' +
+    '  <div class="player-fate-pill pill-azul" title="Fichas Azuis (Defesa / Reação)">' +
+    '    <span>🔵 Azul</span>' +
+    '    <strong>' + (fateTokens.azul || 0) + '</strong>' +
+    '  </div>' +
+    '  <div class="player-fate-pill pill-verde" title="Fichas Verdes (Cura / Recuperação)">' +
+    '    <span>🟢 Verde</span>' +
+    '    <strong>' + (fateTokens.verde || 0) + '</strong>' +
+    '  </div>' +
+    '  <div class="player-fate-pill pill-preta" title="Fichas Pretas (Sobrevivência)">' +
+    '    <span>⚫ Preta</span>' +
+    '    <strong>' + (fateTokens.preta || 0) + '</strong>' +
+    '  </div>' +
+    '</div>' +
+    '<div class="scene-card-6b-block">' +
+    '  <div class="scene-card-6b-top">' +
+    '    <span class="field-label">Tambor 6B (' + (damagedChambers.length ? (chamberCount - damagedChambers.length) + "/" + chamberCount + " livres" : chamberCount + " câmaras") + ')</span>' +
+    '    <button type="button" class="btn btn-secondary btn-small" data-action="roll-6b">🎲 Rolar 6B</button>' +
+    '  </div>' +
+    '  <div class="scene-chambers-row" data-chamber-count="' + chamberCount + '">' +
+    chambersHtml +
+    '  </div>' +
+    '</div>' +
+    '<div class="scene-damage-row" style="display:flex; gap:8px; align-items:center; margin-top:4px;">' +
+    '  <label class="field-label" style="margin:0; flex:1;">Dano real (câmaras bloqueadas): ' +
+    '    <input type="number" class="field-line player-damage-count" min="0" max="' + chamberCount + '" value="' + damagedChambers.length + '" style="width:50px; display:inline-block; margin-left:6px;">' +
+    '  </label>' +
+    '  <button type="button" class="btn btn-secondary btn-small" data-action="save-damage">Aplicar</button>' +
+    '</div>' +
+    '<div class="scene-card-conds-block">' +
+    '  <div class="scene-conds-list">' + condsHtml + '</div>' +
+    '  <div class="scene-cond-add-row">' +
+    '    <input type="text" class="field-line player-cond-input" placeholder="Adicionar condição (ex: Sangrando)">' +
+    '    <button type="button" class="btn btn-secondary btn-small" data-action="add-cond">+</button>' +
+    '  </div>' +
+    '</div>' +
+    '<div class="scene-card-attacks">' + ataquesHtml + '</div>' +
+    '<footer class="scene-card-footer">' +
+    '  <button type="button" class="btn btn-secondary btn-small btn-player-open-sheet" data-action="open-full-sheet">Visualizar Ficha Completa</button>' +
+    '</footer>';
+
+  var defInp = bodyEl.querySelector(".player-defesa-input");
+  if (defInp && typeof callbacks.onUpdateStats === "function") {
+    defInp.addEventListener("change", function () {
+      callbacks.onUpdateStats({ defesa: defInp.value });
+    });
+  }
+  var initInp = bodyEl.querySelector(".player-init-input");
+  if (initInp && typeof callbacks.onUpdateStats === "function") {
+    initInp.addEventListener("change", function () {
+      callbacks.onUpdateStats({ iniciativa: initInp.value });
+    });
+  }
+
+  bodyEl.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    var act = btn.getAttribute("data-action");
+    if (act === "save-damage") {
+      var damageInput = bodyEl.querySelector(".player-damage-count");
+      if (damageInput && damageInput.reportValidity() && callbacks.onUpdateStats) {
+        callbacks.onUpdateStats({ damageCount: damageInput.value });
+      }
+    } else if (act === "fadiga-minus") {
+      if (typeof callbacks.onUpdateStats === "function") {
+        callbacks.onUpdateStats({ fadiga: Math.max(0, fadigaCount - 1) });
+      }
+    } else if (act === "fadiga-plus") {
+      if (typeof callbacks.onUpdateStats === "function") {
+        callbacks.onUpdateStats({ fadiga: Math.min(40, fadigaCount + 1) });
+      }
+    } else if (act === "roll-6b") {
+      if (typeof callbacks.onRoll6B === "function") {
+        callbacks.onRoll6B();
+      }
+    } else if (act === "toggle-chamber") {
+      if (typeof callbacks.onUpdateStats === "function") {
+        callbacks.onUpdateStats({
+          toggleChamber: btn.getAttribute("data-chamber")
+        });
+      }
+    } else if (act === "add-cond") {
+      var cInp = bodyEl.querySelector(".player-cond-input");
+      if (cInp && cInp.value.trim() && typeof callbacks.onUpdateStats === "function") {
+        callbacks.onUpdateStats({ addCondition: cInp.value.trim() });
+      }
+    } else if (act === "remove-cond") {
+      if (typeof callbacks.onUpdateStats === "function") {
+        callbacks.onUpdateStats({
+          removeConditionIndex: parseInt(btn.getAttribute("data-cond-index"), 10)
+        });
+      }
+    } else if (act === "roll-attack") {
+      var atkIdx = parseInt(btn.getAttribute("data-attack-index"), 10);
+      var atkKey = btn.getAttribute("data-attack-key");
+      if (typeof callbacks.onRollAttack === "function") {
+        callbacks.onRollAttack(!isNaN(atkIdx) ? atkIdx : atkKey);
+      }
+    } else if (act === "open-full-sheet") {
+      if (typeof callbacks.onOpenFullSheet === "function") {
+        callbacks.onOpenFullSheet();
+      }
+    }
+  });
+
+  return bodyEl;
+};
+
+OS.updatePlayerSheetStats = function (fichaId, changes) {
+  var st = OS.activeMesaState;
+  if (!st) return null;
+  changes = changes || {};
+  var fichaRow = resolvePlayerFichaRow(fichaId);
+  if (!fichaRow || !fichaRow.dados) return null;
+  var d = fichaRow.dados;
+  var info6B = OS.getCreature6BDisplayInfo(d, { isPlayer: true });
+  var maxChambers = info6B.count;
+
+  if (changes.defesa !== undefined) {
+    d.defesa = String(changes.defesa);
+  }
+  if (changes.iniciativa !== undefined) {
+    d.iniciativa = String(changes.iniciativa);
+  }
+  if (changes.fadiga !== undefined) {
+    setFadigaInState(d, changes.fadiga);
+  }
+  if (changes.damageCount !== undefined) {
+    var wounds = Math.max(0, Math.min(maxChambers, parseInt(changes.damageCount, 10) || 0));
+    d.damagedChambers = Array.from({ length: wounds }, function (_, i) { return i; });
+  }
+  if (changes.toggleChamber !== undefined) {
+    var chIdx = parseInt(String(changes.toggleChamber), 10);
+    if (!isNaN(chIdx) && chIdx >= 0 && chIdx < maxChambers) {
+      if (!Array.isArray(d.usedChambers)) d.usedChambers = [];
+      var pos = d.usedChambers.indexOf(chIdx);
+      if (pos >= 0) d.usedChambers.splice(pos, 1);
+      else d.usedChambers.push(chIdx);
+    }
+  }
+  if (changes.addCondition) {
+    if (!Array.isArray(d.activeConditions)) d.activeConditions = [];
+    var condName = String(changes.addCondition).trim();
+    if (condName) {
+      var exists = d.activeConditions.some(function (c) {
+        var n = typeof c === "string" ? c : c && (c.nome || c.name || c.id);
+        return String(n || "").toLowerCase() === condName.toLowerCase();
+      });
+      if (!exists) {
+        d.activeConditions.push({ id: generateUid("cond"), nome: condName });
+      }
+    }
+  }
+  if (changes.removeConditionIndex !== undefined) {
+    if (Array.isArray(d.activeConditions)) {
+      d.activeConditions.splice(changes.removeConditionIndex, 1);
+    }
+  }
+
+  // Se o próprio jogador estiver com sua ficha ativa
+  if (st.playerFichaId && String(st.playerFichaId) === String(fichaRow.id)) {
+    OS.activeCharacterState = d;
+    if (OS.applyState && typeof document !== "undefined" && OS.$("ficha")) {
+      OS.applyState(d, { readOnlyMode: false });
+    }
+    if (OS.saveCharacter) OS.saveCharacter();
+  }
+
+  // Persiste no Supabase
+  var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
+  if (client && fichaRow.id) {
+    client.from("fichas").update({
+      dados: d,
+      updated_at: new Date().toISOString()
+    }).eq("id", fichaRow.id).then(function (res) {
+      if (res && res.error) {
+        console.warn("[mesaScreen] Falha ao atualizar dados da ficha:", res.error);
+      }
+    });
+  }
+
+  if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+  if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+  return fichaRow;
+};
+
+OS.rollPlayerPopup6B = function (fichaId) {
+  var st = OS.activeMesaState;
+  if (!st) return null;
+  var fichaRow = resolvePlayerFichaRow(fichaId);
+  if (!fichaRow || !fichaRow.dados) return null;
+
+  var d = fichaRow.dados;
+  if (d.freeEdit === undefined) d.freeEdit = false;
+
+  var rolledViaCylinder = false;
+  if (
+    st.playerFichaId &&
+    String(st.playerFichaId) === String(fichaId) &&
+    typeof OS.rollCylinderDice === "function" &&
+    typeof document !== "undefined" &&
+    document.querySelectorAll(".chamber-input").length > 0 &&
+    (!OS.isCylinderEmpty || OS.isCylinderEmpty())
+  ) {
+    OS.rollCylinderDice();
+    if (typeof OS.collectState === "function") {
+      var collected = OS.collectState();
+      Object.assign(d, collected);
+      OS.activeCharacterState = d;
+    }
+    rolledViaCylinder = true;
+  }
+
+  if (!rolledViaCylinder) {
+    var info6B = OS.getCreature6BDisplayInfo(d, { isPlayer: true });
+    var diceList = info6B.diceList;
+    var rawRolls = [];
+    for (var c = 0; c < diceList.length; c++) {
+      var dieStr = diceList[c] || "d6";
+      var rolled = OS.generateDiceResult
+        ? OS.generateDiceResult(dieStr)
+        : Math.floor(Math.random() * (parseInt(dieStr.slice(1), 10) || 6)) + 1;
+      rawRolls.push(parseInt(rolled, 10) || 0);
+    }
+    var fatigueLevel = countFadigaFromState(d);
+    var fatigueRes = applyFatigueTo6BValues(rawRolls, fatigueLevel);
+    var afterFatigue = fatigueRes.values || rawRolls;
+
+    d.originalChambers = rawRolls.map(function (v) { return String(v); });
+    for (var i = 0; i < diceList.length; i++) {
+      d["chamber-" + i] = String(afterFatigue[i] !== undefined ? afterFatigue[i] : rawRolls[i]);
+    }
+    d.usedChambers = [];
+    d.markedChambers = [];
+    d.hasPerformedInitialReload = true;
+  }
+
+  OS.updatePlayerSheetStats(fichaId, {});
+  return fichaRow;
+};
+
+OS.rollPlayerPopupAttack = function (fichaId, attackSpec, optSelectedChambers) {
+  var st = OS.activeMesaState;
+  if (!st) return null;
+  var fichaRow = resolvePlayerFichaRow(fichaId);
+  if (!fichaRow || !fichaRow.dados) return null;
+  OS.getCreature6BDisplayInfo(fichaRow.dados, { isPlayer: true });
+  var pseudoEntity = {
+    id: fichaRow.id,
+    name: fichaRow.dados.nome || fichaRow.nome_personagem || "Jogador",
+    data: fichaRow.dados
+  };
+  return rollCreatureEntityAttack(
+    pseudoEntity,
+    attackSpec,
+    optSelectedChambers,
+    function () {
+      OS.rollPlayerPopup6B(fichaId);
+    },
+    function () {
+      OS.updatePlayerSheetStats(fichaId, {});
+    }
+  );
+};
+
 /**
  * Constrói o corpo de combate compartilhado entre .scene-creature-card (Em Cena)
  * e .mesa-floating-popup (ficha flutuante de criatura).
@@ -4231,7 +4857,13 @@ OS.renderMesaSceneCards = function () {
   var st = OS.activeMesaState;
   var creatures = (st && Array.isArray(st.sceneCreatures)) ? st.sceneCreatures : [];
   var allTokens = (st && Array.isArray(st.mesaTokens)) ? st.mesaTokens : [];
-  if (st.activeMapId) creatures = creatures.filter(function (c) { return allTokens.some(function (t) { return t.owner_type === "creature" && t.owner_ref === c.instanceId && t.mapa_id === st.activeMapId; }); });
+  if (st.activeMapId) {
+    creatures = creatures.filter(function (c) {
+      return allTokens.some(function (t) {
+        return t.owner_type === "creature" && t.owner_ref === c.instanceId && t.mapa_id === st.activeMapId;
+      });
+    });
+  }
   var playerTokens = allTokens.filter(function (t) {
     return t && t.owner_type === "player";
   });
@@ -4243,19 +4875,8 @@ OS.renderMesaSceneCards = function () {
 
   var toggleAllBtn = OS.$("btn-toggle-all-scene-cards");
   if (toggleAllBtn) {
-    if (creatures.length > 0) {
-      toggleAllBtn.removeAttribute("hidden");
-      toggleAllBtn.hidden = false;
-      var allCollapsed = creatures.every(function (c) {
-        return c && c.collapsed === true;
-      });
-      toggleAllBtn.textContent = allCollapsed
-        ? "Expandir Cards"
-        : "Minimizar Cards";
-    } else {
-      toggleAllBtn.setAttribute("hidden", "");
-      toggleAllBtn.hidden = true;
-    }
+    toggleAllBtn.setAttribute("hidden", "");
+    toggleAllBtn.hidden = true;
   }
 
   if (!grid) return;
@@ -4270,7 +4891,7 @@ OS.renderMesaSceneCards = function () {
 
   grid.classList.remove("is-empty");
 
-  // 1) Jogadores em cena: resumo vivo lido diretamente da ficha do jogador (sem duplicar em cena_ativa)
+  // 1) Jogadores em cena: tira compacta (.mesa-scene-card.mesa-compact-row.is-player-entity)
   playerTokens.forEach(function (pToken) {
     var fichaRow = (st.playerSheets || []).find(function (r) {
       return r && String(r.id) === String(pToken.owner_ref);
@@ -4298,52 +4919,51 @@ OS.renderMesaSceneCards = function () {
       ? String(pToken.image_url).trim()
       : "";
 
+    var playerInfo6B = OS.getCreature6BDisplayInfo(d, { isPlayer: true });
+    var vidaText = playerInfo6B.vidaText;
+    var activeConds = Array.isArray(d.activeConditions) ? d.activeConditions : [];
+
     var pCard = document.createElement("article");
-    pCard.className = "scene-player-card";
+    pCard.className = "mesa-scene-card mesa-compact-row is-player-entity";
     pCard.dataset.fichaId = pToken.owner_ref;
     pCard.dataset.tokenId = pToken.id || "";
 
     var avatarHtml = portraitUrl
-      ? '<div class="mesa-compact-avatar"><img src="' +
+      ? '<div class="mesa-compact-avatar is-circular"><img src="' +
         escHtml(portraitUrl) +
         '" alt="Retrato de ' +
         escHtml(charName) +
         '"></div>'
-      : '<div class="mesa-compact-avatar">🤠</div>';
+      : '<div class="mesa-compact-avatar is-circular">🤠</div>';
 
     pCard.innerHTML =
-      '<div class="scene-player-card-top">' +
-      '  <div class="mesa-compact-row-main">' +
+      '<div class="mesa-compact-row-main">' +
       avatarHtml +
-      '    <div class="mesa-compact-info">' +
-      '      <strong class="mesa-compact-title scene-player-name">' +
+      '  <div class="mesa-compact-info">' +
+      '    <div class="mesa-scene-title-row">' +
+      '      <strong class="mesa-compact-title scene-player-name" title="' + escHtml(charName) + '">' +
       escHtml(charName) +
-      "</strong>" +
-      '      <span class="scene-player-live-stats">' +
-      '        <span class="scene-live-stat">Def: <strong data-stat="defesa">' +
-      escHtml(defesaVal) +
-      "</strong></span>" +
-      '        <span class="scene-live-stat">Inic: <strong data-stat="iniciativa">' +
-      escHtml(initVal) +
-      "</strong></span>" +
-      '        <span class="scene-live-stat">Fadiga: <strong data-stat="fadiga">' +
-      fadigaVal +
-      "</strong></span>" +
-      "      </span>" +
-      "    </div>" +
-      "  </div>" +
-      '  <div class="mesa-compact-actions">' +
-      (fichaRow
-        ? '<button type="button" class="btn btn-secondary btn-small btn-scene-view-player" title="Visualizar ficha do jogador">Ficha</button>'
-        : "") +
-      '    <button type="button" class="btn btn-secondary btn-small scene-player-remove-btn" data-action="remove-player-scene" title="Remover jogador de Em Cena">×</button>' +
-      "  </div>" +
-      "</div>";
+      '      </strong>' +
+      '      <span class="mesa-entity-badge type-player">Jogador</span>' +
+      '    </div>' +
+      '    <div class="mesa-scene-badges-row">' +
+      '      <span class="scene-badge badge-init" title="Iniciativa">⚡ ' + escHtml(initVal) + '</span>' +
+      '      <span class="scene-badge badge-def" title="Defesa">🛡️ ' + escHtml(defesaVal) + '</span>' +
+      '      <span class="scene-badge badge-health" title="Câmaras / Vida">❤️ ' + vidaText + '</span>' +
+      (fadigaVal > 0 ? '      <span class="scene-badge badge-fadiga" title="Fadiga">💤 ' + fadigaVal + '</span>' : '') +
+      (activeConds.length > 0 ? '      <span class="scene-badge badge-conds" title="Condições Ativas: ' + escHtml(activeConds.map(function(c){return typeof c === "string" ? c : c.nome;}).join(", ")) + '">⚠️ ' + activeConds.length + '</span>' : '') +
+      '    </div>' +
+      '  </div>' +
+      '</div>' +
+      '<div class="mesa-compact-actions">' +
+      '  <button type="button" class="btn btn-secondary btn-small btn-scene-open-sheet" data-action="open-popup" title="Abrir ficha flutuante (Popup)">⧉ Ficha</button>' +
+      '  <button type="button" class="btn btn-secondary btn-small scene-player-remove-btn" data-action="remove-player-scene" title="Remover jogador de Em Cena">×</button>' +
+      '</div>';
 
-    var viewBtn = pCard.querySelector(".btn-scene-view-player");
-    if (viewBtn && fichaRow) {
+    var viewBtn = pCard.querySelector(".btn-scene-open-sheet");
+    if (viewBtn) {
       viewBtn.addEventListener("click", function () {
-        OS.openPlayerSheetReadOnlyForGm(fichaRow);
+        OS.openOrFocusPlayerPopup(pToken.owner_ref);
       });
     }
     var remBtn = pCard.querySelector(".scene-player-remove-btn");
@@ -4353,42 +4973,67 @@ OS.renderMesaSceneCards = function () {
       });
     }
 
-    OS.appendTokenVisibilityButton(pCard.querySelector(".mesa-compact-actions"), pToken);
-    if (OS.appendCombatJoinButton) OS.appendCombatJoinButton(pCard.querySelector(".mesa-compact-actions"), pToken);
+    var actionsEl = pCard.querySelector(".mesa-compact-actions");
+    OS.appendTokenVisibilityButton(actionsEl, pToken);
+    if (OS.appendCombatJoinButton) OS.appendCombatJoinButton(actionsEl, pToken);
     grid.appendChild(pCard);
   });
 
-  // 2) Criaturas / NPCs em cena: card minimizável (.scene-creature-card) lido de mesas.cena_ativa
+  // 2) Criaturas / NPCs em cena: tira compacta (.mesa-scene-card.mesa-compact-row.is-creature-entity)
   creatures.forEach(function (inst) {
     var d = inst.data || {};
-    var isCollapsed = inst.collapsed === true;
+    var charName = inst.name || d.nome || "Criatura";
+    var tipoLabel = d.tipo_ficha === "monstro" ? "Monstro" : (d.tipo_ficha === "npc" ? "NPC" : "Criatura");
+    var badgeClass = d.tipo_ficha === "npc" ? "type-npc" : "type-creature";
+    var defesaVal = d.defesa !== undefined && d.defesa !== "" ? String(d.defesa) : "10";
+    var initVal = d.iniciativa !== undefined && d.iniciativa !== "" ? String(d.iniciativa) : "0";
+    var fadigaVal = countFadigaFromState(d);
+    var portraitUrl = d.retrato_url ? String(d.retrato_url).trim() : "";
+
+    var info6B = OS.getCreature6BDisplayInfo(d);
+    var chamberCount = info6B.count;
+    var damagedChambers = info6B.damagedChambers;
+    var vidaText = info6B.vidaText;
+    var activeConds = Array.isArray(d.condicoes) ? d.condicoes : (Array.isArray(d.activeConditions) ? d.activeConditions : []);
+
     var card = document.createElement("article");
-    card.className =
-      "scene-creature-card" + (isCollapsed ? " is-collapsed" : "");
+    card.className = "mesa-scene-card scene-creature-card mesa-compact-row is-creature-entity";
     card.dataset.instanceId = inst.instanceId;
 
-    var headerEl = document.createElement("header");
-    headerEl.className = "scene-card-header";
-    headerEl.innerHTML =
-      "<div>" +
-      '  <h4 class="scene-card-title">' +
-      escHtml(inst.name || d.nome || "Criatura") +
-      "</h4>" +
-      (d.alcunha
-        ? '<span class="scene-card-sub">' + escHtml(d.alcunha) + "</span>"
-        : "") +
-      "</div>" +
-      '<div class="scene-card-header-btns">' +
-      '  <button type="button" class="btn btn-secondary btn-small scene-card-popup-btn" data-action="open-popup" title="Abrir ficha flutuante (Popup)">⧉ Popup</button>' +
-      '  <button type="button" class="btn btn-secondary btn-small scene-card-collapse-btn" data-action="toggle-collapse" title="' +
-      (isCollapsed ? "Expandir card" : "Minimizar card") +
-      '">' +
-      (isCollapsed ? "▸" : "▾") +
-      "</button>" +
-      '  <button type="button" class="btn btn-secondary btn-small scene-card-remove-btn" data-action="remove-scene" title="Remover da cena">×</button>' +
-      "</div>";
+    var avatarHtml = portraitUrl
+      ? '<div class="mesa-compact-avatar is-circular"><img src="' +
+        escHtml(portraitUrl) +
+        '" alt="Retrato de ' +
+        escHtml(charName) +
+        '"></div>'
+      : '<div class="mesa-compact-avatar is-circular">' + (d.tipo_ficha === "npc" ? '👤' : '💀') + '</div>';
 
-    headerEl.addEventListener("click", function (e) {
+    card.innerHTML =
+      '<div class="mesa-compact-row-main">' +
+      avatarHtml +
+      '  <div class="mesa-compact-info">' +
+      '    <div class="mesa-scene-title-row">' +
+      '      <strong class="mesa-compact-title scene-creature-name" title="' + escHtml(charName) + '">' +
+      escHtml(charName) +
+      '      </strong>' +
+      '      <span class="mesa-entity-badge ' + badgeClass + '">' + escHtml(tipoLabel) + '</span>' +
+      '    </div>' +
+      '    <div class="mesa-scene-badges-row">' +
+      '      <span class="scene-badge badge-init" title="Iniciativa">⚡ ' + escHtml(initVal) + '</span>' +
+      '      <span class="scene-badge badge-def" title="Defesa">🛡️ ' + escHtml(defesaVal) + '</span>' +
+      '      <span class="scene-badge badge-health" title="Câmaras / Vida">❤️ ' + vidaText + '</span>' +
+      (fadigaVal > 0 ? '      <span class="scene-badge badge-fadiga" title="Fadiga">💤 ' + fadigaVal + '</span>' : '') +
+      (activeConds.length > 0 ? '      <span class="scene-badge badge-conds" title="Condições Ativas: ' + escHtml(activeConds.map(function(c){return typeof c === "string" ? c : (c.nome || c.name);}).join(", ")) + '">⚠️ ' + activeConds.length + '</span>' : '') +
+      '    </div>' +
+      '  </div>' +
+      '</div>' +
+      '<div class="mesa-compact-actions">' +
+      '  <button type="button" class="btn btn-secondary btn-small btn-scene-open-sheet" data-action="open-popup" title="Abrir ficha flutuante (Popup)">⧉ Ficha</button>' +
+      '  <button type="button" class="btn btn-secondary btn-small scene-card-remove-btn" data-action="remove-scene" title="Remover da cena">×</button>' +
+      '</div>';
+
+    var cActionsEl = card.querySelector(".mesa-compact-actions");
+    card.addEventListener("click", function (e) {
       var btn = e.target.closest("[data-action]");
       if (!btn) return;
       var act = btn.getAttribute("data-action");
@@ -4397,36 +5042,14 @@ OS.renderMesaSceneCards = function () {
           from: "scene",
           instanceId: inst.instanceId
         });
-      } else if (act === "toggle-collapse") {
-        inst.collapsed = !inst.collapsed;
-        inst.updatedAt = new Date().toISOString();
-        OS.renderMesaSceneCards();
-        OS.scheduleMesaSceneSave();
       } else if (act === "remove-scene") {
         OS.removeCreatureFromScene(inst.instanceId);
       }
     });
 
-    OS.appendTokenVisibilityButton(headerEl.querySelector(".scene-card-header-btns"), OS.getSceneToken(inst.instanceId));
-    if (OS.appendCombatJoinButton) OS.appendCombatJoinButton(headerEl.querySelector(".scene-card-header-btns"), OS.getSceneToken(inst.instanceId));
-    card.appendChild(headerEl);
+    OS.appendTokenVisibilityButton(cActionsEl, OS.getSceneToken(inst.instanceId));
+    if (OS.appendCombatJoinButton) OS.appendCombatJoinButton(cActionsEl, OS.getSceneToken(inst.instanceId));
 
-    var bodyEl = OS.buildCreatureCombatCardBody(inst, {
-      onUpdateStats: function (changes) {
-        OS.updateSceneCreatureStats(inst.instanceId, changes);
-      },
-      onRoll6B: function () {
-        OS.rollSceneCreature6B(inst.instanceId);
-      },
-      onRollAttack: function (atkSpec) {
-        OS.rollSceneCreatureAttack(inst.instanceId, atkSpec);
-      },
-      onOpenSheet: function () {
-        OS.openSceneCreatureFullSheet(inst.instanceId);
-      }
-    });
-
-    card.appendChild(bodyEl);
     grid.appendChild(card);
   });
 };
@@ -4608,7 +5231,7 @@ OS.renderMesaPlayersCards = function () {
     var viewBtn = card.querySelector(".btn-view-player-sheet");
     if (viewBtn) {
       viewBtn.addEventListener("click", function () {
-        OS.openPlayerSheetReadOnlyForGm(row);
+        OS.openOrFocusPlayerPopup(row.id);
       });
     }
 
@@ -4955,6 +5578,19 @@ OS.resolveGmPopupTarget = function (popupEntry) {
   var st = OS.activeMesaState;
   if (!st) return null;
 
+  if (popupEntry.targetType === "player") {
+    var fichaRow = resolvePlayerFichaRow(popupEntry.targetId);
+    if (!fichaRow) return null;
+    var d = fichaRow.dados && typeof fichaRow.dados === "object" ? fichaRow.dados : {};
+    return {
+      targetType: "player",
+      targetId: String(fichaRow.id),
+      entity: fichaRow,
+      name: d.nome || fichaRow.nome_personagem || "Jogador",
+      subtitle: "Jogador" + (d.classe ? " • " + d.classe : "") + (d.nivel ? " (Nv " + d.nivel + ")" : "")
+    };
+  }
+
   if (popupEntry.targetType === "scene") {
     var inst = OS.getSceneCreatureById(popupEntry.targetId);
     if (!inst || !inst.data) return null;
@@ -5014,13 +5650,20 @@ OS.bringGmPopupToFront = function (popupId) {
 OS.openOrFocusCreaturePopup = function (spec) {
   spec = spec || {};
   var st = OS.activeMesaState;
-  if (!st || !st.mesaId || !st.isMestre) return null;
+  if (!st || !st.mesaId) return null;
+  var isPlayerTarget = (spec.from === "player" || spec.targetType === "player");
+  if (!st.isMestre && !isPlayerTarget) return null;
   if (!Array.isArray(st.gmPopups)) st.gmPopups = [];
 
   var resolvedType = null;
   var resolvedId = null;
 
-  if (spec.from === "scene" || spec.targetType === "scene") {
+  if (spec.from === "player" || spec.targetType === "player") {
+    var fId = spec.fichaId || spec.targetId;
+    if (!fId) return null;
+    resolvedType = "player";
+    resolvedId = String(fId);
+  } else if (spec.from === "scene" || spec.targetType === "scene") {
     var instId = spec.instanceId || spec.targetId;
     var sceneInst = OS.getSceneCreatureById(instId);
     if (!sceneInst) return null;
@@ -5118,6 +5761,10 @@ OS.openOrFocusCreaturePopup = function (spec) {
   return created;
 };
 
+OS.openOrFocusPlayerPopup = function (fichaId) {
+  return OS.openOrFocusCreaturePopup({ from: "player", fichaId: fichaId });
+};
+
 OS.closeGmPopup = function (popupId) {
   var st = OS.activeMesaState;
   if (!st || !Array.isArray(st.gmPopups)) return;
@@ -5201,7 +5848,7 @@ OS.closeAllGmPopups = function () {
 
 OS.clampAllGmPopupsToViewport = function () {
   var st = OS.activeMesaState;
-  if (!st || !st.mesaId || !st.isMestre || !Array.isArray(st.gmPopups) || !st.gmPopups.length) {
+  if (!st || !st.mesaId || (!st.isMestre && (!st.gmPopups || !st.gmPopups.length)) || !Array.isArray(st.gmPopups) || !st.gmPopups.length) {
     return;
   }
   var changed = false;
@@ -5296,7 +5943,7 @@ OS.renderMesaFloatingPopups = function () {
   var st = OS.activeMesaState;
   if (!layer) return;
 
-  if (!st || !st.mesaId || !st.isMestre) {
+  if (!st || !st.mesaId || (!st.isMestre && (!st.gmPopups || !st.gmPopups.length))) {
     layer.innerHTML = "";
     layer.setAttribute("hidden", "");
     layer.hidden = true;
@@ -5364,7 +6011,7 @@ OS.renderMesaFloatingPopups = function () {
     var headerEl = document.createElement("header");
     headerEl.className = "mesa-floating-popup-header";
     var badgeLabel =
-      p.targetType === "scene" ? "Em Cena" : "NPC da Mesa";
+      p.targetType === "scene" ? "Em Cena" : (p.targetType === "player" ? "Jogador" : "NPC da Mesa");
     headerEl.innerHTML =
       '<div class="mesa-floating-popup-title-wrap">' +
       '  <strong class="mesa-floating-popup-title" title="' +
@@ -5400,8 +6047,10 @@ OS.renderMesaFloatingPopups = function () {
       }
     });
 
-    OS.appendTokenVisibilityButton(headerEl.querySelector(".mesa-floating-popup-controls"),
-      p.targetType === "scene" ? OS.getSceneToken(p.targetId) : null);
+    var sceneToken = p.targetType === "scene"
+      ? OS.getSceneToken(p.targetId)
+      : (p.targetType === "player" ? OS.getPlayerSceneToken(p.targetId) : null);
+    OS.appendTokenVisibilityButton(headerEl.querySelector(".mesa-floating-popup-controls"), sceneToken);
     bindGmPopupHeaderDrag(popupEl, headerEl, p);
     popupEl.appendChild(headerEl);
 
@@ -5409,36 +6058,58 @@ OS.renderMesaFloatingPopups = function () {
       var contentWrap = document.createElement("div");
       contentWrap.className = "mesa-floating-popup-body";
 
-      var bodyEl = OS.buildCreatureCombatCardBody(resolved.entity, {
-        onUpdateStats: function (changes) {
-          if (p.targetType === "scene") {
-            OS.updateSceneCreatureStats(p.targetId, changes);
-          } else {
-            OS.updateMesaNpcStats(p.targetId, changes);
+      var bodyEl;
+      if (p.targetType === "player") {
+        bodyEl = OS.buildPlayerCombatCardBody(resolved.entity, {
+          onUpdateStats: function (changes) {
+            OS.updatePlayerSheetStats(p.targetId, changes);
+          },
+          onRoll6B: function () {
+            OS.rollPlayerPopup6B(p.targetId);
+          },
+          onRollAttack: function (atkSpec) {
+            OS.rollPlayerPopupAttack(p.targetId, atkSpec);
+          },
+          onOpenFullSheet: function () {
+            if (st.isMestre) {
+              OS.openPlayerSheetReadOnlyForGm(resolved.entity);
+            } else if (st.playerFichaId && String(st.playerFichaId) === String(p.targetId)) {
+              OS.switchMesaSidebarTab("fichas");
+            }
           }
-        },
-        onRoll6B: function () {
-          if (p.targetType === "scene") {
-            OS.rollSceneCreature6B(p.targetId);
-          } else {
-            OS.rollMesaNpc6B(p.targetId);
+        });
+      } else {
+        bodyEl = OS.buildCreatureCombatCardBody(resolved.entity, {
+          onUpdateStats: function (changes) {
+            if (p.targetType === "scene") {
+              OS.updateSceneCreatureStats(p.targetId, changes);
+            } else {
+              OS.updateMesaNpcStats(p.targetId, changes);
+            }
+          },
+          onRoll6B: function () {
+            if (p.targetType === "scene") {
+              OS.rollSceneCreature6B(p.targetId);
+            } else {
+              OS.rollMesaNpc6B(p.targetId);
+            }
+          },
+          onRollAttack: function (atkSpec) {
+            if (p.targetType === "scene") {
+              OS.rollSceneCreatureAttack(p.targetId, atkSpec);
+            } else {
+              OS.rollMesaNpcAttack(p.targetId, atkSpec);
+            }
+          },
+          onOpenSheet: function () {
+            if (p.targetType === "scene") {
+              OS.openSceneCreatureFullSheet(p.targetId);
+            } else {
+              OS.openMesaNpcFullSheet(p.targetId);
+            }
           }
-        },
-        onRollAttack: function (atkSpec) {
-          if (p.targetType === "scene") {
-            OS.rollSceneCreatureAttack(p.targetId, atkSpec);
-          } else {
-            OS.rollMesaNpcAttack(p.targetId, atkSpec);
-          }
-        },
-        onOpenSheet: function () {
-          if (p.targetType === "scene") {
-            OS.openSceneCreatureFullSheet(p.targetId);
-          } else {
-            OS.openMesaNpcFullSheet(p.targetId);
-          }
-        }
-      });
+        });
+      }
 
       contentWrap.appendChild(bodyEl);
       popupEl.appendChild(contentWrap);
@@ -5458,7 +6129,7 @@ OS.renderMesaPopupsHub = function () {
   if (
     !st ||
     !st.mesaId ||
-    !st.isMestre ||
+    (!st.isMestre && (!st.gmPopups || !st.gmPopups.length)) ||
     !Array.isArray(st.gmPopups) ||
     st.gmPopups.length === 0
   ) {
@@ -6754,6 +7425,61 @@ OS.sendMesaFeedEvent = async function (texto, visivelPara, tipo) {
   return ins ? ins.data : null;
 };
 
+OS.handleGmNovaSessaoMesa = async function () {
+  var st = OS.activeMesaState;
+  if (!st || !st.mesaId || !st.isMestre) {
+    if (typeof OS.showToast === "function") {
+      OS.showToast("Apenas o Mestre pode iniciar uma nova sessão.", "error");
+    }
+    return;
+  }
+
+  var confirmed = window.confirm(
+    "Deseja iniciar uma Nova Sessão para todos os participantes? Isso irá sortear novas Fichas do Destino e preparar o 6B de todas as fichas vinculadas a esta mesa."
+  );
+  if (!confirmed) return;
+
+  var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
+  if (!client) {
+    if (typeof OS.showToast === "function") {
+      OS.showToast("Erro: Cliente Supabase não disponível.", "error");
+    }
+    return;
+  }
+
+  var btn = OS.$("btn-mesa-nova-sessao");
+  if (btn) btn.disabled = true;
+
+  try {
+    var res = await client.rpc("iniciar_nova_sessao_mesa", {
+      p_mesa_id: st.mesaId
+    });
+
+    if (res && res.error) {
+      console.error("[mesaScreen] Erro ao iniciar nova sessão:", res.error);
+      if (typeof OS.showToast === "function") {
+        OS.showToast("Erro ao iniciar Nova Sessão: " + (res.error.message || res.error), "error");
+      }
+      return;
+    }
+
+    if (typeof OS.showToast === "function") {
+      OS.showToast("Nova Sessão iniciada com sucesso para todas as fichas da mesa!", "success");
+    }
+
+    await OS.loadMesaPlayersSheets();
+    if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+    if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+  } catch (err) {
+    console.error("[mesaScreen] Falha ao executar RPC iniciar_nova_sessao_mesa:", err);
+    if (typeof OS.showToast === "function") {
+      OS.showToast("Falha inesperada ao iniciar Nova Sessão.", "error");
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+};
+
 /* ─── Bind de Eventos da Tela de Mesa e Modais ───────────────── */
 
 OS.bindMesaScreenEvents = function () {
@@ -6911,6 +7637,14 @@ OS.bindMesaScreenEvents = function () {
     btnMesaRegras._mesaBound = true;
     btnMesaRegras.addEventListener("click", function () {
       OS.openRegrasModal();
+    });
+  }
+
+  var btnMesaNovaSessao = OS.$("btn-mesa-nova-sessao");
+  if (btnMesaNovaSessao && !btnMesaNovaSessao._mesaBound) {
+    btnMesaNovaSessao._mesaBound = true;
+    btnMesaNovaSessao.addEventListener("click", function () {
+      OS.handleGmNovaSessaoMesa();
     });
   }
 

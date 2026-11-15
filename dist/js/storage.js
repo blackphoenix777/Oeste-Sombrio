@@ -472,6 +472,7 @@ OS.collectState = function () {
       state.mesa_id = OS.activeCharacterMesaId;
     }
     state.retrato_url = OS.characterPortraitUrl || "";
+    OS.activeCharacterState = state;
 
     return state;
   };
@@ -763,6 +764,10 @@ OS.collectState = function () {
     if (OS.setReadOnlyMode) {
       OS.setReadOnlyMode(!!options.readOnlyMode);
     }
+    if (typeof OS.updateNovaSessaoButtonVisibility === "function") {
+      OS.updateNovaSessaoButtonVisibility();
+    }
+    OS.activeCharacterState = state;
   };
 
   OS.saveToStorage = function () {
@@ -882,4 +887,12 @@ OS.collectState = function () {
       /* ignore */
     }
     OS.setStatus("Ficha limpa", false);
+  };
+
+  OS.getCharacterState = function () {
+    return OS.collectState ? OS.collectState() : (OS.activeCharacterState || {});
+  };
+
+  OS.saveCharacter = function () {
+    return OS.saveToStorage ? OS.saveToStorage() : false;
   };

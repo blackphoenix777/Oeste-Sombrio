@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   release:
@@ -52,4 +53,5 @@ jobs:
           releaseBody: 'Nova versão do Dark West lançada com atualizações automáticas.'
           releaseDraft: false
           prerelease: false
+          updaterJsonPreferNsis: true
           args: ${{ matrix.args }}
