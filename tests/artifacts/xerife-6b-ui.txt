@@ -1,0 +1,40 @@
+PASS: 39 verificações
+Xerife recebe dois painéis distintos
+painéis começam recolhidos
+recolhimento nativo details/summary funciona
+composição autorizada aparece em cada conjunto
+JWT definido antes da inscrição Realtime
+cliente inscreve somente INSERT/UPDATE do conjunto aberto
+rolagem aberta usa RPC
+resultados confirmados pelo servidor são renderizados
+rolagem secreta usa RPC exclusiva
+resultados secretos não se misturam ao aberto
+resultados não entram em localStorage nem na serialização da mesa
+dois NPCs consultam o mesmo conjunto compartilhado
+consumidor não consegue mutar a projeção em memória
+Consumir exige seleção e Renovar fica bloqueado antes de zerar
+clicar no dado habilita consumo selecionado
+consumo parcial marca dado e mantém Renovar bloqueado
+rolar ataque de NPC abre seleção do 6B Aberto igual aos players
+modal reflete dados já consumidos e disponíveis do 6B Aberto
+confirmar ataque do NPC consome os dados escolhidos no 6B Aberto
+ataque do NPC soma bônus dos dados escolhidos no 6B Aberto
+Gastar todos zera o 6B Aberto e libera Renovar
+aviso de regra oficial exibido ao zerar 6B Aberto em combate
+Renovar gera nova rolagem aberta e limpa usados
+ficha completa do NPC usa seleção do 6B Aberto do Xerife
+ficha completa soma dado consumido do 6B Aberto ao resultado final
+Gastar todos no 6B Secreto libera Renovar
+Renovar secreto gera nova rolagem privada
+evento Realtime recarrega sem substituir resultados por composição nova
+reconexão recarrega o estado autoritativo
+sincronização em andamento bloqueia mutação concorrente no cliente
+resposta secreta atrasada não aparece após troca de identidade
+jogador não envia operação secreta
+sessão de jogador consulta somente aberto
+jogador não acessa a projeção de NPC
+presença informa ficha; identidade é derivada do JWT no servidor
+migração ausente falha fechada e limpa resultados antigos
+saída limpa DOM e estado secreto
+logout elimina dados e timers dos conjuntos
+painéis cabem na lateral redimensionável MESA-01

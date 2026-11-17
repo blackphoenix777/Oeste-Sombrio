@@ -1,0 +1,352 @@
+﻿BEGIN
+CREATE FUNCTION
+CREATE FUNCTION
+SET
+SET
+ check_it 
+----------
+ 
+(1 row)
+
+SET
+docker : NOTICE:  PASS: sem jogadores ativos: nÃ£o inventa dados
+No linha:12 caractere:53
++ ... fe-6b.sql | docker exec -i $cid psql -U postgres -v ON_ERROR_STOP=1 2 ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (NOTICE:  PASS: ...o inventa dados:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: um jogador: seis dados do menor tipo
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: duas conexÃµes do mesmo jogador contam apenas uma vez
+ check_it 
+----------
+ 
+(1 row)
+
+SET
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+NOTICE:  PASS: fechar uma conexÃ£o preserva a outra
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador nÃ£o lÃª segredo via RPC [42501]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador nÃ£o lÃª tabela secreta diretamente [42501]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador nÃ£o opera o conjunto aberto [42501]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador nÃ£o consome o conjunto aberto [42501]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador nÃ£o renova o conjunto aberto [42501]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: presenÃ§a nÃ£o aceita ficha de outro usuÃ¡rio [42501]
+ denied 
+--------
+ 
+(1 row)
+
+SET
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador sem ficha nÃ£o entra na composiÃ§Ã£o
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+NOTICE:  PASS: vÃ¡rios jogadores: aberto usa menor tipo global
+ check_it 
+----------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: secreto: um dado por jogador, maior tipo global
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: rolagem inicial aberta persistida
+ check_it 
+----------
+ 
+(1 row)
+
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: rolagem inicial secreta persistida
+NOTICE:  PASS: replay ou versÃ£o concorrente rejeitada [40001]
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: rolagem inicial nÃ£o substitui renovaÃ§Ã£o [0A000]
+NOTICE:  PASS: Xerife consome mÃºltiplos dados do 6B Aberto
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: projeÃ§Ã£o aberta sincroniza usados no consumo
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: consumo com versÃ£o antiga Ã© rejeitado [40001]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: consumo repetido do mesmo Ã­ndice Ã© rejeitado [22023]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: renovaÃ§Ã£o bloqueada enquanto restam dados nÃ£o gastos no aberto [55000]
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: Xerife pode gastar todos os dados do 6B Secreto de uma vez
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: renovaÃ§Ã£o secreta liberada apÃ³s gastar todos os resultados
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: Xerife gasta dados restantes do 6B Aberto
+ check_it 
+----------
+ 
+(1 row)
+
+RESET
+SELECT 2
+NOTICE:  PASS: resultados dentro dos tipos autorizados
+ check_it 
+----------
+ 
+(1 row)
+
+UPDATE 1
+SET
+SET
+NOTICE:  PASS: desconexÃ£o sinaliza composiÃ§Ã£o pendente
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: dado jÃ¡ consumido nÃ£o Ã© restaurado pela mudanÃ§a de composiÃ§Ã£o
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: desconexÃ£o nÃ£o recalcula pool durante resoluÃ§Ã£o
+ check_it 
+----------
+ 
+(1 row)
+
+SET
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+NOTICE:  PASS: troca de personagem nÃ£o sobrescreve estado atual
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: jogador lÃª somente projeÃ§Ã£o aberta
+ check_it 
+----------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: escrita direta na projeÃ§Ã£o negada [42501]
+NOTICE:  PASS: RLS isola outra mesa
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: Xerife de outra mesa nÃ£o lÃª segredo [42501]
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+ denied 
+NOTICE:  PASS: anÃ´nimo nÃ£o chama RPC [42501]
+--------
+ 
+(1 row)
+
+RESET
+NOTICE:  PASS: nenhuma tabela privada publicada em Realtime
+ check_it 
+----------
+ 
+(1 row)
+
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: somente projeÃ§Ã£o aberta publicada
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: reload, reconexÃ£o e mudanÃ§as preservam resultados e consumo
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: um conjunto aberto por mesa, independente de quantos NPCs
+NOTICE:  PASS: elenco/configuraÃ§Ãµes privados nÃ£o acessÃ­veis por helper
+ check_it 
+----------
+ 
+(1 row)
+
+SET
+SET
+NOTICE:  PASS: renovaÃ§Ã£o aberta adota nova composiÃ§Ã£o apÃ³s gastar todos os dados
+ check_it 
+----------
+ 
+(1 row)
+
+ check_it 
+----------
+ 
+(1 row)
+
+RESET
+NOTICE:  PASS: renovaÃ§Ã£o limpa pendÃªncia de composiÃ§Ã£o
+INSERT 0 2
+SET
+SET
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+SET
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: ficha com nivel=7 e config6B vazio deriva d8 pelo nÃ­vel
+ check_it 
+----------
+ 
+(1 row)
+
+NOTICE:  PASS: zera aberto para validar renovaÃ§Ã£o com derivaÃ§Ã£o por nÃ­vel
+ check_it 
+----------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: derivaÃ§Ã£o pelo nÃ­vel 7 garante d8 mesmo com config6B vazio
+ presenca_6b_xerife 
+--------------------
+ 
+(1 row)
+
+SET
+ check_it 
+----------
+ 
+(1 row)
+
+ROLLBACK
+NOTICE:  PASS: ficha totalmente sem nÃ­vel/6B Ã© ignorada isoladamente sem derrubar a mesa

@@ -1,0 +1,3 @@
+FAIL: Error: nenhum item do catálogo renderizado
+    at http://127.0.0.1:60181/test:1705:19
+Screenshot: C:\Users\STFANO~1\AppData\Local\Temp\darkwest-gm-tools-WdSL0t\gm-tools.png

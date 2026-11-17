@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "results": [
+    "Aberto deriva 6d8 pelo nivel 7 da ficha",
+    "Duas conexoes do mesmo jogador contam apenas 1 dado secreto",
+    "Anonimo bloqueado via HTTP",
+    "Jogador nao le segredo via HTTP",
+    "Jogador nao rola aberto via HTTP",
+    "Jogador nao altera mesa_6b_aberto via HTTP",
+    "Rolagem secreta confirmada no servidor",
+    "Rolagem secreta nao emite evento Realtime para jogador",
+    "Rolagem aberta confirmada no servidor",
+    "Jogador recebe INSERT do 6B Aberto via WebSocket Realtime",
+    "Consumo parcial aberto via HTTP",
+    "Jogador recebe UPDATE de consumo via Realtime",
+    "Renovacao bloqueada via HTTP antes de gastar todos os dados",
+    "Consumo dos dados restantes via HTTP",
+    "Renovacao aberta adota novo nivel (d10) e zera usados",
+    "Jogador recebe UPDATE de renovacao via Realtime",
+    "Novo cliente recupera estado autoritativo sem cache"
+  ]
+}
