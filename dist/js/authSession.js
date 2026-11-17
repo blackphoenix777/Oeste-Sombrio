@@ -21,6 +21,7 @@ OS.clearAuthSession = function () {
   if (OS.saveTimer) clearTimeout(OS.saveTimer);
   if (OS.closeAllGmPopups) OS.closeAllGmPopups();
   if (OS.clearMesaNotes) OS.clearMesaNotes();
+  if (OS.clearXerife6B) OS.clearXerife6B();
   clearInterval(OS.deliveryTimer);
   if (OS.activeMesaState) {
     OS.activeMesaState.tokenStatus = {};

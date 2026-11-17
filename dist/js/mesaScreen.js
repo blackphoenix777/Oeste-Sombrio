@@ -3001,6 +3001,7 @@ OS.switchMesaSidebarTab = function (tabName) {
 };
 
 OS.openMesa = async function (mesaId) {
+  if (OS.clearXerife6B) OS.clearXerife6B();
   if (OS.flushMesaNotes && !(await OS.flushMesaNotes())) return false;
   if (OS.activeMesaState.deliveryTask) await OS.activeMesaState.deliveryTask;
   if (!(await OS.verifyAuthSession())) return false;
@@ -3205,6 +3206,7 @@ OS.openMesa = async function (mesaId) {
   }
 
   if (OS.initMesaNotes) OS.initMesaNotes();
+  if (OS.initXerife6B) await OS.initXerife6B();
   clearInterval(OS.deliveryTimer);
   if (!isMestre && OS.processMesaDeliveries) {
     await OS.processMesaDeliveries();
@@ -3315,6 +3317,7 @@ OS.loadPlayerSheetForMesa = async function (mesaId, userId) {
 };
 
 OS.leaveMesaScreen = async function () {
+  if (OS.clearXerife6B) OS.clearXerife6B();
   if (OS.flushMesaNotes && !(await OS.flushMesaNotes())) return false;
   clearInterval(OS.deliveryTimer);
   if (OS.activeMesaState.deliveryTask) await OS.activeMesaState.deliveryTask;
@@ -4322,111 +4325,8 @@ OS.getSceneCreatureAttacks = function (instOrData) {
   return out;
 };
 
-function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onReload6B, afterUpdate) {
-  if (!entity || !entity.data) return null;
-
-  var attacks = OS.getSceneCreatureAttacks(entity);
-  var atk = null;
-
-  if (typeof attackSpec === "number") {
-    atk = attacks[attackSpec] || attacks[0] || null;
-  } else if (typeof attackSpec === "string") {
-    var trimmed = attackSpec.trim();
-    var asNum = /^\d+$/.test(trimmed) ? parseInt(trimmed, 10) : NaN;
-    if (!isNaN(asNum) && attacks[asNum]) {
-      atk = attacks[asNum];
-    } else {
-      atk =
-        attacks.find(function (a) {
-          return (
-            a.key === trimmed ||
-            a.name.toLowerCase() === trimmed.toLowerCase() ||
-            a.rawLine === trimmed
-          );
-        }) ||
-        attacks[0] ||
-        null;
-    }
-  } else if (attackSpec && typeof attackSpec === "object") {
-    atk =
-      attacks.find(function (a) {
-        return (
-          (attackSpec.key && a.key === attackSpec.key) ||
-          (typeof attackSpec.index === "number" && a.index === attackSpec.index) ||
-          (attackSpec.name && a.name.toLowerCase() === String(attackSpec.name).toLowerCase())
-        );
-      }) || {
-        index: typeof attackSpec.index === "number" ? attackSpec.index : 0,
-        key: attackSpec.key || "natural-0",
-        name: attackSpec.name || "Ataque",
-        rawLine: attackSpec.rawLine || attackSpec.name || "Ataque",
-        skillDie: attackSpec.skillDie || "",
-        damageExpr: attackSpec.damageExpr || "d6",
-        slotCategory: attackSpec.slotCategory || "corpo_a_corpo"
-      };
-  } else {
-    atk = attacks[0] || null;
-  }
-
-  if (!atk) return null;
-
+function executeCreatureAttackRoll(entity, atk, chosenChambers, chamberValues, chamberBonus, isXerife6B, afterUpdate) {
   var d = entity.data;
-  OS.sanitizeCreature6BData(d);
-  var info6B = OS.resolveCreature6BInfo(d);
-  var maxChambers = info6B.count;
-  if (!Array.isArray(d.usedChambers)) d.usedChambers = [];
-
-  var getAvailableChamberIndices = function () {
-    var avail = [];
-    for (var c = 0; c < maxChambers; c++) {
-      var val = parseInt(String(d["chamber-" + c] || "0"), 10) || 0;
-      if (val > 0 && d.usedChambers.indexOf(c) < 0 && !(OS.getRealDamagedChambers && OS.getRealDamagedChambers(d, maxChambers).includes(c))) {
-        avail.push(c);
-      }
-    }
-    return avail;
-  };
-
-  var availIndices = getAvailableChamberIndices();
-  if (!availIndices.length) {
-    if (typeof onReload6B === "function") {
-      onReload6B();
-    } else {
-      rollCreatureEntity6B(entity);
-    }
-    d = entity.data;
-    availIndices = getAvailableChamberIndices();
-  }
-
-  var chosenChambers = null;
-  if (Array.isArray(optSelectedChambers) && optSelectedChambers.length > 0) {
-    chosenChambers = optSelectedChambers.slice();
-  } else if (
-    attackSpec &&
-    typeof attackSpec === "object" &&
-    Array.isArray(attackSpec.selectedChambers) &&
-    attackSpec.selectedChambers.length > 0
-  ) {
-    chosenChambers = attackSpec.selectedChambers.slice();
-  } else if (availIndices.length > 0) {
-    chosenChambers = [availIndices[0]];
-  } else {
-    chosenChambers = [0];
-  }
-
-  var chamberValues = [];
-  var chamberBonus = 0;
-  chosenChambers.forEach(function (idx) {
-    var cIdx = parseInt(String(idx), 10);
-    if (isNaN(cIdx) || cIdx < 0 || cIdx >= maxChambers) return;
-    var val = parseInt(String(d["chamber-" + cIdx] || "0"), 10) || 0;
-    chamberValues.push(val);
-    chamberBonus += val;
-    if (d.usedChambers.indexOf(cIdx) < 0) {
-      d.usedChambers.push(cIdx);
-    }
-  });
-
   var skillDie = atk.skillDie || getSlotSelectedDieFromData(d, atk.slotCategory);
   var skillTotal = 0;
   var skillBreakdown = "";
@@ -4464,7 +4364,9 @@ function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onRel
     dmgRoll.label +
     "(" +
     dmgRoll.total +
-    ") + 6B(+" +
+    ") + " +
+    (isXerife6B ? "6B Xerife" : "6B") +
+    "(+" +
     chamberBonus +
     ") = " +
     finalTotal;
@@ -4526,7 +4428,7 @@ function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onRel
     var totalEl = document.getElementById("roll-modal-total");
     var totalLabel = rollModal.querySelector(".roll-total-label");
     if (titleEl) titleEl.textContent = creatureTitle + " — " + atk.name;
-    if (subEl) subEl.textContent = "Perícia + Dano + Valores do 6B";
+    if (subEl) subEl.textContent = isXerife6B ? "Perícia + Dano + 6B Aberto do Xerife" : "Perícia + Dano + Valores do 6B";
     if (totalLabel) totalLabel.textContent = "Resultado Final";
     if (totalEl) totalEl.textContent = String(finalTotal);
     if (detailsEl) {
@@ -4545,12 +4447,16 @@ function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onRel
         "</strong> (" +
         escHtml(dmgRoll.label) +
         ")</div>" +
-        '<div class="roll-line">Câmaras 6B (' +
-        chamberValues
-          .map(function (v) {
-            return "+" + v;
-          })
-          .join(", ") +
+        '<div class="roll-line">' +
+        (isXerife6B ? "6B Aberto do Xerife" : "Câmaras 6B") +
+        " (" +
+        (chamberValues.length
+          ? chamberValues
+              .map(function (v) {
+                return "+" + v;
+              })
+              .join(", ")
+          : "0") +
         "): <strong>+" +
         chamberBonus +
         "</strong></div>" +
@@ -4587,6 +4493,130 @@ function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onRel
     total: finalTotal,
     rollText: rollText
   };
+}
+
+function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onReload6B, afterUpdate) {
+  if (!entity || !entity.data) return null;
+
+  var attacks = OS.getSceneCreatureAttacks(entity);
+  var atk = null;
+
+  if (typeof attackSpec === "number") {
+    atk = attacks[attackSpec] || attacks[0] || null;
+  } else if (typeof attackSpec === "string") {
+    var trimmed = attackSpec.trim();
+    var asNum = /^\d+$/.test(trimmed) ? parseInt(trimmed, 10) : NaN;
+    if (!isNaN(asNum) && attacks[asNum]) {
+      atk = attacks[asNum];
+    } else {
+      atk =
+        attacks.find(function (a) {
+          return (
+            a.key === trimmed ||
+            a.name.toLowerCase() === trimmed.toLowerCase() ||
+            a.rawLine === trimmed
+          );
+        }) ||
+        attacks[0] ||
+        null;
+    }
+  } else if (attackSpec && typeof attackSpec === "object") {
+    atk =
+      attacks.find(function (a) {
+        return (
+          (attackSpec.key && a.key === attackSpec.key) ||
+          (typeof attackSpec.index === "number" && a.index === attackSpec.index) ||
+          (attackSpec.name && a.name.toLowerCase() === String(attackSpec.name).toLowerCase())
+        );
+      }) || {
+        index: typeof attackSpec.index === "number" ? attackSpec.index : 0,
+        key: attackSpec.key || "natural-0",
+        name: attackSpec.name || "Ataque",
+        rawLine: attackSpec.rawLine || attackSpec.name || "Ataque",
+        skillDie: attackSpec.skillDie || "",
+        damageExpr: attackSpec.damageExpr || "d6",
+        slotCategory: attackSpec.slotCategory || "corpo_a_corpo"
+      };
+  } else {
+    atk = attacks[0] || null;
+  }
+
+  if (!atk) return null;
+
+  var hasExplicitChambers =
+    (Array.isArray(optSelectedChambers) && optSelectedChambers.length > 0) ||
+    (attackSpec && typeof attackSpec === "object" && Array.isArray(attackSpec.selectedChambers) && attackSpec.selectedChambers.length > 0);
+
+  if (
+    !hasExplicitChambers &&
+    OS.isXerife6BAvailable &&
+    OS.isXerife6BAvailable() &&
+    OS.openXerife6BCreatureAttackModal
+  ) {
+    OS.openXerife6BCreatureAttackModal(entity, atk, function (chosen, values, bonus) {
+      return executeCreatureAttackRoll(entity, atk, chosen, values, bonus, true, afterUpdate);
+    });
+    return null;
+  }
+
+  var d = entity.data;
+  OS.sanitizeCreature6BData(d);
+  var info6B = OS.resolveCreature6BInfo(d);
+  var maxChambers = info6B.count;
+  if (!Array.isArray(d.usedChambers)) d.usedChambers = [];
+
+  var getAvailableChamberIndices = function () {
+    var avail = [];
+    for (var c = 0; c < maxChambers; c++) {
+      var val = parseInt(String(d["chamber-" + c] || "0"), 10) || 0;
+      if (val > 0 && d.usedChambers.indexOf(c) < 0 && !(OS.getRealDamagedChambers && OS.getRealDamagedChambers(d, maxChambers).includes(c))) {
+        avail.push(c);
+      }
+    }
+    return avail;
+  };
+
+  var availIndices = getAvailableChamberIndices();
+  if (!availIndices.length) {
+    if (typeof onReload6B === "function") {
+      onReload6B();
+    } else {
+      rollCreatureEntity6B(entity);
+    }
+    d = entity.data;
+    availIndices = getAvailableChamberIndices();
+  }
+
+  var chosenChambers = null;
+  if (Array.isArray(optSelectedChambers) && optSelectedChambers.length > 0) {
+    chosenChambers = optSelectedChambers.slice();
+  } else if (
+    attackSpec &&
+    typeof attackSpec === "object" &&
+    Array.isArray(attackSpec.selectedChambers) &&
+    attackSpec.selectedChambers.length > 0
+  ) {
+    chosenChambers = attackSpec.selectedChambers.slice();
+  } else if (availIndices.length > 0) {
+    chosenChambers = [availIndices[0]];
+  } else {
+    chosenChambers = [0];
+  }
+
+  var chamberValues = [];
+  var chamberBonus = 0;
+  chosenChambers.forEach(function (idx) {
+    var cIdx = parseInt(String(idx), 10);
+    if (isNaN(cIdx) || cIdx < 0 || cIdx >= maxChambers) return;
+    var val = parseInt(String(d["chamber-" + cIdx] || "0"), 10) || 0;
+    chamberValues.push(val);
+    chamberBonus += val;
+    if (d.usedChambers.indexOf(cIdx) < 0) {
+      d.usedChambers.push(cIdx);
+    }
+  });
+
+  return executeCreatureAttackRoll(entity, atk, chosenChambers, chamberValues, chamberBonus, false, afterUpdate);
 }
 
 OS.rollSceneCreatureAttack = function (instanceId, attackSpec, optSelectedChambers) {

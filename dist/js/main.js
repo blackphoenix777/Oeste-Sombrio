@@ -28,6 +28,7 @@ import "./turnTracker.js";
 import "./mesaTokenStatus.js";
 import "./mesaDeliveries.js";
 import "./mesaNotes.js";
+import "./mesaXerife6B.js";
 import "./updater.js";
 
 OS.bindEvents = function () {

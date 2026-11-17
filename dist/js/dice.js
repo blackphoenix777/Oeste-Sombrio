@@ -74,8 +74,9 @@ OS.finishSkillRoll = function (baseResult, chosenDetail) {
   var st = OS.chamberSelectionState || {};
   var selected = st.selectedChambers || [];
   var dice = st.dice || OS.rollModalState.dice || [];
-  var final = OS.rollModalState.finalResults || [];
-  var bonus = OS.calculateChamberBonus(selected);
+  var final = (st.results && st.results.length ? st.results : OS.rollModalState.finalResults) || [];
+  var isXerife = !!st.xerifePoolMode;
+  var bonus = isXerife ? (Number(st.consumedBonus) || 0) : OS.calculateChamberBonus(selected);
   var skillKey = (st.rowEl && st.rowEl.getAttribute("data-skill-key")) || "";
   var skillName = st.skillName || "Perícia";
   var buffEval = OS.evaluateSkillRollBuffs
@@ -84,11 +85,15 @@ OS.finishSkillRoll = function (baseResult, chosenDetail) {
   var buffBonus = buffEval.total || 0;
   var total = (baseResult || 0) + bonus + buffBonus;
   var chamberValues = [];
-  for (var c = 0; c < selected.length; c++) {
-    chamberValues.push(OS.chamberValueAt(selected[c]));
+  if (isXerife) {
+    chamberValues = Array.isArray(st.consumedValues) ? st.consumedValues.slice() : [];
+  } else {
+    for (var c = 0; c < selected.length; c++) {
+      chamberValues.push(OS.chamberValueAt(selected[c]));
+    }
   }
 
-  if (selected.length) OS.consumeCylinderChambers(selected);
+  if (!isXerife && selected.length) OS.consumeCylinderChambers(selected);
   OS.updateReloadButtonState();
 
   var outEl = st.outEl;
@@ -257,7 +262,7 @@ OS.clearRollResultsOnly = function () {
   }
 };
 
-OS.applyCylinderBonuses = function () {
+OS.applyCylinderBonuses = async function () {
   var st = OS.chamberSelectionState || {};
   var selected = st.selectedChambers || [];
 
@@ -268,6 +273,48 @@ OS.applyCylinderBonuses = function () {
       hint.textContent = "Selecione pelo menos 1 valor do 6B para confirmar a rolagem da arma.";
     }
     return false;
+  }
+
+  if (st.xerifePoolMode) {
+    if (st._consumingXerife) return false;
+    var snap = OS.getXerife6BSnapshot ? OS.getXerife6BSnapshot("aberto") : null;
+    var resultados = (snap && Array.isArray(snap.resultados)) ? snap.resultados : [];
+    var chosenXerife = selected.slice();
+    var consumedValues = chosenXerife.map(function (idx) {
+      var v = Number(resultados[idx]);
+      return Number.isFinite(v) ? v : 0;
+    });
+    var consumedBonus = consumedValues.reduce(function (acc, v) { return acc + v; }, 0);
+
+    if (chosenXerife.length > 0) {
+      st._consumingXerife = true;
+      if (OS.updateChamberModalUi) OS.updateChamberModalUi();
+      var ok = false;
+      try {
+        ok = OS.consumeXerife6B ? await OS.consumeXerife6B("aberto", chosenXerife) : false;
+      } finally {
+        st._consumingXerife = false;
+      }
+      if (!ok) {
+        var hintErr = OS.$("chamber-modal-hint");
+        if (hintErr) {
+          hintErr.textContent = "Não foi possível consumir o 6B Aberto. Atualize os dados disponíveis.";
+        }
+        if (OS.renderChamberGrid) OS.renderChamberGrid();
+        if (OS.updateChamberModalUi) OS.updateChamberModalUi();
+        return false;
+      }
+    }
+
+    st.consumedValues = consumedValues;
+    st.consumedBonus = consumedBonus;
+
+    if (st.isCreaturePopupAttack && typeof st.creatureAttackCallback === "function") {
+      var cb = st.creatureAttackCallback;
+      st.creatureAttackCallback = null;
+      OS.closeChamberModal();
+      return cb(chosenXerife, consumedValues, consumedBonus);
+    }
   }
 
   if (st.isWeaponRoll) {
@@ -319,7 +366,8 @@ OS.applyCylinderBonuses = function () {
 
     window.setTimeout(waitAndResolveRoll, 620);
   } else {
-    var bonus = OS.calculateChamberBonus(selected);
+    var isXerifeElse = !!st.xerifePoolMode;
+    var bonus = isXerifeElse ? (Number(st.consumedBonus) || 0) : OS.calculateChamberBonus(selected);
     var highest = st.baseTotal || 0;
     var legacySkillKey = (st.rowEl && st.rowEl.getAttribute("data-skill-key")) || "";
     var legacySkillName = st.skillName || "Perícia";
@@ -327,9 +375,9 @@ OS.applyCylinderBonuses = function () {
       ? OS.evaluateSkillRollBuffs(legacySkillKey, legacySkillName)
       : { total: 0, items: [] };
     var legacyBuffBonus = legacyBuffEval.total || 0;
-    var total = OS.calculateFinalRoll(highest, selected) + legacyBuffBonus;
+    var total = highest + bonus + legacyBuffBonus;
 
-    if (selected.length && OS.consumeCylinderChambers) {
+    if (!isXerifeElse && selected.length && OS.consumeCylinderChambers) {
       OS.consumeCylinderChambers(selected);
     }
     OS.updateReloadButtonState();

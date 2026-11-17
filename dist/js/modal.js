@@ -453,6 +453,28 @@ var finalTotal = highest + bonus;
 
   /* ---- Seleção de câmaras (pós-rolagem) ---- */
 
+function isGmXerifeSheetMode() {
+  return !!(
+    OS.freeEdit &&
+    OS.activeMesaState &&
+    OS.activeMesaState.isMestre &&
+    OS.activeMesaState.gmEditingSheet &&
+    OS.isXerife6BAvailable &&
+    OS.isXerife6BAvailable()
+  );
+}
+
+function getXerifePoolBonus(selectedIndices) {
+  var snap = OS.getXerife6BSnapshot ? OS.getXerife6BSnapshot("aberto") : null;
+  var resultados = (snap && Array.isArray(snap.resultados)) ? snap.resultados : [];
+  var sum = 0;
+  (selectedIndices || []).forEach(function (idx) {
+    var v = Number(resultados[idx]);
+    if (Number.isFinite(v) && v > 0) sum += v;
+  });
+  return sum;
+}
+
 OS.openChamberSelectionModal = function (baseTotal, dice, results, rowEl, outEl, skillName, subtitle) {
   var modal = OS.$("chamber-modal");
   if (!modal) return;
@@ -460,6 +482,9 @@ OS.openChamberSelectionModal = function (baseTotal, dice, results, rowEl, outEl,
   OS.closeRollModal();
 
   var preRoll = (baseTotal === null || baseTotal === undefined);
+  var xerifeMode = isGmXerifeSheetMode();
+  var titleEl = OS.$("chamber-modal-title");
+  if (titleEl) titleEl.textContent = xerifeMode ? "6B Aberto do Xerife" : "Ritual do Tambor";
 
   OS.chamberSelectionState.preRoll   = preRoll;
   OS.chamberSelectionState.baseTotal = baseTotal || 0;
@@ -474,12 +499,23 @@ OS.openChamberSelectionModal = function (baseTotal, dice, results, rowEl, outEl,
   OS.chamberSelectionState.requireMinOneChamber = false;
   OS.chamberSelectionState.weaponInvId = null;
   OS.chamberSelectionState.weaponSlotCategory = null;
+  OS.chamberSelectionState.xerifePoolMode = xerifeMode;
+  OS.chamberSelectionState.isCreaturePopupAttack = false;
+  OS.chamberSelectionState.creatureAttackCallback = null;
+  OS.chamberSelectionState.consumedValues = [];
+  OS.chamberSelectionState.consumedBonus = 0;
 
   var sub = OS.$("chamber-modal-sub");
   if (sub) {
-    sub.textContent = preRoll
-      ? "Selecione câmaras para adicionar bônus antes de rolar."
-      : "Maior resultado: " + baseTotal + ". Selecione câmaras para somar ao teste (opcional).";
+    if (xerifeMode) {
+      sub.textContent = preRoll
+        ? "Selecione os dados do 6B Aberto do Xerife para adicionar antes de rolar (opcional)."
+        : "Maior resultado: " + baseTotal + ". Selecione dados do 6B Aberto do Xerife (opcional).";
+    } else {
+      sub.textContent = preRoll
+        ? "Selecione câmaras para adicionar bônus antes de rolar."
+        : "Maior resultado: " + baseTotal + ". Selecione câmaras para somar ao teste (opcional).";
+    }
   }
 
   var summary = OS.$("chamber-roll-summary");
@@ -514,6 +550,10 @@ OS.openWeaponChamberSelectionModal = function (invItem, slotCategory, skillLabel
 
   OS.closeRollModal();
 
+  var xerifeMode = isGmXerifeSheetMode();
+  var titleEl = OS.$("chamber-modal-title");
+  if (titleEl) titleEl.textContent = xerifeMode ? "6B Aberto do Xerife" : "Ritual do Tambor";
+
   OS.chamberSelectionState.preRoll = true;
   OS.chamberSelectionState.baseTotal = 0;
   OS.chamberSelectionState.dice = (skillDice || []).slice();
@@ -524,22 +564,29 @@ OS.openWeaponChamberSelectionModal = function (invItem, slotCategory, skillLabel
   OS.chamberSelectionState.skillName = invItem.name + " (" + (skillLabel || "Combate") + ")";
   OS.chamberSelectionState.subtitle = "Ataque com " + invItem.name;
   OS.chamberSelectionState.isWeaponRoll = true;
-  OS.chamberSelectionState.requireMinOneChamber = true;
+  OS.chamberSelectionState.requireMinOneChamber = !xerifeMode;
   OS.chamberSelectionState.weaponInvId = invItem.id;
   OS.chamberSelectionState.weaponSlotCategory = slotCategory;
   OS.chamberSelectionState.weaponSkillLabel = skillLabel || "Combate";
   OS.chamberSelectionState.weaponDamageStr = danoStr || "d6";
+  OS.chamberSelectionState.xerifePoolMode = xerifeMode;
+  OS.chamberSelectionState.isCreaturePopupAttack = false;
+  OS.chamberSelectionState.creatureAttackCallback = null;
+  OS.chamberSelectionState.consumedValues = [];
+  OS.chamberSelectionState.consumedBonus = 0;
 
   var sub = OS.$("chamber-modal-sub");
   if (sub) {
-    sub.textContent = "Selecione obrigatoriamente pelo menos 1 valor do 6B para rolar " + invItem.name + ".";
+    sub.textContent = xerifeMode
+      ? "Selecione os dados do 6B Aberto do Xerife para rolar " + invItem.name + " (opcional)."
+      : "Selecione obrigatoriamente pelo menos 1 valor do 6B para rolar " + invItem.name + ".";
   }
 
   var summary = OS.$("chamber-roll-summary");
   if (summary) {
     var sDiceTxt = (skillDice && skillDice.length) ? skillDice.join(" · ") : "1d4 - 2 (não treinada)";
     summary.innerHTML =
-      '<div class="chamber-roll-line">Perícia (' + (skillLabel || "Combate") + '): <strong>' + sDiceTxt + '</strong> + Dano da Arma: <strong>' + (danoStr || "d6") + '</strong> + Valores do 6B</div>';
+      '<div class="chamber-roll-line">Perícia (' + (skillLabel || "Combate") + '): <strong>' + sDiceTxt + '</strong> + Dano da Arma: <strong>' + (danoStr || "d6") + '</strong> + ' + (xerifeMode ? '6B do Xerife' : 'Valores do 6B') + '</div>';
   }
 
   if (OS.syncTestCalcModalPlacement) {
@@ -551,6 +598,64 @@ OS.openWeaponChamberSelectionModal = function (invItem, slotCategory, skillLabel
   OS.updateChamberModalUi();
 };
 
+OS.openXerife6BCreatureAttackModal = function (entity, atk, onConfirmCallback) {
+  var modal = OS.$("chamber-modal");
+  if (!modal || !entity || !atk) return false;
+
+  OS.closeRollModal();
+
+  var titleEl = OS.$("chamber-modal-title");
+  if (titleEl) {
+    titleEl.textContent = "6B do Xerife — " + (entity.name || (entity.data && entity.data.nome) || "Criatura");
+  }
+
+  OS.chamberSelectionState.preRoll = true;
+  OS.chamberSelectionState.baseTotal = 0;
+  OS.chamberSelectionState.dice = [];
+  OS.chamberSelectionState.results = [];
+  OS.chamberSelectionState.selectedChambers = [];
+  OS.chamberSelectionState.rowEl = null;
+  OS.chamberSelectionState.outEl = null;
+  OS.chamberSelectionState.skillName = atk.name || "Ataque";
+  OS.chamberSelectionState.subtitle = "Ataque de " + (entity.name || "Criatura");
+  OS.chamberSelectionState.isWeaponRoll = false;
+  OS.chamberSelectionState.requireMinOneChamber = false;
+  OS.chamberSelectionState.weaponInvId = null;
+  OS.chamberSelectionState.weaponSlotCategory = null;
+  OS.chamberSelectionState.xerifePoolMode = true;
+  OS.chamberSelectionState.isCreaturePopupAttack = true;
+  OS.chamberSelectionState.creatureAttackCallback = onConfirmCallback;
+  OS.chamberSelectionState.consumedValues = [];
+  OS.chamberSelectionState.consumedBonus = 0;
+
+  var sub = OS.$("chamber-modal-sub");
+  if (sub) {
+    sub.textContent = "Selecione os dados do 6B Aberto do Xerife que deseja gastar em " + (atk.name || "Ataque") + " (opcional).";
+  }
+
+  var summary = OS.$("chamber-roll-summary");
+  if (summary) {
+    summary.replaceChildren();
+    var line = document.createElement("div");
+    line.className = "chamber-roll-line";
+    line.textContent =
+      "Ataque: " + (atk.rawLine || atk.name) +
+      " | Perícia: " + (atk.skillDie || "1d4-2") +
+      " | Dano: " + (atk.damageExpr || "d6") +
+      " + Dados do 6B Aberto selecionados";
+    summary.appendChild(line);
+  }
+
+  if (OS.syncTestCalcModalPlacement) {
+    OS.syncTestCalcModalPlacement("chamber-modal-test-calc-slot", false);
+  }
+
+  modal.classList.add("open");
+  OS.renderChamberGrid();
+  OS.updateChamberModalUi();
+  return true;
+};
+
   OS.openCylinderChoiceModal = function (base, dice, results, rowEl, outEl) {
     OS.openChamberSelectionModal(base, dice, results, rowEl, outEl);
   };
@@ -559,12 +664,97 @@ OS.openWeaponChamberSelectionModal = function (invItem, slotCategory, skillLabel
     var modal = OS.$("chamber-modal");
     if (!modal) return;
     modal.classList.remove("open");
+    if (OS.chamberSelectionState) {
+      OS.chamberSelectionState.creatureAttackCallback = null;
+    }
   };
 
   OS.renderChamberGrid = function () {
     var grid = OS.$("chamber-grid");
     if (!grid) return;
     grid.innerHTML = "";
+
+    var st = OS.chamberSelectionState || {};
+    if (st.xerifePoolMode) {
+      var snap = OS.getXerife6BSnapshot ? OS.getXerife6BSnapshot("aberto") : null;
+      var dice = (snap && Array.isArray(snap.dados)) ? snap.dados : [];
+      var resultados = (snap && Array.isArray(snap.resultados)) ? snap.resultados : [];
+      var usados = (snap && Array.isArray(snap.usados)) ? snap.usados : [];
+
+      if (!dice.length) {
+        var emptyMsg = document.createElement("p");
+        emptyMsg.className = "mesa-xerife-status";
+        emptyMsg.textContent = "Nenhum jogador ativo com ficha válida para compor o 6B Aberto.";
+        grid.appendChild(emptyMsg);
+        return;
+      }
+
+      if (!resultados.length) {
+        var unrolledMsg = document.createElement("p");
+        unrolledMsg.className = "mesa-xerife-status";
+        unrolledMsg.textContent = "O 6B Aberto do Xerife ainda não foi rolado.";
+        var rollNowBtn = document.createElement("button");
+        rollNowBtn.type = "button";
+        rollNowBtn.className = "btn btn-secondary btn-small";
+        rollNowBtn.textContent = "Rolar 6B Aberto";
+        rollNowBtn.addEventListener("click", async function () {
+          if (!OS.rollXerife6B) return;
+          rollNowBtn.disabled = true;
+          await OS.rollXerife6B("aberto");
+          OS.renderChamberGrid();
+          OS.updateChamberModalUi();
+        });
+        grid.appendChild(unrolledMsg);
+        grid.appendChild(rollNowBtn);
+        return;
+      }
+
+      for (var xi = 0; xi < dice.length; xi++) {
+        var val = resultados[xi];
+        var spent = usados.indexOf(xi) >= 0;
+        var pBtn = document.createElement("button");
+        pBtn.type = "button";
+        pBtn.className = "chamber-pill" + (spent ? " disabled" : "");
+        pBtn.setAttribute("data-index", String(xi));
+        pBtn.setAttribute("aria-label", "6B Aberto dado " + (xi + 1) + (spent ? " (já usado)" : ": " + val));
+        pBtn.disabled = spent || val == null;
+
+        var valSp = document.createElement("span");
+        valSp.className = "chamber-pill-value";
+        valSp.textContent = val != null ? String(val) : "—";
+        pBtn.appendChild(valSp);
+
+        var lblSp = document.createElement("span");
+        lblSp.className = "chamber-pill-label";
+        lblSp.textContent = "d" + dice[xi];
+        pBtn.appendChild(lblSp);
+
+        if (!spent && val != null) {
+          pBtn.addEventListener("click", function (e) {
+            var idx = parseInt(e.currentTarget.getAttribute("data-index"), 10);
+            OS.toggleChamberSelection(idx);
+          });
+        }
+        grid.appendChild(pBtn);
+      }
+
+      if (usados.length >= dice.length) {
+        var renewBtn = document.createElement("button");
+        renewBtn.type = "button";
+        renewBtn.className = "btn btn-secondary btn-small";
+        renewBtn.textContent = "Renovar 6B Aberto";
+        renewBtn.addEventListener("click", async function () {
+          if (!OS.renewXerife6B) return;
+          renewBtn.disabled = true;
+          var ok = await OS.renewXerife6B("aberto");
+          if (ok) OS.chamberSelectionState.selectedChambers = [];
+          OS.renderChamberGrid();
+          OS.updateChamberModalUi();
+        });
+        grid.appendChild(renewBtn);
+      }
+      return;
+    }
 
     for (var i = 0; i < 6; i++) {
       var chamberInput = OS.$("chamber-" + i);
@@ -634,17 +824,27 @@ OS.openWeaponChamberSelectionModal = function (invItem, slotCategory, skillLabel
       });
     }
 
-    var bonus = OS.calculateChamberBonus(selected);
-    var total = OS.calculateFinalRoll(st.baseTotal, selected);
+    var bonus = st.xerifePoolMode ? getXerifePoolBonus(selected) : OS.calculateChamberBonus(selected);
+    var total = (st.baseTotal || 0) + bonus;
     var base = st.baseTotal;
     var requireMin = !!st.requireMinOneChamber;
 
     if (confirmBtn) {
-      confirmBtn.disabled = requireMin && selected.length < 1;
+      confirmBtn.disabled = !!st._consumingXerife || (requireMin && selected.length < 1);
     }
 
     if (hint) {
-      if (st.isWeaponRoll) {
+      if (st.xerifePoolMode) {
+        if (selected.length === 0) {
+          hint.textContent = st.isCreaturePopupAttack || st.preRoll
+            ? "Nenhum dado do 6B Aberto selecionado (rolagem sem bônus de 6B)."
+            : "Nenhum dado do 6B Aberto selecionado. Resultado final: " + base + ".";
+        } else {
+          hint.textContent = st.isCreaturePopupAttack || st.preRoll
+            ? "6B Aberto selecionado: +" + bonus + " (" + selected.length + " dado(s))."
+            : "Maior: " + base + " | 6B Aberto: +" + bonus + " | Final: " + total;
+        }
+      } else if (st.isWeaponRoll) {
         if (selected.length === 0) {
           hint.textContent =
             "Obrigatório selecionar pelo menos 1 valor do 6B para confirmar a rolagem da arma.";

@@ -616,6 +616,9 @@ OS.createNewCharacter = async function (options) {
             OS.activeMesaState._pendingPlayerSheetUpsert = null;
           }
         }
+        if (OS.refreshXerife6B) {
+          OS.refreshXerife6B().catch(function () {});
+        }
       }
 
       OS.saveToStorage();

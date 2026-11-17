@@ -719,8 +719,9 @@ OS.executeConfirmedWeaponRoll = function (invId, slotCategory, selectedChambers)
     : OS.inventoryItems.find(function (i) { return i.id === invId; });
   if (!invItem || !invItem.equipped || invItem.group !== "armas") return null;
 
-  // Regra obrigatória: escolher pelo menos 1 valor do 6B para confirmar a rolagem da arma
-  if (!Array.isArray(selectedChambers) || selectedChambers.length < 1) {
+  var isXerifeMode = !!(OS.chamberSelectionState && OS.chamberSelectionState.xerifePoolMode);
+  // Regra obrigatória para jogadores: escolher pelo menos 1 valor do 6B para confirmar a rolagem da arma
+  if (!Array.isArray(selectedChambers) || (!isXerifeMode && selectedChambers.length < 1)) {
     return null;
   }
 
@@ -740,12 +741,16 @@ OS.executeConfirmedWeaponRoll = function (invId, slotCategory, selectedChambers)
   var isMeleeSlot = resolvedSlot === "corpo_a_corpo";
   var autoReloaded = false;
 
-  var chamberBonus = OS.calculateChamberBonus ? OS.calculateChamberBonus(selectedChambers) : 0;
-  var chamberValues = selectedChambers.map(function (idx) {
-    return OS.chamberValueAt ? OS.chamberValueAt(idx) : 0;
-  });
+  var chamberBonus = isXerifeMode
+    ? (Number(OS.chamberSelectionState.consumedBonus) || 0)
+    : (OS.calculateChamberBonus ? OS.calculateChamberBonus(selectedChambers) : 0);
+  var chamberValues = isXerifeMode
+    ? (Array.isArray(OS.chamberSelectionState.consumedValues) ? OS.chamberSelectionState.consumedValues.slice() : [])
+    : selectedChambers.map(function (idx) {
+        return OS.chamberValueAt ? OS.chamberValueAt(idx) : 0;
+      });
 
-  if (OS.consumeCylinderChambers) {
+  if (!isXerifeMode && OS.consumeCylinderChambers) {
     OS.consumeCylinderChambers(selectedChambers);
   }
   if (OS.updateReloadButtonState) {
