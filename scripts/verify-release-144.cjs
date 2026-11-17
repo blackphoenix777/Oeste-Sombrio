@@ -52,7 +52,15 @@ async function publishDraft() {
     if (!r.ok) throw Error(`GitHub ${method} ${route}: HTTP ${r.status}`);
     return r.json();
   };
-  const release = await api('/releases/tags/v1.4.4');
+  // The by-tag endpoint can return 404 for drafts; list authenticated releases.
+  const matches = [];
+  for (let page = 1; ; page++) {
+    const releases = await api(`/releases?per_page=100&page=${page}`);
+    matches.push(...releases.filter(release => release.tag_name === 'v1.4.4'));
+    if (releases.length < 100) break;
+  }
+  assert.equal(matches.length, 1, 'Exactly one 1.4.4 release must exist');
+  const release = matches[0];
   assert.equal(release.target_commitish, process.env.GITHUB_SHA, 'Draft must target exact approved commit');
   assert.equal(release.prerelease, false);
   assert.deepEqual(release.assets.map(a => a.name).sort(), Object.keys(expected).sort());
