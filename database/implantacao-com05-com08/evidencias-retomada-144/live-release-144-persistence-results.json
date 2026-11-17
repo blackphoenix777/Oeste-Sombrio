@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "cleanupOK": true,
+  "results": [
+    "Jogador bloqueado por HTTP em mapas: adicionar",
+    "Jogador bloqueado por HTTP em mapas: editar",
+    "Jogador bloqueado por HTTP em mapas: flamula",
+    "Jogador bloqueado por HTTP em mapas: excluir",
+    "Xerife de outra mesa nao ganha autorizacao",
+    "Conteudo JSONB invalido rejeitado: {}",
+    "Conteudo JSONB invalido rejeitado: 42",
+    "Conteudo JSONB invalido rejeitado: null",
+    "Conteudo JSONB invalido rejeitado: []",
+    "Erros JSONB preservam texto e versao anterior",
+    "Jogador nao altera notas por HTTP",
+    "Notas isoladas entre mesas",
+    "Renovacao real da sessao Auth",
+    "Nome e grade recuperados sem cache em novo cliente autenticado",
+    "Notas e versao recuperadas sem cache em novo cliente autenticado",
+    "Flamula recuperada pelo jogador em nova sessao",
+    "Exclusao sintetica por RPC persiste e ajusta flamula"
+  ],
+  "roomIds": [
+    "7f1ca753-8e4b-4dd8-b70c-880169a60c2d",
+    "7462a32c-e629-4cfb-b4d4-13a0a26eeb5b"
+  ]
+}

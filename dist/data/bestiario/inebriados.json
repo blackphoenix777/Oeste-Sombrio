@@ -120,6 +120,7 @@
     "pericia-sobrevivencia-d12": false,
     "defesa": "15",
     "iniciativa": "0",
+    "acoes_por_turno": 2,
     "fadiga-0": false,
     "fadiga-1": false,
     "fadiga-2": false,

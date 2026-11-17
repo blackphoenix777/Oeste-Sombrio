@@ -1,0 +1,1 @@
+PASS: jogador usa RPC; normaliza token_id; próprio token movível; outro bloqueado; metadados via RPC; refresh remove token ocultado; Mestre mantém SELECT completo. Backend simulado.

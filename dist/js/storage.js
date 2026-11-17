@@ -325,6 +325,7 @@ OS.setFreeEditMode = function (enabled) {
       remTotalEl.readOnly = true;
     }
   }
+  if (OS.syncCriaturaModeUI) OS.syncCriaturaModeUI();
 };
 
 OS.collectState = function () {
@@ -332,6 +333,7 @@ OS.collectState = function () {
 
     OS.getFormElements().forEach(function (el) {
       if (!el.name && !el.id) return;
+      if (el.id === "is-criatura" || el.name === "is-criatura") return;
       var key = el.name || el.id;
 
       if (el.type === "checkbox") {
@@ -461,6 +463,21 @@ OS.collectState = function () {
     if (OS.isBestiaryCustom) {
       state.isBestiaryCustom = true;
     }
+    if (OS.freeEdit) {
+      if (OS.isCriatura === true) {
+        state.isCriatura = true;
+        state["is-criatura"] = true;
+        state.operationalMode = "creature_mode";
+      } else if (OS.isCriatura === false) {
+        state.isCriatura = false;
+        state["is-criatura"] = false;
+        state.operationalMode = "full_sheet";
+      } else if (OS._loadedCreatureModeNullKeys) {
+        if (OS._loadedCreatureModeNullKeys.isCriatura) state.isCriatura = null;
+        if (OS._loadedCreatureModeNullKeys.dash) state["is-criatura"] = null;
+        if (OS._loadedCreatureModeNullKeys.operationalMode) state.operationalMode = null;
+      }
+    }
     if (
       !OS.freeEdit &&
       OS.activeMesaState &&
@@ -505,14 +522,28 @@ OS.collectState = function () {
     } else {
       OS.freeEdit = isFree;
     }
-    OS.activeSheetTipo = state.tipo_ficha || (isFree ? "npc" : null);
+    var hasExplicitTipoFicha =
+      Object.prototype.hasOwnProperty.call(state, "tipo_ficha") &&
+      state.tipo_ficha !== undefined &&
+      state.tipo_ficha !== null &&
+      String(state.tipo_ficha).trim() !== "";
+    OS._loadedHasTipoFicha = hasExplicitTipoFicha;
+    OS.activeSheetTipo = hasExplicitTipoFicha ? state.tipo_ficha : null;
     OS.isBestiaryCustom = !!state.isBestiaryCustom;
+    OS._loadedCreatureModeNullKeys = {
+      isCriatura: Object.prototype.hasOwnProperty.call(state, "isCriatura") && state.isCriatura === null,
+      dash: Object.prototype.hasOwnProperty.call(state, "is-criatura") && state["is-criatura"] === null,
+      operationalMode: Object.prototype.hasOwnProperty.call(state, "operationalMode") && state.operationalMode === null
+    };
     OS.activeCharacterMesaId = !isFree && (state.mesa_id || state.mesaId)
       ? String(state.mesa_id || state.mesaId)
       : null;
 
     OS.getFormElements().forEach(function (el) {
       var key = el.name || el.id;
+      if (el.id === "is-criatura" || el.name === "is-criatura") {
+        return;
+      }
       if (!(key in state) && el.type === "radio" && !(el.name in state)) {
         return;
       }
@@ -738,6 +769,18 @@ OS.collectState = function () {
     if (OS.applyFatiguePenalty) OS.applyFatiguePenalty();
     if (OS.renderActiveConditions) OS.renderActiveConditions();
     if (OS.syncTerrorAndVeteranoUI) OS.syncTerrorAndVeteranoUI();
+    var loadedCriaturaChoice = OS.extractCreatureModeChoice
+      ? OS.extractCreatureModeChoice(state)
+      : state.operationalMode === "creature_mode" || state.isCriatura === true || state["is-criatura"] === true
+      ? true
+      : state.operationalMode === "full_sheet" || state.isCriatura === false || state["is-criatura"] === false
+      ? false
+      : null;
+    if (OS.setCriaturaMode) {
+      OS.setCriaturaMode(isFree ? loadedCriaturaChoice : null, true);
+    } else {
+      OS.isCriatura = isFree ? loadedCriaturaChoice : null;
+    }
     if (OS.updateBuffButtonUI) OS.updateBuffButtonUI();
     if (OS.updateStatsFields) OS.updateStatsFields(false);
 
@@ -859,6 +902,9 @@ OS.collectState = function () {
     if (OS.setReadOnlyMode) OS.setReadOnlyMode(false);
     OS.sceneTerrorLevel = 0;
     OS.isVeterano = false;
+    OS.isCriatura = null;
+    OS._loadedHasTipoFicha = false;
+    OS._loadedCreatureModeNullKeys = null;
     OS.downtimeWeeks = 0;
     OS.downtimeDays = 0;
     var sSlider = OS.$("scene-terror-slider");
@@ -875,6 +921,7 @@ OS.collectState = function () {
     if (dEl) dEl.value = "0";
     if (OS.renderActiveConditions) OS.renderActiveConditions();
     if (OS.syncTerrorAndVeteranoUI) OS.syncTerrorAndVeteranoUI();
+    if (OS.syncCriaturaModeUI) OS.syncCriaturaModeUI();
     if (OS.clearInventoryItems) OS.clearInventoryItems();
     if (OS.clearMagiasState) OS.clearMagiasState({ freeEdit: isFree });
     OS.activeBuffs = [];

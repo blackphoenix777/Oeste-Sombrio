@@ -1,0 +1,17 @@
+PASS: Jogador bloqueado por HTTP em mapas: adicionar
+PASS: Jogador bloqueado por HTTP em mapas: editar
+PASS: Jogador bloqueado por HTTP em mapas: flamula
+PASS: Jogador bloqueado por HTTP em mapas: excluir
+PASS: Xerife de outra mesa nao ganha autorizacao
+PASS: Conteudo JSONB invalido rejeitado: {}
+PASS: Conteudo JSONB invalido rejeitado: 42
+PASS: Conteudo JSONB invalido rejeitado: null
+PASS: Conteudo JSONB invalido rejeitado: []
+PASS: Erros JSONB preservam texto e versao anterior
+PASS: Jogador nao altera notas por HTTP
+PASS: Notas isoladas entre mesas
+PASS: Renovacao real da sessao Auth
+PASS: Nome e grade recuperados sem cache em novo cliente autenticado
+PASS: Notas e versao recuperadas sem cache em novo cliente autenticado
+PASS: Flamula recuperada pelo jogador em nova sessao
+PASS: Exclusao sintetica por RPC persiste e ajusta flamula

@@ -1,0 +1,12 @@
+Realtime: canais autenticados inscritos
+PASS: Fila acessível por HTTP ao destinatário autenticado
+Realtime: entrega recebida
+PASS: Entrega recebida por INSERT Realtime em 469 ms
+PASS: Envio do Mestre mantém ficha intacta até consumo pelo jogador
+PASS: Jogador confirma entrega após persistir item/recibo via HTTP
+PASS: Integridade e REM do aliado chegam pelo Realtime
+PASS: Criatura visível atualiza Mestre, sem enviar status ao WebSocket do jogador
+PASS: SELECT HTTP também oculta status de criaturas
+PASS: Notas persistidas por UPDATE HTTP com versão
+PASS: Jogador não lê notas por SELECT HTTP
+PASS: Versão antiga não sobrescreve notas via HTTP

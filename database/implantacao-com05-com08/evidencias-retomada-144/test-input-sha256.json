@@ -1,0 +1,20 @@
+{
+  "tests/auth-session.cjs": "873b504a851ce2bf5afbc881ef25223a69c284c8963c81c893596cfe1a411bdc",
+  "tests/com03-com04-creature-mode.cjs": "bdcd46cb8883c6a6965dda6067f2059777f43df48ba5b0ceebb7fb041d1de1d8",
+  "tests/com05-com06-initiative-budget.cjs": "e73f1f91f212c8072612826b68b1cc0b2410f498c579ba51733d8637d3bafc7c",
+  "tests/com07-com08-controller-events.cjs": "45c505b3e87791f9fc3e4a091df068384facdcef33116b27991f404b0504e214",
+  "tests/turn-tracker-ui.cjs": "a27ab78863071a0e7003cd57e25c53de5f5f2bbd764aa9fc0c034998b615d165",
+  "tests/scene-read.cjs": "2e962a4d478820637b77454e236060e1cf73a554a585d6b0bdd5e670355e486f",
+  "tests/token-initiative.cjs": "9cec46d7c0ecd6d85ae6a594ae0f95eadde9c685db9e904d929ca1620bb535e2",
+  "tests/mesa-6b.cjs": "e85c617602c0e0a918a3bec964dcca779f414bb6363735898a13e222f96ad175",
+  "tests/map-camera.cjs": "87987bd3fcfba358fc844300fa18e1c9517ef43d1b8c2628b61be38fa8c559cc",
+  "tests/gm-tools-ui.cjs": "3d1fe09a1ee102ab28c4df73abcf37d8c30db720b86b7fc71313cc2b95d9cf23",
+  "tests/multiple-maps-ui.cjs": "b805be81baf1b8df756637c679febb032c915d267fcdf2fbe4f9d3e6fb2427ad",
+  "tests/browser-harness.cjs": "c2d7192de5926c47e89f911d294ed4707c5bed979fde0bd356dfb61fde2c8eba",
+  "tests/live-maps.cjs": "bec57a0c670bc67e03c48291ab8e28c488effdade9a24051f5c4350c9a1d1b20",
+  "tests/live-gm-tools.cjs": "23041b5817d1bd1b5a55c2888b899f56e3d7992ae5fb2934f0090daf0fc86973",
+  "tests/live-release-144-persistence.cjs": "d266ad6479a56ed6a6a3925f721b1d5339c37082d0dc1f6049367f85cea5b2d6",
+  "tests/rls-multiple-maps.sql": "fed091070a55a8e6bd9aa59c75c5ae5a1147f1a63797c6caf4171da0aa57f373",
+  "tests/rls-gm-tools.sql": "5fa9966729ec618beaf3c791962cdde619427f1a7de724faa7c167c1492e4cf4",
+  "tests/rls-com05-com08-combat-actions.sql": "89bcd6da740784c469432f35b2a968a6de1430d2d0407fe251721760017fb95c"
+}

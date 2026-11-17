@@ -1,0 +1,306 @@
+{
+  "project": "igyupxczhczidfgtjiws",
+  "migrationReapplied": false,
+  "sql": {
+    "rls-multiple-maps": [
+      {
+        "test": "Nova mesa sem imagem recebe Mapa 1 e flâmula",
+        "result": "PASS"
+      },
+      {
+        "test": "Mestre cria quatro mapas com IDs e slots distintos",
+        "result": "PASS"
+      },
+      {
+        "test": "Quinto mapa bloqueado pela RPC",
+        "result": "PASS — 22023"
+      },
+      {
+        "test": "Quinto mapa bloqueado também por UPDATE direto",
+        "result": "PASS — 22023"
+      },
+      {
+        "test": "Nome e grade persistem independentemente por mapa",
+        "result": "PASS"
+      },
+      {
+        "test": "Grade fora de 4–64 bloqueada",
+        "result": "PASS"
+      },
+      {
+        "test": "Flâmula para mapa inexistente bloqueada",
+        "result": "PASS"
+      },
+      {
+        "test": "Mesma entidade aceita em mapas diferentes",
+        "result": "PASS"
+      },
+      {
+        "test": "Duplicata no mesmo mapa bloqueada",
+        "result": "PASS — 23505"
+      },
+      {
+        "test": "Token com mapa inexistente bloqueado",
+        "result": "PASS — 23503"
+      },
+      {
+        "test": "Mestre acessa INSERT/SELECT/UPDATE de três slots coexistentes no Storage",
+        "result": "PASS — metadados"
+      },
+      {
+        "test": "Upload para slot 5 bloqueado pela policy",
+        "result": "PASS — 42501"
+      },
+      {
+        "test": "Editar mapa de preparação não move nem sinaliza jogadores",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador recebe só mapa da flâmula e token próprio nele",
+        "result": "PASS"
+      },
+      {
+        "test": "SELECT direto oculta tokens de outro mapa, inclusive próprios",
+        "result": "PASS"
+      },
+      {
+        "test": "Movimento próprio só permitido no mapa da flâmula",
+        "result": "PASS"
+      },
+      {
+        "test": "Storage/listagem expõe somente imagem do mapa ativo",
+        "result": "PASS"
+      },
+      {
+        "test": "Linha de mesas privada e RPC legada sem URL de preparação",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador não gerencia mapas/flâmula",
+        "result": "PASS — 42501"
+      },
+      {
+        "test": "Combate vinculado ao mapa; entrada de outro mapa bloqueada",
+        "result": "PASS"
+      },
+      {
+        "test": "Tracker não revela combate em mapa de preparação",
+        "result": "PASS"
+      },
+      {
+        "test": "Mover flâmula gera sinal com revisão crescente",
+        "result": "PASS"
+      },
+      {
+        "test": "Mestre continua lendo todos os tokens de todos os mapas",
+        "result": "PASS"
+      },
+      {
+        "test": "Após flâmula, RPC entrega novo mapa/grade/tokens e preserva ocultos",
+        "result": "PASS"
+      },
+      {
+        "test": "RPC de cena antiga também respeita flâmula",
+        "result": "PASS"
+      },
+      {
+        "test": "Tracker reaparece no mapa correto preservando combate",
+        "result": "PASS"
+      },
+      {
+        "test": "Não membro não acessa RPC, sinais nem arquivos",
+        "result": "PASS"
+      },
+      {
+        "test": "Anon não executa RPC pública",
+        "result": "PASS — 42501"
+      },
+      {
+        "test": "Mapa com combate ativo não pode ser excluído",
+        "result": "PASS"
+      },
+      {
+        "test": "Exclusão remove só tokens do mapa; outros mapas e arquivos preservados",
+        "result": "PASS"
+      },
+      {
+        "test": "Slot liberado reutilizado com novo ID",
+        "result": "PASS"
+      }
+    ],
+    "rls-gm-tools": [
+      {
+        "test": "Status inicial deriva instância da criatura e respeita 8 câmaras",
+        "result": "PASS"
+      },
+      {
+        "test": "Mestre lê status visíveis, ocultos e de outros mapas",
+        "result": "PASS"
+      },
+      {
+        "test": "Mestre salva árvore e versão avança",
+        "result": "PASS"
+      },
+      {
+        "test": "Edição de notas com versão antiga não sobrescreve",
+        "result": "PASS"
+      },
+      {
+        "test": "Schema inválido de notas rejeitado",
+        "result": "PASS"
+      },
+      {
+        "test": "Envio do Mestre cria fila idempotente sem escrever ficha",
+        "result": "PASS"
+      },
+      {
+        "test": "Envio para ficha de outra mesa rejeitado",
+        "result": "PASS"
+      },
+      {
+        "test": "Quantidade inválida rejeitada",
+        "result": "PASS"
+      },
+      {
+        "test": "Ficha sem entregas mantém inventário legado intacto",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador recebe apenas próprio status e aliado revelado no mapa da flâmula",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador não lê nem altera notas via tabela privada",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador não envia itens como Mestre",
+        "result": "PASS"
+      },
+      {
+        "test": "Destinatário lê fila, mas não falsifica quantidade ou confirmação direta",
+        "result": "PASS"
+      },
+      {
+        "test": "Confirmação antes de salvar recibo é bloqueada",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador persiste item/recibo e confirma entrega sem duplicar",
+        "result": "PASS"
+      },
+      {
+        "test": "Salvamento concorrente antigo preserva item recebido",
+        "result": "PASS"
+      },
+      {
+        "test": "Consumir dados para tiros não reduz integridade",
+        "result": "PASS"
+      },
+      {
+        "test": "Dano real e REM sincronizam automaticamente após salvar ficha",
+        "result": "PASS"
+      },
+      {
+        "test": "Sessão que conhece recibo pode consumir/remover o item normalmente",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador não altera status de criatura alheia",
+        "result": "PASS"
+      },
+      {
+        "test": "RPC de status rejeita token inexistente",
+        "result": "PASS"
+      },
+      {
+        "test": "Proprietário sincroniza próprio token autorizado",
+        "result": "PASS"
+      },
+      {
+        "test": "Não membro não recebe fila nem status",
+        "result": "PASS"
+      },
+      {
+        "test": "Anon não executa RPC de entrega",
+        "result": "PASS"
+      },
+      {
+        "test": "Anon não executa RPC de status",
+        "result": "PASS"
+      },
+      {
+        "test": "As duas tabelas estão publicadas no Realtime",
+        "result": "PASS"
+      }
+    ],
+    "rls-com05-com08-combat-actions": [
+      {
+        "test": "Mestre inicia combate com action_state persistido no servidor",
+        "result": "PASS"
+      },
+      {
+        "test": "Iniciativa vigente congelada (10) e futura (24) registrada na mesma rodada",
+        "result": "PASS"
+      },
+      {
+        "test": "Sigilo de action_state alheio e de participantes ocultos preservado",
+        "result": "PASS"
+      },
+      {
+        "test": "Jogador bloqueado de alterar outro combatente, usar custom ou autorizar reação (42501)",
+        "result": "PASS"
+      },
+      {
+        "test": "Reserva transacional, replay idempotente sem duplo débito e rejeição de payload divergente com mesma op_id",
+        "result": "PASS"
+      },
+      {
+        "test": "Custo adulterado, custom sem justificativa, tipo de reação inválido, versão obsoleta e mapa incorreto rejeitados",
+        "result": "PASS"
+      },
+      {
+        "test": "Bloqueio de virada pendente, commit, reação autorizada pelo Mestre e proibição de reembolso pós-commit",
+        "result": "PASS"
+      },
+      {
+        "test": "Round 2 promove 24 -> 5 ações sem transportar gastos e aceita custom do Mestre com justificativa",
+        "result": "PASS"
+      },
+      {
+        "test": "Compatibilidade retroativa com combate iniciado antes da migração validada",
+        "result": "PASS"
+      },
+      {
+        "test": "Isolamento entre mesas e mapas preservado",
+        "result": "PASS"
+      },
+      {
+        "test": "Ações fixas dos 4 monstros oficiais preservadas na RPC SQL (2, 2, 3, 3)",
+        "result": "PASS"
+      },
+      {
+        "test": "Privilégios efetivos de catálogo e bloqueio anon validados (42501)",
+        "result": "PASS"
+      }
+    ]
+  },
+  "cleanup": [
+    {
+      "cleanup": {
+        "mesas": 0,
+        "fichas": 0,
+        "entregas": 0,
+        "usuarios": 0,
+        "auth_users": 0,
+        "mapa_sinais": 0,
+        "mesa_tokens": 0,
+        "membros_mesa": 0,
+        "auth_sessions": 0,
+        "auth_identities": 0,
+        "storage_objects": 0,
+        "mesa_token_status": 0
+      }
+    }
+  ]
+}

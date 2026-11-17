@@ -1,0 +1,572 @@
+{
+  "version": "1.4.4",
+  "baseCommit": "8016f2a23c93b2394616ddae31f611cdc37b3a47",
+  "installerSha256": "1555dc6fab22960110c277b6b9c3c0a974cdfd604ac25216a9eddea4ff3ec962",
+  "extractedExecutableSha256": "1c7fa05eb23c838aa5436cf502f0866b8bebf3bb4e98e460dd1cbff143002f6c",
+  "method": "Brotli buffers found in the extracted approved executable, decompressed and matched to all frontend source files. Native sources matched the historical pre-build manifest; only application-version metadata changed as documented in the build report.",
+  "frontend": [
+    {
+      "path": "dist/assets/cards/carta-azul.png",
+      "sha256": "dde352a070b20247bc629c39942d110dbee6cc185070a52cd4474d83589b9516",
+      "embedded": true
+    },
+    {
+      "path": "dist/assets/cards/carta-preta.png",
+      "sha256": "59aaa3c39574d088952138b556b1451be04595fd036182dbb1d7fac0f16ff28f",
+      "embedded": true
+    },
+    {
+      "path": "dist/assets/cards/carta-verde.png",
+      "sha256": "1a1e7797d61776f45a4fefb6dfe5e65aca448bb974e35fa6fe8f5fccba5130b2",
+      "embedded": true
+    },
+    {
+      "path": "dist/assets/cards/carta-vermelha.png",
+      "sha256": "13b49d0336507c245720810c362acb75a14a8f6803734bac6c70e67aad0c5d42",
+      "embedded": true
+    },
+    {
+      "path": "dist/assets/img/oeste-sombrio-icon.png",
+      "sha256": "681cd910369f800f969b43ec87e92ef47276f89f1cbf4e8832fa44970ce05d27",
+      "embedded": true
+    },
+    {
+      "path": "dist/assets/img/source/oeste-sombrio-icon-original.jfif",
+      "sha256": "800005796ab91a64b3f19e7e8359cff8692be73c6890a34964a0f5a152ae0a6f",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/bestiario/bestiario-index.json",
+      "sha256": "32928e0686126175e69955f6cf16dc90b1c1bd412c4ad1ac0e93aa6bec7bc8aa",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/bestiario/cao_das_sombras.json",
+      "sha256": "afd3015a10c3ce6a3b5e00ab6ae93fdcfb02a233d8095674c35bb223305d654e",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/bestiario/gosma_eterna.json",
+      "sha256": "85968007e35a6027598ae8e1ed278176cfbf2bab1a06bb7aa02be8685de526b8",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/bestiario/inebriados.json",
+      "sha256": "90b480d2c1c9c8b1edd7d5cab5104821c01798cf7715720b4c3af4a010d9dce8",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/bestiario/jebediah_jeb_cale.json",
+      "sha256": "1da1f5fb56dbdde0fe360527463ac74f4c2fd6dec4b6575ae3531107542bc2f0",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/bestiario/verme_do_carvao.json",
+      "sha256": "fa39d0cf5f5260e2a49375bc8636f2535c7994f30a668d9fe1e1865b09cf67af",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/animais e equipamentos/animais.json",
+      "sha256": "02af80f82a7e4855fc729068b8ae7532557790fef798092ac33e15848365bc33",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/animais e equipamentos/equipamentos_de_montaria.json",
+      "sha256": "d73dfecf365af2879e908c97651433b970077c0698ae31d764d25f4d8025a958",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/arcos_e_bestas.json",
+      "sha256": "fe621da8b5207f7042d36d0669523dc0d7c0e53874f5c6221f98cf2ec3c1e47e",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/armas_corpo_a_corpo.json",
+      "sha256": "eaf0009006298c001b59a20c82b4d61a379a1be4859bbaaeb854044953b5af07",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/armas_estranhas.json",
+      "sha256": "c65d8d3cd16b758c65fab2b399967d9afeaa017931eba77546cc786aa87728af",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/escopetas.json",
+      "sha256": "02b4438c965cea6e314a9a6a1b3a6af26c17a847ac812faae6f3bc9605bba8d0",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/espingardas_de_repeticao.json",
+      "sha256": "5911648e092621d450e1d2fa1ccc5d85cbca47cb7df242b6f612c60bb6beb37a",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/explosivos_e_armas_de_arremesso.json",
+      "sha256": "8429ea40af8c21bd11881d4677927d88b3f01edbdee8cdd00348fdd401ccbf16",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/modificacoes.json",
+      "sha256": "2ff296bc859f74726e9cf14ed22d066608e87d4495c0cb44e8df52e219674871",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/municoes.json",
+      "sha256": "338400c6286882476cbfebcd12dd16dc2e635572183e58174dd36b9d6840403c",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/municoes_alquimicas.json",
+      "sha256": "3089cbed7282b085fcf80c3453f9cc7a5d953d0a0964cf35301a4550526f2bd3",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/pistolas.json",
+      "sha256": "71e0c7f8717c21514aba1a4eab9247d0f7ae2224f528e0f52d880a332fc181bc",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/revolveres.json",
+      "sha256": "0e3eb107b42ab3c8a2549ad1aaccf1155a1664a8d1b31a84e4f147db116cfba5",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/armas/rifles.json",
+      "sha256": "45173bd911c7e2965ed9c4746fafc015cbfee79a8f69b8ffad49f821c283ebd9",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/catalog-index.json",
+      "sha256": "4aca04e1fe9c23e7f8df8d4c646cd001b4da9a7441fba67d93c8e6bda629792a",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/equipamentos/equipamentos_avancados.json",
+      "sha256": "54a4a34d52c02eb24ea315ccb43c5ed105dc461b1de15f4c5536b90c254cc85e",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/equipamentos/equipamentos_comuns.json",
+      "sha256": "5320b911f6213d80c544d1e2ed1ac2883b9eb4813907c30c49067d53057ce7d8",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/equipamentos/kits.json",
+      "sha256": "1f21d828568334865331be7fb61e1f24c9d66562e5f56f254aa58a11ee946b2d",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens/componentes_quimicos.json",
+      "sha256": "4c8f3f52f73ee1dd1cf8c2cef8b1de2140f6821759c567abd32125d3fcc20458",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens/drogas_e_venenos.json",
+      "sha256": "809b9bf416a9023d46b5fd770f02a22626bdbc546b15744ac564f108ad145633",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens/itens_alquimicos_basicos.json",
+      "sha256": "dd1d44099a6ca7f0f8162eb7f70afd25e6a94dbacbc923af273462cdda7c5fb5",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens/itens_alquimicos_raros.json",
+      "sha256": "4dc96e2c0a3be166fb146c5c53680d9e4a6ebeaf4afe7400537504ffe4e870a3",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens/tonicos.json",
+      "sha256": "ad769cd08275896b42cb40bb3ed471833f2dfe6f25218226b42ced3c18749dcf",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens/tonicos_mutagenicos.json",
+      "sha256": "1c6a5c26d8203ccab2101e107c6631d75c5b11f45029d9beab45fa4fe8e2cdb2",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/itens_criados.json",
+      "sha256": "12a553ab67a3be956a28a7716f24bc238947022a1f661c4e94639403b9412cde",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/serviços/pratos_bebidas_especiais.json",
+      "sha256": "2acbe4f2fe1f0061d37728b225e6c768a484b2af2f53deb5afc966b8c2b3dada",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/serviços/servicos_bar_taverna.json",
+      "sha256": "92fa4b2ef8a8d776d307a6f1553c157b1023eeaa036a644efa324e01e7742a38",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/serviços/servicos_gerais.json",
+      "sha256": "6926859f057b3bd953b186718e47082367790f841f764deac7cde83771c10b70",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/serviços/servico_aluguel.json",
+      "sha256": "1d79839097376365830740399df186012bdd0c4c00a5a66fce3999bfa8edcdb6",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/vestuario/itens_de_protecao.json",
+      "sha256": "f7324d1ce111829068d8fb9e7b4337e8f950c8213b0bf110ad99649c55a837a9",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/vestuario/modificacoes.json",
+      "sha256": "527417c571b585d42b38f611bab2fca1319a73922c27bae166bcbdc5ceb0404c",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/equip/vestuario/vestuario.json",
+      "sha256": "eda3519e583d96a745733c101be00e7aeb7cfac37f5c0dab4ca3d636163d2101",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/game-data-index.json",
+      "sha256": "84555e9f12074f8c6b025f0cae78983338082635b579519183b6409c86f4c11d",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/itens_criados.json",
+      "sha256": "12a553ab67a3be956a28a7716f24bc238947022a1f661c4e94639403b9412cde",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/magias/caminhos_magia.json",
+      "sha256": "653ecc289b0020fbe83c2a807b6570de5e6b33a4fbd69f67e75df7fc27354911",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/magias/lista_magias.json",
+      "sha256": "127ab818944f90f28882e343ee1803478057d37a3270041b968c24aade8ecd1a",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/magias/magias_buffs.json",
+      "sha256": "ff1b8a3369bc1eec87f0ba937e9fd4b73556bc19a9a93034e3dbce3c98840fab",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/magias/magias_criadas.json",
+      "sha256": "b37cb7b8ddd6c1c39847e82f4c93bde1299fe9634e7c47d62e81e7690356498d",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/magias/reservatorio_energia_mistica.json",
+      "sha256": "65f3a0efb515664ca67223a0890dd1b320fa6245528e6911e2bd574ff5f879ab",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/magias_criadas.json",
+      "sha256": "b37cb7b8ddd6c1c39847e82f4c93bde1299fe9634e7c47d62e81e7690356498d",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/progressao/pontos_pericia.json",
+      "sha256": "7d563a8e3606e712c2dcd191827cdd2c730668406ee6a18f052c85d9abfb39a5",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/progressao/progressao_6b.json",
+      "sha256": "67d8b07b486322e9aca5939cd411b74c2a841897a33b71430fe8e9a241018ce4",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/regras/fichas_do_destino.json",
+      "sha256": "edf2f3381e9a1e7914d1bf29fcdc4dd02ddd328daa2089c3a4537fc14ce6d338",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/regras/itens_e_equipamentos.json",
+      "sha256": "5f55cc5f5267c202fe19169e9afd43f5c63c92c40689999c538aa100c91f8f8c",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/regras/regras_combate.json",
+      "sha256": "7e6c59474c2ce57858aa1d7fb6501017af682f4802e3b9772c94fe55494c5ed2",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/regras/sistema_de_testes.json",
+      "sha256": "070d534ecb13f1fceda8cd33d06e45e45c0e6a1ca3bbfd7f88f277cf43b4c91e",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/regras/tempo_livre.json",
+      "sha256": "f3b07ca20f3e9e36b0c95a5e127d45d93029b35a6538a329fa1621e4118f4598",
+      "embedded": true
+    },
+    {
+      "path": "dist/data/regras/veteranos.json",
+      "sha256": "5190fa79b1b145265bde23a9136e7bdd35ce5bee4d44d889b6f3387d45727c08",
+      "embedded": true
+    },
+    {
+      "path": "dist/index.html",
+      "sha256": "daaa970aa5033be0e2186635001615e98c5c0715d57ec92ce809a4f172f68a11",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/app.js",
+      "sha256": "6f175ca539398493a983a2d74f49e2910b2dda206b4bc4729049739307e37d77",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/authSession.js",
+      "sha256": "9706442103836d43fb75d652b78de01e383d5150ec246685db334763ae303e83",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/authUI.js",
+      "sha256": "b5bf1c62cb18c0c934bde5de38fbdcf4f29a7685163cda193a9cd68376e54497",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/catalogModal.js",
+      "sha256": "c48170f3a0b4b955bd97d660498111dd9e8ad0771cdf794ed5224e8b2661b626",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/characterManager.js",
+      "sha256": "6e2351dfcdb8b5ec212c0e6a27c89cca722e8f1d27041875e9dd23519a26f655",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/combat.js",
+      "sha256": "493ed6f7d5eee179cf61a1ea51c34cce9244c091cbd1d30a4eab0e8673d94683",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/config.js",
+      "sha256": "10d04176359582974dd37dbc703dacaec2d0f140d769aed7f1b2eb217b3d20c4",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/cylinder.js",
+      "sha256": "a6848e6d6a65d72ab17bff3b202a61ad1ffd178def9cbcc61e647553ce8437b5",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/dice.js",
+      "sha256": "92ed8c90ae10deaef8213130c1c0bd09a0f204b7d684f49ad669da415edd6409",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/equipCatalog.js",
+      "sha256": "15de74d4f323251010ea94fa47ea559a60be70d2eb18bba4c55127334d5605b5",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/equipment.js",
+      "sha256": "bc8acef15b645f95a9d597dd19b58d9a19f6289b9d30331ba483454fe17ae758",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/gameData.js",
+      "sha256": "00086e70836d1ae6d8ccd8e0fa7541cea4af59eec5d35377c7e91bddf697a012",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/homeScreen.js",
+      "sha256": "bb6e35eefbdc8073ed82328488af4ab4b73dfe278aa398652b07e80be9c71e77",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/inventoryUI.js",
+      "sha256": "833edc9b3b9e52898489af89ad506b3c814cee6013c44a2f6f45907c4d20ba16",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/magiasUI.js",
+      "sha256": "e6f8ce62bca9c959b7529db1ed28afc5f778e0a358acec6a1989bfbf6d536b6d",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/main.js",
+      "sha256": "050dce9266351f7c14ef23b291899881710fec1c94569dbe7f20ca055e648be6",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/mesaDeliveries.js",
+      "sha256": "c093a8d83f328fd9019b81a46ded2cde07952ec934d7cff85a15e15b7cf32235",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/mesaMaps.js",
+      "sha256": "a1ad38b4258ab0d80225b409924654166b1cbd10957fae0662fc09bfd4775ccc",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/mesaNotes.js",
+      "sha256": "50c255f6b1770bf7ea00a34b2d5c59a3ae4e0fbc6abda3c6fdac4ea7212eb75e",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/mesaScreen.js",
+      "sha256": "2533ab573cb503f1db3ce0ca2c835e3739568d0ba8b70a12b5901c72625a52eb",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/mesaTokenStatus.js",
+      "sha256": "b665ace167a4acdabe26ba670e48b1ecdc97305eed9d747d1d9fdfccd3e4ef0a",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/modal.js",
+      "sha256": "89f05abeaadeaf5ad41406eab3403e90a9b3bd06ce8d7c2834c647886a40b98e",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/combatRules.js",
+      "sha256": "30e46684b24343dd09f06bea0b4544f567bddbc6def0fb510cf23f28c9b3c6f1",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/cylinderRules.js",
+      "sha256": "773c2f6d90a016b72993787378a7ce672f1adcd6e1c759439fcfe03c6b542562",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/defenseRules.js",
+      "sha256": "7641e51a6aad151260c70905e8b5b4ea911cb8c06da560732eea983754a767cb",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/diceRules.js",
+      "sha256": "b05207d70584a32a067fd82cd655910e070635ca5248e447340b2d1479520670",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/fatigueRules.js",
+      "sha256": "74c8b59b2c4d962f16e5b892b46b0b059bd21da7f6ac5f4ee83ddc702cc26f2a",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/index.js",
+      "sha256": "8a3ea1c417c246fcf5dc4504b3d7aa22e36a3874f981168a57c64cc033313ff8",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/initiativeRules.js",
+      "sha256": "5507e01078e16b97202a1851198ad02c684c5b324ef825d674f1e26047e6a1f5",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/restRules.js",
+      "sha256": "f1be4a11a5de267336dc0383672f07944257a9ac2e1a23c8c4810eb157190ba1",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/skill-progression.js",
+      "sha256": "e388837be51085e0910b7329d325563ce6110fbefe175635a9f63e64d9741ce2",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/volumeRules.js",
+      "sha256": "bab5e4c5a4e14cf4d39a387c43b9c77fd1966dc69432876c18b1fad7024b75e6",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/rules/weaponRules.js",
+      "sha256": "c154081d903b457c29888e7f3f2fe1be4214931f435ea36167410938b775153e",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/skills.js",
+      "sha256": "b432fa5f7c0dc000d50175fb43a87007bfe6305c106ca7049d00098be6112851",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/state.js",
+      "sha256": "a13a9903456b3a4a085e79a872aff7953383df8cd8322d3f2c8c8a038310c5da",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/storage.js",
+      "sha256": "fe60631b7d232bb1b91a65e085491cc15448153771a5ce622dcce106ae09bb15",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/supabaseClient.js",
+      "sha256": "b6120f5af5ff504dce94ed4ceeec96d4b598b08ede8799606ba50b0620a79b84",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/supabaseConfig.js",
+      "sha256": "3785bcb632bcc05a6875038c014677f361a4e9bfbb448170198ebca633dc240d",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/turnTracker.js",
+      "sha256": "1e9b68945f70db527117369cc86498f79a09af1b135d7970b8e6520a98e8d89f",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/ui.js",
+      "sha256": "7ae51a792dca5b81dcc7744404a4252114ab8bdffe60d807ff461d92eb34cbe9",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/updater.js",
+      "sha256": "d694f04aa6513b0f32fab923c90665eb0e731724839f62a515c9b3d05c48988a",
+      "embedded": true
+    },
+    {
+      "path": "dist/js/vendor/supabase.js",
+      "sha256": "ee3be8de192b97cb1d73d1e95d6b82bb1f6b658c0f97c4ef757fc331996ed3d3",
+      "embedded": true
+    },
+    {
+      "path": "dist/script.js",
+      "sha256": "106dad987f773175660ff98ec246b7236baa026c9def1ce4b7f13ceb5285dd26",
+      "embedded": true
+    },
+    {
+      "path": "dist/style.css",
+      "sha256": "e607af922932d12a0c157d3b962738102bd6b5ac1eaaea863da1566b68e630bc",
+      "embedded": true
+    }
+  ],
+  "nativeAndManifests": [
+    {
+      "path": "src-tauri/src/lib.rs",
+      "sha256": "445b07b56bf9f36c2f5b2d42b1cebcd86d9f592a70b68fb5475ba6d8c566a725"
+    },
+    {
+      "path": "src-tauri/src/main.rs",
+      "sha256": "78a244bdd0351e245f87068dc26b42235a62bf9092fddbc68e92c7eec8b0bc54"
+    },
+    {
+      "path": "src-tauri/build.rs",
+      "sha256": "475e2e09e57f802634b6b3719b5e7a85e10db76a945e80f4f82b4ef63f28042c"
+    },
+    {
+      "path": "src-tauri/Cargo.toml",
+      "sha256": "e749dbce4d6165b57c32d2a2c3b16e5a2edeb2cb6e7050d3f7a2e4968bde9fc6"
+    },
+    {
+      "path": "src-tauri/Cargo.lock",
+      "sha256": "7273c483525978b97bc88e6a2ffd10b279e13069464323de1225f7b9d29bd2ba"
+    },
+    {
+      "path": "src-tauri/tauri.conf.json",
+      "sha256": "fc6d373e2d792968637d1751532f7813dcb4d9c2b530226d58c6340581bcef00"
+    },
+    {
+      "path": "src-tauri/capabilities/default.json",
+      "sha256": "2063903643737b957e7d19d3a26e580b27785b2c91ec3c0458ef68b7f2df46c8"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6d843fae57ce7b0fa58c4e4160f8d47197a0904d2c90e72c3c2f015b696d804e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "e1616b7812569e3b73863c8986365e10c6d4a043bcf7381d3d980c1f35c91d9c"
+    }
+  ]
+}

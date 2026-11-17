@@ -3464,6 +3464,41 @@ body {
   background: rgba(25, 16, 12, 0.55);
 }
 
+.criatura-mode-badge,
+.mesa-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.25;
+}
+
+.criatura-mode-badge.is-creature-mode,
+.mesa-mode-badge.is-creature-mode {
+  background: rgba(120, 28, 20, 0.55);
+  color: #f5b0a4;
+  border: 1px solid rgba(220, 80, 60, 0.65);
+}
+
+.criatura-mode-badge.is-full-sheet,
+.mesa-mode-badge.is-full-sheet {
+  background: rgba(42, 86, 125, 0.5);
+  color: #bde0ff;
+  border: 1px solid rgba(110, 175, 235, 0.65);
+}
+
+.criatura-mode-badge.is-unset,
+.mesa-mode-badge.is-unset {
+  background: rgba(110, 82, 28, 0.5);
+  color: #ffe29a;
+  border: 1px dashed rgba(220, 170, 75, 0.75);
+}
+
 .terror-and-test-block {
   display: flex;
   flex-direction: column;
@@ -5595,7 +5630,8 @@ body.mesa-fullscreen-active .mesa-feed-list {
 .ficha.ficha-readonly #btn-descanso-longo,
 .ficha.ficha-readonly #btn-magias-descanso-longo,
 .ficha.ficha-readonly #btn-historia-portrait-upload,
-.ficha.ficha-readonly .veterano-toggle-label input {
+.ficha.ficha-readonly .veterano-toggle-label input,
+.ficha.ficha-readonly .criatura-toggle-label input {
   pointer-events: none !important;
   opacity: 0.45 !important;
   cursor: not-allowed !important;

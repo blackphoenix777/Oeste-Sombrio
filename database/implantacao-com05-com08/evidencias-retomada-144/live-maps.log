@@ -1,0 +1,20 @@
+PASS: três imagens distintas coexistem no Storage real
+PASS: upsert slot 2 preserva bytes do slot 1 e três arquivos
+PASS: RPC HTTP do jogador oculta mapa e tokens de preparação
+PASS: download autenticado de slot privado é negado
+PASS: download autenticado do mapa ativo funciona
+PASS: URL pública de imagem privada é bloqueada
+PASS: RPC HTTP anônima é negada
+PASS: jogador lê sinal via HTTP antes da assinatura
+Realtime status: SUBSCRIBED
+Realtime bindings: [{"id":72356021,"filter":{"event":"*","schema":"public","table":"mesa_mapa_sinais","filter":"mesa_id=eq.7bca282e-254d-4499-b5e1-1dda76a09ba1"}}]
+PASS: preparação do Mestre não sinaliza mudança da visão do jogador
+Realtime evento: UPDATE 3 true
+PASS: troca da flâmula recebida por WebSocket autenticado em 362 ms
+PASS: após sinal, RPC HTTP entrega imagem/grade/token corretos e oculta monstro secreto
+Storage após flâmula: {"novo":"ok","antigo":"Object not found"}
+PASS: download autenticado sem cache acompanha a flâmula
+PASS: SELECT HTTP direto preserva isolamento de mapas/visibilidade
+Realtime status: CLOSED
+Cleanup de arquivos/mesa e logout: concluído
+Contas Auth temporárias: remover pelo SQL autorizado usando exatamente cfg.gm e cfg.player.

@@ -9,8 +9,14 @@ module.exports=async function run(file,temp,screenshot){
   ['--headless','--disable-gpu','--no-first-run','--no-default-browser-check','--remote-debugging-port=0','--user-data-dir='+profile,'--window-size=1200,1100','about:blank'],{stdio:'ignore',windowsHide:true});
  let socket;
  try{
-  const deadline=Date.now()+30000;while(!fs.existsSync(portfile)){if(Date.now()>deadline)throw Error('Chrome não iniciou');await delay(100);}
-  const port=fs.readFileSync(portfile,'utf8').split('\n')[0];
+  const deadline=Date.now()+30000;let port;
+  while(!port){
+   try{
+    const candidate=fs.readFileSync(portfile,'utf8').split('\n')[0].trim();
+    if(/^\d+$/.test(candidate)&&Number(candidate)>0&&Number(candidate)<=65535)port=candidate;
+   }catch(error){if(!['ENOENT','EBUSY'].includes(error.code))throw error;}
+   if(!port){if(Date.now()>deadline)throw Error('Chrome não disponibilizou DevToolsActivePort em 30 s');await delay(100);}
+  }
   const targets=await(await fetch('http://127.0.0.1:'+port+'/json/list')).json();
   socket=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);
   await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});

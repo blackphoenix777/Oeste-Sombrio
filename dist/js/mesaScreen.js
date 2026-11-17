@@ -5,6 +5,7 @@
  * Compilado de Magias somente leitura e Modal de Resumo de Regras (#regras-modal).
  */
 import { OS } from "./app.js";
+import { computeTurnActionBudget, resolveIndividual6BInitiative, resolveCombatantInitiativeMode, computeCascadeInitiatives, extractMonsterFixedActions, inspectCombatConditionsForActions, evaluateSheetOverloadForActions, CANONICAL_ACTION_COSTS, ALLOWED_REACTION_ACTION_TYPES, resolveCanonicalActionCost, createCombatantActionState, computeAvailableActionsFromState, hasPendingActionReservations, applyActionControllerOperation } from "./rules/index.js";
 
 var BESTIARIO_INDEX_URL = "data/bestiario/bestiario-index.json";
 var SCENE_LS_PREFIX = "oesteSombrioMesaScene_";
@@ -117,6 +118,9 @@ OS.syncSceneTokenInitiative = function (instance) {
     if (st.mesaId === mesaId) {
       var token = OS.getSceneToken(instanceId);
       if (token) token.iniciativa = iniciativa;
+      if (st.combateAtivo && st.combateAtivo.ativo && OS.recordNextRoundInitiative) {
+        OS.recordNextRoundInitiative(instanceId, iniciativa);
+      }
       OS.dispatchMesaCombatantsChange();
     }
     return true;
@@ -555,6 +559,405 @@ OS.getCreature6BDisplayInfo = function (targetOrData, options) {
     availableValues: availableValues,
     compactSummary: availableValues.length ? availableValues.join(",") : info.cfgText
   };
+};
+
+/**
+ * Resolve o tipo de combatente (CombatantKind) e a modalidade operacional
+ * (OperationalMode: "creature_mode" | "full_sheet" | null) sem alterar a natureza
+ * da ficha e sem usar owner_type === "creature" como único critério.
+ */
+OS.resolveCombatantOperationalInfo = function (targetOrData, context) {
+  context = context || {};
+  var rawObj = targetOrData && typeof targetOrData === "object" ? targetOrData : {};
+  var st = OS.activeMesaState;
+
+  // Se for um token de mesa_tokens, resolve metadados/entidade associada quando disponível
+  if (rawObj.owner_type && rawObj.owner_ref !== undefined && !rawObj.data && !rawObj.dados) {
+    var tokOwnerType = rawObj.owner_type;
+    if (tokOwnerType === "player") {
+      var pRow =
+        (st && Array.isArray(st.playerSheets)
+          ? st.playerSheets.find(function (r) {
+              return r && String(r.id) === String(rawObj.owner_ref);
+            })
+          : null) || null;
+      return OS.resolveCombatantOperationalInfo(
+        pRow || { dados: { tipo_ficha: "jogador", freeEdit: false } },
+        Object.assign({}, context, { ownerType: "player", isPlayer: true })
+      );
+    }
+    var sceneInst =
+      st && Array.isArray(st.sceneCreatures)
+        ? st.sceneCreatures.find(function (c) {
+            return c && String(c.instanceId) === String(rawObj.owner_ref);
+          })
+        : null;
+    if (sceneInst) {
+      return OS.resolveCombatantOperationalInfo(
+        sceneInst,
+        Object.assign({}, context, { ownerType: "creature" })
+      );
+    }
+  }
+
+  var d =
+    rawObj.data && typeof rawObj.data === "object"
+      ? rawObj.data
+      : rawObj.dados && typeof rawObj.dados === "object"
+      ? rawObj.dados
+      : rawObj;
+
+  var sourceType = context.sourceType || rawObj.sourceType || null;
+  var sourceId = context.sourceId || rawObj.sourceId || rawObj.id || null;
+  var sourceCategory = context.sourceCategory || rawObj.sourceCategory || rawObj.category || null;
+  if (!sourceCategory && sourceId && OS.bestiaryCatalog && OS.bestiaryCatalog.byId) {
+    var catEntry = OS.bestiaryCatalog.byId[sourceId];
+    if (catEntry) {
+      sourceCategory = catEntry.category || null;
+      if (!sourceType) sourceType = catEntry.sourceType || "oficial";
+    }
+  }
+
+  var ownerType = context.ownerType || rawObj.ownerType || null;
+  var isExplicitPlayer = !!(
+    context.isPlayer ||
+    ownerType === "player" ||
+    d.tipo_ficha === "jogador" ||
+    (d.freeEdit === false &&
+      !d.isBestiaryCustom &&
+      d.tipo_ficha !== "npc" &&
+      d.tipo_ficha !== "monstro" &&
+      sourceType !== "oficial" &&
+      sourceType !== "custom" &&
+      sourceType !== "mesa_npc")
+  );
+
+  if (isExplicitPlayer) {
+    return {
+      kind: "player",
+      operationalMode: "full_sheet",
+      effectiveMode: "full_sheet",
+      rawChoice: null,
+      isExplicit: true,
+      isLegacyUnset: false,
+      isOfficialMonster: false,
+      isVeterano: !!(d.isVeterano === true || d["is-veterano"] === true),
+      statusLabel: "Ficha Completa"
+    };
+  }
+
+  var isVeterano = !!(d.isVeterano === true || d["is-veterano"] === true);
+  var catLower = String(sourceCategory || "").trim().toLowerCase();
+  var tipoLower = String(d.tipo_ficha || context.classe || rawObj.classe || "").trim().toLowerCase();
+  var isOfficialMonster = !!(
+    sourceType === "oficial" &&
+    catLower !== "npc" &&
+    tipoLower !== "npc" &&
+    !d.isBestiaryCustom
+  );
+  var isExplicitMonster = !!(
+    isOfficialMonster ||
+    tipoLower === "monstro" ||
+    (catLower === "monstro" && sourceType !== "custom")
+  );
+
+  var kind = "npc_human";
+  if (isVeterano && (catLower === "npc" || tipoLower === "npc" || !isExplicitMonster)) {
+    kind = "npc_veteran";
+  } else if (isExplicitMonster) {
+    kind = "bestiary_monster";
+  }
+
+  var rawChoice = OS.extractCreatureModeChoice
+    ? OS.extractCreatureModeChoice(rawObj)
+    : d.operationalMode === "creature_mode" || d.isCriatura === true || d["is-criatura"] === true
+    ? true
+    : d.operationalMode === "full_sheet" || d.isCriatura === false || d["is-criatura"] === false
+    ? false
+    : null;
+
+  if (rawChoice === true) {
+    return {
+      kind: kind,
+      operationalMode: "creature_mode",
+      effectiveMode: "creature_mode",
+      rawChoice: true,
+      isExplicit: true,
+      isLegacyUnset: false,
+      isOfficialMonster: isOfficialMonster,
+      isVeterano: isVeterano,
+      statusLabel: "Modo Criatura"
+    };
+  }
+  if (rawChoice === false) {
+    return {
+      kind: kind,
+      operationalMode: "full_sheet",
+      effectiveMode: "full_sheet",
+      rawChoice: false,
+      isExplicit: true,
+      isLegacyUnset: false,
+      isOfficialMonster: false,
+      isVeterano: isVeterano,
+      statusLabel: "Ficha Completa"
+    };
+  }
+
+  if (isOfficialMonster) {
+    return {
+      kind: "bestiary_monster",
+      operationalMode: "creature_mode",
+      effectiveMode: "creature_mode",
+      rawChoice: null,
+      isExplicit: true,
+      isLegacyUnset: false,
+      isOfficialMonster: true,
+      isVeterano: isVeterano,
+      statusLabel: "Modo Criatura (Bestiário)"
+    };
+  }
+
+  return {
+    kind: kind,
+    operationalMode: null,
+    effectiveMode: "full_sheet",
+    rawChoice: null,
+    isExplicit: false,
+    isLegacyUnset: true,
+    isOfficialMonster: false,
+    isVeterano: isVeterano,
+    statusLabel: "Modo não definido"
+  };
+};
+
+/**
+ * Normaliza campos legados de NPC/criatura apenas em leitura (sem mutar o objeto de entrada).
+ */
+OS.normalizeLegacyNpcDataReadOnly = function (targetOrData, context) {
+  var rawObj = targetOrData && typeof targetOrData === "object" ? targetOrData : {};
+  var rawData =
+    rawObj.data && typeof rawObj.data === "object"
+      ? rawObj.data
+      : rawObj.dados && typeof rawObj.dados === "object"
+      ? rawObj.dados
+      : rawObj;
+  var copyData = deepClone(rawData || {});
+  var opInfo = OS.resolveCombatantOperationalInfo(rawObj, context);
+  var sixBInfo = OS.getCreature6BDisplayInfo(copyData, {
+    isPlayer: opInfo.kind === "player"
+  });
+  var hasExplicitTipo =
+    Object.prototype.hasOwnProperty.call(rawData, "tipo_ficha") &&
+    rawData.tipo_ficha !== undefined &&
+    rawData.tipo_ficha !== null &&
+    String(rawData.tipo_ficha).trim() !== "";
+  var tipoEfetivo = hasExplicitTipo
+    ? String(rawData.tipo_ficha)
+    : opInfo.kind === "bestiary_monster"
+    ? "monstro"
+    : "npc";
+
+  return {
+    data: copyData,
+    operationalInfo: opInfo,
+    tipoFichaEfetivo: tipoEfetivo,
+    hasExplicitTipoFicha: hasExplicitTipo,
+    damagedChambers: sixBInfo.damagedChambers.slice(),
+    hasExplicitDamagedChambers: Array.isArray(rawData.damagedChambers),
+    inventoryItems: Array.isArray(rawData.inventoryItems)
+      ? deepClone(rawData.inventoryItems)
+      : [],
+    hasExplicitInventoryItems: Array.isArray(rawData.inventoryItems),
+    attacks: OS.getSceneCreatureAttacks ? OS.getSceneCreatureAttacks(copyData) : [],
+    sixBInfo: sixBInfo
+  };
+};
+
+if (typeof resolveIndividual6BInitiative === "function") {
+  OS.resolveIndividual6BInitiative = resolveIndividual6BInitiative;
+} else {
+  OS.resolveIndividual6BInitiative = function (sheetData) {
+    var d = sheetData && sheetData.data ? sheetData.data : sheetData && sheetData.dados ? sheetData.dados : sheetData || {};
+    var sum = (parseInt(d["chamber-0"] || 0, 10) || 0) + (parseInt(d["chamber-1"] || 0, 10) || 0) + (parseInt(d["chamber-2"] || 0, 10) || 0);
+    var exp = OS.normalizeMesaInitiative(d.iniciativa);
+    return exp !== 0 ? exp : sum;
+  };
+}
+if (typeof resolveCombatantInitiativeMode === "function") {
+  OS.resolveCombatantInitiativeMode = resolveCombatantInitiativeMode;
+}
+if (typeof computeCascadeInitiatives === "function") {
+  OS.computeCascadeInitiatives = computeCascadeInitiatives;
+}
+if (typeof extractMonsterFixedActions === "function") {
+  OS.extractMonsterFixedActions = extractMonsterFixedActions;
+}
+if (typeof inspectCombatConditionsForActions === "function") {
+  OS.inspectCombatConditionsForActions = inspectCombatConditionsForActions;
+}
+if (typeof evaluateSheetOverloadForActions === "function") {
+  OS.evaluateSheetOverloadForActions = evaluateSheetOverloadForActions;
+}
+if (typeof computeTurnActionBudget === "function") {
+  OS.computeTurnActionBudget = computeTurnActionBudget;
+}
+if (typeof CANONICAL_ACTION_COSTS !== "undefined") {
+  OS.CANONICAL_ACTION_COSTS = CANONICAL_ACTION_COSTS;
+}
+if (typeof ALLOWED_REACTION_ACTION_TYPES !== "undefined") {
+  OS.ALLOWED_REACTION_ACTION_TYPES = ALLOWED_REACTION_ACTION_TYPES;
+}
+if (typeof resolveCanonicalActionCost === "function") {
+  OS.resolveCanonicalActionCost = resolveCanonicalActionCost;
+}
+if (typeof createCombatantActionState === "function") {
+  OS.createCombatantActionState = createCombatantActionState;
+}
+if (typeof computeAvailableActionsFromState === "function") {
+  OS.computeAvailableActionsFromState = computeAvailableActionsFromState;
+}
+if (typeof hasPendingActionReservations === "function") {
+  OS.hasPendingActionReservations = hasPendingActionReservations;
+}
+if (typeof applyActionControllerOperation === "function") {
+  OS.applyActionControllerOperation = applyActionControllerOperation;
+}
+
+/**
+ * Resolve o orçamento de ações inicial (COM-06) para qualquer item de combate,
+ * token, instância de cena, NPC da mesa ou ficha de jogador, usando apenas a
+ * iniciativa vigente da rodada e sem depender do DOM.
+ */
+OS.computeCombatantTurnBudget = function (targetOrItem, roundNum, options) {
+  options = options || {};
+  var st = OS.activeMesaState || {};
+  var raw = targetOrItem && typeof targetOrItem === "object" ? targetOrItem : {};
+  var combatantId = null;
+  var sheetData = null;
+  var opInfo = null;
+  var linkedToken = null;
+  var sceneInst = null;
+  var playerRow = null;
+
+  if (raw.token_id || (raw.id && raw.owner_ref !== undefined && raw.owner_type)) {
+    combatantId = String(raw.token_id || raw.id);
+    if (Array.isArray(st.mesaTokens)) {
+      linkedToken =
+        st.mesaTokens.find(function (t) {
+          return t && String(t.id) === combatantId;
+        }) || null;
+    }
+    var oType = raw.owner_type || (linkedToken && linkedToken.owner_type);
+    var oRef = raw.owner_ref !== undefined ? raw.owner_ref : linkedToken && linkedToken.owner_ref;
+    if (oType === "player") {
+      if (Array.isArray(st.playerSheets)) {
+        playerRow =
+          st.playerSheets.find(function (r) {
+            return r && String(r.id) === String(oRef);
+          }) || null;
+      }
+      sheetData = (playerRow && playerRow.dados) || null;
+      opInfo = OS.resolveCombatantOperationalInfo(
+        playerRow || { dados: { tipo_ficha: "jogador", freeEdit: false } },
+        { ownerType: "player", isPlayer: true }
+      );
+    } else {
+      if (Array.isArray(st.sceneCreatures)) {
+        sceneInst =
+          st.sceneCreatures.find(function (c) {
+            return c && String(c.instanceId) === String(oRef);
+          }) || null;
+      }
+      sheetData = (sceneInst && sceneInst.data) || null;
+      opInfo = sceneInst
+        ? OS.resolveCombatantOperationalInfo(sceneInst)
+        : OS.resolveCombatantOperationalInfo(linkedToken || raw);
+    }
+  } else if (raw.instanceId) {
+    if (Array.isArray(st.mesaTokens)) {
+      linkedToken =
+        st.mesaTokens.find(function (t) {
+          return t && t.owner_type === "creature" && String(t.owner_ref) === String(raw.instanceId);
+        }) || null;
+    }
+    combatantId =
+      options.preferTokenId && linkedToken
+        ? String(linkedToken.id)
+        : String(raw.instanceId);
+    sheetData = raw.data || null;
+    opInfo = OS.resolveCombatantOperationalInfo(raw);
+  } else if (raw.dados) {
+    combatantId = raw.id ? String(raw.id) : options.combatantId || null;
+    sheetData = raw.dados;
+    opInfo = OS.resolveCombatantOperationalInfo(raw, options);
+  } else {
+    combatantId = options.combatantId || null;
+    sheetData = raw.data || raw;
+    opInfo = OS.resolveCombatantOperationalInfo(raw, options);
+  }
+
+  var currentInit =
+    options.currentInitiative !== undefined
+      ? OS.normalizeMesaInitiative(options.currentInitiative)
+      : raw.currentInitiative !== undefined
+      ? OS.normalizeMesaInitiative(raw.currentInitiative)
+      : raw.iniciativa !== undefined
+      ? OS.normalizeMesaInitiative(raw.iniciativa)
+      : linkedToken && linkedToken.iniciativa !== undefined &&
+        (opInfo.kind !== "player" && opInfo.operationalMode !== "full_sheet")
+      ? OS.normalizeMesaInitiative(linkedToken.iniciativa)
+      : (opInfo.kind === "player" || opInfo.operationalMode === "full_sheet") && sheetData
+      ? OS.resolveIndividual6BInitiative(sheetData)
+      : linkedToken && linkedToken.iniciativa !== undefined
+      ? OS.normalizeMesaInitiative(linkedToken.iniciativa)
+      : 0;
+
+  // Para full_sheet fora do combate (ou sem valor no token), garante leitura do 6B se token/item = 0 e sheetData > 0
+  if (
+    options.currentInitiative === undefined &&
+    raw.currentInitiative === undefined &&
+    (opInfo.kind === "player" || opInfo.operationalMode === "full_sheet") &&
+    currentInit === 0 &&
+    sheetData
+  ) {
+    var derived6B = OS.resolveIndividual6BInitiative(sheetData);
+    if (derived6B !== 0) currentInit = derived6B;
+  }
+
+  var rNum =
+    roundNum !== undefined && roundNum !== null
+      ? roundNum
+      : (st.combateAtivo && st.combateAtivo.round) || 1;
+
+  if (typeof computeTurnActionBudget === "function") {
+    return computeTurnActionBudget({
+      combatantId: combatantId,
+      round: rNum,
+      kind: opInfo.kind,
+      operationalMode: opInfo.operationalMode,
+      isOfficialMonster: opInfo.isOfficialMonster,
+      currentInitiative: currentInit,
+      sheetData: sheetData,
+      conditions: options.conditions,
+      isOverloaded: options.isOverloaded,
+      overloadBonusPenalty: options.overloadBonusPenalty,
+      inTotalCover: options.inTotalCover,
+      fixedActions: options.fixedActions
+    });
+  }
+
+  // Fallback seguro quando importado sem ./rules/index.js (ex.: harnesses Node vm isolados)
+  if (opInfo.operationalMode === null && opInfo.kind !== "player" && !opInfo.isOfficialMonster) {
+    return { combatantId: combatantId, round: rNum, kind: opInfo.kind, operationalMode: null, currentInitiative: currentInit, budgetDefined: false, pendingReason: "legacy_npc_operational_mode_unset", initialBudget: null, availableActions: null, ledger: [] };
+  }
+  if (opInfo.isOfficialMonster || opInfo.kind === "bestiary_monster") {
+    return { combatantId: combatantId, round: rNum, kind: "bestiary_monster", operationalMode: opInfo.operationalMode || "creature_mode", currentInitiative: currentInit, budgetDefined: false, pendingReason: "bestiary_monster_fixed_actions_undefined", initialBudget: null, availableActions: null, ledger: [] };
+  }
+  if (opInfo.operationalMode === "creature_mode") {
+    return { combatantId: combatantId, round: rNum, kind: opInfo.kind, operationalMode: "creature_mode", currentInitiative: currentInit, budgetDefined: true, pendingReason: null, baseActions: 1, bonusActionsRaw: 0, initialBudget: 1, availableActions: 1, ledger: [] };
+  }
+  var fallbackBonus = Math.floor(Math.max(0, currentInit) / 5);
+  return { combatantId: combatantId, round: rNum, kind: opInfo.kind, operationalMode: "full_sheet", currentInitiative: currentInit, budgetDefined: true, pendingReason: null, baseActions: 1, bonusActionsRaw: fallbackBonus, initialBudget: 1 + fallbackBonus, availableActions: 1 + fallbackBonus, ledger: [] };
 };
 
 function sanitizeNpcsMesaListInPlace(list) {
@@ -2255,6 +2658,7 @@ OS.handleRealtimeTokenChange = function (payload) {
     var existing = index >= 0 ? st.mesaTokens[index] : null;
     if (existing && existing.updated_at && incoming.updated_at &&
         Date.parse(incoming.updated_at) < Date.parse(existing.updated_at)) return;
+    var prevInitRT = existing ? OS.normalizeMesaInitiative(existing.iniciativa) : null;
     var next = Object.assign({}, existing || {}, deepClone(incoming));
     next.iniciativa = OS.normalizeMesaInitiative(next.iniciativa);
     refreshCards = refreshCards || !existing || existing.display_name !== next.display_name ||
@@ -2268,6 +2672,16 @@ OS.handleRealtimeTokenChange = function (payload) {
     if (existing) Object.assign(existing, next);
     else { existing = next; st.mesaTokens.push(existing); }
     OS.renderSingleMesaMapToken(existing);
+    if (
+      eventType === "UPDATE" &&
+      prevInitRT !== null &&
+      prevInitRT !== next.iniciativa &&
+      st.combateAtivo &&
+      st.combateAtivo.ativo &&
+      OS.recordNextRoundInitiative
+    ) {
+      OS.recordNextRoundInitiative(existing.id, next.iniciativa);
+    }
   }
   OS.dispatchMesaCombatantsChange();
   if (refreshCards) {
@@ -2964,13 +3378,18 @@ OS.loadCustomNpcs = async function () {
           var d = row.dados && typeof row.dados === "object" ? row.dados : {};
           if (
             d.isBestiaryCustom === true ||
+            d.freeEdit === true ||
             d.tipo_ficha === "npc" ||
-            d.tipo_ficha === "monstro"
+            d.tipo_ficha === "monstro" ||
+            row.classe === "npc" ||
+            row.classe === "monstro" ||
+            d.isCriatura !== undefined ||
+            d["is-criatura"] !== undefined ||
+            d.operationalMode !== undefined
           ) {
             var copyData = deepClone(d);
             copyData.freeEdit = true;
             copyData.isBestiaryCustom = true;
-            if (!copyData.tipo_ficha) copyData.tipo_ficha = "npc";
             if (!copyData.nome && row.nome_personagem) {
               copyData.nome = row.nome_personagem;
             }
@@ -2983,7 +3402,7 @@ OS.loadCustomNpcs = async function () {
                 row.nome_personagem ||
                 "NPC Customizado",
               category:
-                copyData.tipo_ficha === "monstro" ? "Monstro" : "NPC",
+                (copyData.tipo_ficha || row.classe) === "monstro" ? "Monstro" : "NPC",
               updatedAt: row.updated_at,
               data: copyData
             });
@@ -3004,6 +3423,9 @@ OS.loadCustomNpcs = async function () {
 };
 
 OS.saveCustomNpcToSupabase = async function (stateData, existingId, tipoFicha) {
+  if (OS.activeMesaState && OS.activeMesaState.mesaId && !OS.activeMesaState.isMestre) {
+    return null;
+  }
   var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
   var uid = await ensureUsuarioProfile();
   if (!uid) return null;
@@ -3011,13 +3433,28 @@ OS.saveCustomNpcToSupabase = async function (stateData, existingId, tipoFicha) {
   var cleanData = deepClone(stateData || {});
   cleanData.freeEdit = true;
   cleanData.isBestiaryCustom = true;
-  cleanData.tipo_ficha = tipoFicha || cleanData.tipo_ficha || "npc";
+  if (tipoFicha && (!cleanData.tipo_ficha || String(cleanData.tipo_ficha).trim() === "")) {
+    cleanData.tipo_ficha = tipoFicha;
+  }
+  var modeChoice = OS.extractCreatureModeChoice
+    ? OS.extractCreatureModeChoice(cleanData)
+    : null;
+  if (modeChoice === true) {
+    cleanData.isCriatura = true;
+    cleanData["is-criatura"] = true;
+    cleanData.operationalMode = "creature_mode";
+  } else if (modeChoice === false) {
+    cleanData.isCriatura = false;
+    cleanData["is-criatura"] = false;
+    cleanData.operationalMode = "full_sheet";
+  }
   OS.sanitizeCreature6BData(cleanData);
 
   var nome = String(cleanData.nome || "NPC Customizado").trim() || "NPC Customizado";
   cleanData.nome = nome;
   var rawLv = parseInt(String(cleanData.nivel || 0), 10);
   var nivelInt = isNaN(rawLv) ? 0 : rawLv;
+  var sqlClasse = cleanData.tipo_ficha || tipoFicha || "npc";
   var nowIso = new Date().toISOString();
 
   if (client) {
@@ -3027,7 +3464,7 @@ OS.saveCustomNpcToSupabase = async function (stateData, existingId, tipoFicha) {
         .update({
           nome_personagem: nome,
           nivel: nivelInt,
-          classe: cleanData.tipo_ficha,
+          classe: sqlClasse,
           dados: cleanData,
           updated_at: nowIso
         })
@@ -3048,7 +3485,7 @@ OS.saveCustomNpcToSupabase = async function (stateData, existingId, tipoFicha) {
           mesa_id: null,
           nome_personagem: nome,
           nivel: nivelInt,
-          classe: cleanData.tipo_ficha,
+          classe: sqlClasse,
           dados: cleanData
         })
         .select("*")
@@ -3069,7 +3506,7 @@ OS.saveCustomNpcToSupabase = async function (stateData, existingId, tipoFicha) {
     id: fallbackId,
     sourceType: "custom",
     name: nome,
-    category: cleanData.tipo_ficha === "monstro" ? "Monstro" : "NPC",
+    category: sqlClasse === "monstro" ? "Monstro" : "NPC",
     updatedAt: nowIso,
     data: cleanData
   };
@@ -3278,6 +3715,18 @@ OS.addCreatureToScene = function (sourceEntry, options) {
 
   var clonedData = deepClone(sourceEntry.data);
   clonedData.freeEdit = true;
+  var wrapperModeChoice = OS.extractCreatureModeChoice
+    ? OS.extractCreatureModeChoice(sourceEntry)
+    : null;
+  if (
+    wrapperModeChoice !== null &&
+    OS.extractCreatureModeChoice &&
+    OS.extractCreatureModeChoice(clonedData) === null
+  ) {
+    clonedData.isCriatura = wrapperModeChoice;
+    clonedData["is-criatura"] = wrapperModeChoice;
+    clonedData.operationalMode = wrapperModeChoice ? "creature_mode" : "full_sheet";
+  }
   if (!Array.isArray(clonedData.usedChambers)) clonedData.usedChambers = [];
   if (!Array.isArray(clonedData.activeConditions)) clonedData.activeConditions = [];
   OS.sanitizeCreature6BData(clonedData);
@@ -3326,6 +3775,22 @@ OS.addCreatureToScene = function (sourceEntry, options) {
 
   clonedData.nome = displayName;
   var nowIso = new Date().toISOString();
+  var instanceModeChoice = OS.extractCreatureModeChoice
+    ? OS.extractCreatureModeChoice(clonedData)
+    : null;
+  if (
+    instanceModeChoice === false &&
+    (clonedData.iniciativa === undefined ||
+      clonedData.iniciativa === "" ||
+      String(clonedData.iniciativa).trim() === "0") &&
+    OS.resolveIndividual6BInitiative
+  ) {
+    var derivedInitOnAdd = OS.resolveIndividual6BInitiative(clonedData, { fromChambersOnly: true });
+    if (derivedInitOnAdd !== 0) {
+      clonedData.iniciativa = String(derivedInitOnAdd);
+      clonedData._initiativeFrom6B = true;
+    }
+  }
   var instance = {
     instanceId: generateUuidV4(),
     baseName: baseName,
@@ -3334,6 +3799,13 @@ OS.addCreatureToScene = function (sourceEntry, options) {
     sourceType: sourceEntry.sourceType || "oficial",
     sourceCategory: sourceEntry.sourceCategory || sourceEntry.category || null,
     sourceId: sourceEntry.mesaNpcId || sourceEntry.id || null,
+    isCriatura: instanceModeChoice,
+    operationalMode:
+      instanceModeChoice === true
+        ? "creature_mode"
+        : instanceModeChoice === false
+        ? "full_sheet"
+        : null,
     updatedAt: nowIso,
     data: clonedData
   };
@@ -3497,6 +3969,27 @@ function applyCreatureStatsChanges(entity, changes) {
     var wounds = Math.max(0, Math.min(maxChambers, parseInt(changes.damageCount, 10) || 0));
     d.damagedChambers = Array.from({ length: wounds }, function (_, i) { return i; });
   }
+  if (changes.isCriatura !== undefined) {
+    if (changes.isCriatura === true) {
+      d.isCriatura = true;
+      d["is-criatura"] = true;
+      d.operationalMode = "creature_mode";
+      entity.isCriatura = true;
+      entity.operationalMode = "creature_mode";
+    } else if (changes.isCriatura === false) {
+      d.isCriatura = false;
+      d["is-criatura"] = false;
+      d.operationalMode = "full_sheet";
+      entity.isCriatura = false;
+      entity.operationalMode = "full_sheet";
+    } else {
+      delete d.isCriatura;
+      delete d["is-criatura"];
+      delete d.operationalMode;
+      delete entity.isCriatura;
+      delete entity.operationalMode;
+    }
+  }
 
   OS.sanitizeCreature6BData(d);
   entity.updatedAt = new Date().toISOString();
@@ -3504,9 +3997,25 @@ function applyCreatureStatsChanges(entity, changes) {
 }
 
 OS.updateSceneCreatureStats = function (instanceId, changes) {
+  if (!OS.activeMesaState || !OS.activeMesaState.isMestre) return null;
   var inst = OS.getSceneCreatureById(instanceId);
   if (!inst || !inst.data) return null;
   applyCreatureStatsChanges(inst, changes);
+  var st = OS.activeMesaState;
+  if (st.combateAtivo && st.combateAtivo.ativo) {
+    if (changes && changes.iniciativa !== undefined && OS.recordNextRoundInitiative) {
+      OS.recordNextRoundInitiative(instanceId, inst.data.iniciativa);
+    }
+    if (
+      changes &&
+      (changes.addCondition !== undefined ||
+        changes.removeConditionIndex !== undefined ||
+        changes.isCriatura !== undefined) &&
+      OS.recalculateCombatantTurnBudget
+    ) {
+      OS.recalculateCombatantTurnBudget(instanceId);
+    }
+  }
   OS.renderMesaSceneCards();
   if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
   OS.syncSceneTokenInitiative(inst);
@@ -3515,6 +4024,7 @@ OS.updateSceneCreatureStats = function (instanceId, changes) {
 };
 
 OS.updateMesaNpcStats = function (mesaNpcId, changes) {
+  if (!OS.activeMesaState || !OS.activeMesaState.isMestre) return null;
   var item = OS.getMesaNpcById(mesaNpcId);
   if (!item || !item.data) return null;
   applyCreatureStatsChanges(item, changes);
@@ -3524,25 +4034,55 @@ OS.updateMesaNpcStats = function (mesaNpcId, changes) {
   return item;
 };
 
-function rollCreatureEntity6B(entity) {
+function rollCreatureEntity6B(entity, forcedValues) {
   if (!entity || !entity.data) return null;
   var info = OS.sanitizeCreature6BData(entity.data);
   var diceList = info.diceList;
+  var forced = Array.isArray(forcedValues) ? forcedValues : null;
 
   for (var c = 0; c < diceList.length; c++) {
     var sides = parseInt(diceList[c].slice(1), 10) || 6;
-    var rolled = Math.floor(Math.random() * sides) + 1;
+    var rolled =
+      forced && c < forced.length && Number.isFinite(Number(forced[c]))
+        ? Math.max(0, Math.trunc(Number(forced[c])))
+        : Math.floor(Math.random() * sides) + 1;
     entity.data["chamber-" + c] = String(rolled);
   }
   entity.data.usedChambers = [];
+
+  var opInfo = OS.resolveCombatantOperationalInfo
+    ? OS.resolveCombatantOperationalInfo(entity)
+    : null;
+  if (
+    opInfo &&
+    opInfo.operationalMode === "full_sheet" &&
+    opInfo.kind !== "bestiary_monster" &&
+    OS.resolveIndividual6BInitiative
+  ) {
+    entity.data.iniciativa = String(
+      OS.resolveIndividual6BInitiative(entity.data, { fromChambersOnly: true })
+    );
+    entity.data._initiativeFrom6B = true;
+  }
+
   entity.updatedAt = new Date().toISOString();
   return entity;
 }
 
-OS.rollSceneCreature6B = function (instanceId) {
+OS.rollSceneCreature6B = function (instanceId, forcedValues) {
   var inst = OS.getSceneCreatureById(instanceId);
   if (!inst || !inst.data) return null;
-  rollCreatureEntity6B(inst);
+  rollCreatureEntity6B(inst, forcedValues);
+  var st = OS.activeMesaState;
+  if (
+    st &&
+    st.combateAtivo &&
+    st.combateAtivo.ativo &&
+    inst.data._initiativeFrom6B &&
+    OS.recordNextRoundInitiative
+  ) {
+    OS.recordNextRoundInitiative(instanceId, inst.data.iniciativa);
+  }
   OS.renderMesaSceneCards();
   if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
   OS.syncSceneTokenInitiative(inst);
@@ -4489,6 +5029,18 @@ OS.updatePlayerSheetStats = function (fichaId, changes) {
     }
   }
 
+  if (st.combateAtivo && st.combateAtivo.ativo) {
+    if (changes.iniciativa !== undefined && OS.recordNextRoundInitiative) {
+      OS.recordNextRoundInitiative(fichaRow.id, d.iniciativa);
+    }
+    if (
+      (changes.addCondition !== undefined || changes.removeConditionIndex !== undefined) &&
+      OS.recalculateCombatantTurnBudget
+    ) {
+      OS.recalculateCombatantTurnBudget(fichaRow.id);
+    }
+  }
+
   // Se o próprio jogador estiver com sua ficha ativa
   if (st.playerFichaId && String(st.playerFichaId) === String(fichaRow.id)) {
     OS.activeCharacterState = d;
@@ -4847,6 +5399,17 @@ OS.buildCreatureCombatCardBody = function (target, callbacks) {
   return bodyEl;
 };
 
+function getCombatantModeBadgeMeta(opInfo) {
+  if (!opInfo) return { cls: "is-unset", label: "Modo não definido" };
+  if (opInfo.operationalMode === "creature_mode") {
+    return { cls: "is-creature-mode", label: "Modo Criatura" };
+  }
+  if (opInfo.operationalMode === "full_sheet") {
+    return { cls: "is-full-sheet", label: "Ficha Completa" };
+  }
+  return { cls: "is-unset", label: "Modo não definido" };
+}
+
 OS.renderMesaSceneCards = function () {
   var grid = OS.$("mesa-em-cena-list");
   if (!OS.activeMesaState || !OS.activeMesaState.isMestre) {
@@ -4982,15 +5545,19 @@ OS.renderMesaSceneCards = function () {
   // 2) Criaturas / NPCs em cena: tira compacta (.mesa-scene-card.mesa-compact-row.is-creature-entity)
   creatures.forEach(function (inst) {
     var d = inst.data || {};
+    var norm = OS.normalizeLegacyNpcDataReadOnly ? OS.normalizeLegacyNpcDataReadOnly(inst) : null;
+    var opInfo = norm ? norm.operationalInfo : OS.resolveCombatantOperationalInfo(inst);
+    var modeMeta = getCombatantModeBadgeMeta(opInfo);
     var charName = inst.name || d.nome || "Criatura";
-    var tipoLabel = d.tipo_ficha === "monstro" ? "Monstro" : (d.tipo_ficha === "npc" ? "NPC" : "Criatura");
-    var badgeClass = d.tipo_ficha === "npc" ? "type-npc" : "type-creature";
+    var tipoEfetivo = norm ? norm.tipoFichaEfetivo : (d.tipo_ficha || "criatura");
+    var tipoLabel = tipoEfetivo === "monstro" ? "Monstro" : (tipoEfetivo === "npc" ? "NPC" : "Criatura");
+    var badgeClass = tipoEfetivo === "npc" ? "type-npc" : "type-creature";
     var defesaVal = d.defesa !== undefined && d.defesa !== "" ? String(d.defesa) : "10";
     var initVal = d.iniciativa !== undefined && d.iniciativa !== "" ? String(d.iniciativa) : "0";
-    var fadigaVal = countFadigaFromState(d);
+    var fadigaVal = countFadigaFromState(norm ? norm.data : d);
     var portraitUrl = d.retrato_url ? String(d.retrato_url).trim() : "";
 
-    var info6B = OS.getCreature6BDisplayInfo(d);
+    var info6B = norm ? norm.sixBInfo : OS.getCreature6BDisplayInfo(d);
     var chamberCount = info6B.count;
     var damagedChambers = info6B.damagedChambers;
     var vidaText = info6B.vidaText;
@@ -4999,6 +5566,7 @@ OS.renderMesaSceneCards = function () {
     var card = document.createElement("article");
     card.className = "mesa-scene-card scene-creature-card mesa-compact-row is-creature-entity";
     card.dataset.instanceId = inst.instanceId;
+    card.dataset.operationalMode = opInfo.operationalMode || "unset";
 
     var avatarHtml = portraitUrl
       ? '<div class="mesa-compact-avatar is-circular"><img src="' +
@@ -5006,7 +5574,7 @@ OS.renderMesaSceneCards = function () {
         '" alt="Retrato de ' +
         escHtml(charName) +
         '"></div>'
-      : '<div class="mesa-compact-avatar is-circular">' + (d.tipo_ficha === "npc" ? '👤' : '💀') + '</div>';
+      : '<div class="mesa-compact-avatar is-circular">' + (tipoEfetivo === "npc" ? '👤' : '💀') + '</div>';
 
     card.innerHTML =
       '<div class="mesa-compact-row-main">' +
@@ -5017,6 +5585,7 @@ OS.renderMesaSceneCards = function () {
       escHtml(charName) +
       '      </strong>' +
       '      <span class="mesa-entity-badge ' + badgeClass + '">' + escHtml(tipoLabel) + '</span>' +
+      '      <span class="mesa-mode-badge ' + modeMeta.cls + '" title="Modalidade operacional em combate">' + escHtml(modeMeta.label) + '</span>' +
       '    </div>' +
       '    <div class="mesa-scene-badges-row">' +
       '      <span class="scene-badge badge-init" title="Iniciativa">⚡ ' + escHtml(initVal) + '</span>' +
@@ -5099,7 +5668,9 @@ OS.loadMesaPlayersSheets = async function (mesaIdArg) {
       return !(
         d.isBestiaryCustom === true ||
         d.tipo_ficha === "npc" ||
-        d.tipo_ficha === "monstro"
+        d.tipo_ficha === "monstro" ||
+        row.classe === "npc" ||
+        row.classe === "monstro"
       );
     });
 
@@ -5278,6 +5849,18 @@ OS.addBestiarioEntryToMesa = async function (sourceEntry) {
 
   var clonedData = deepClone(sourceEntry.data);
   clonedData.freeEdit = true;
+  var wrapperModeChoice = OS.extractCreatureModeChoice
+    ? OS.extractCreatureModeChoice(sourceEntry)
+    : null;
+  if (
+    wrapperModeChoice !== null &&
+    OS.extractCreatureModeChoice &&
+    OS.extractCreatureModeChoice(clonedData) === null
+  ) {
+    clonedData.isCriatura = wrapperModeChoice;
+    clonedData["is-criatura"] = wrapperModeChoice;
+    clonedData.operationalMode = wrapperModeChoice ? "creature_mode" : "full_sheet";
+  }
   if (!Array.isArray(clonedData.usedChambers)) clonedData.usedChambers = [];
   if (!Array.isArray(clonedData.activeConditions)) clonedData.activeConditions = [];
   OS.sanitizeCreature6BData(clonedData);
@@ -5311,6 +5894,9 @@ OS.addBestiarioEntryToMesa = async function (sourceEntry) {
 
   clonedData.nome = displayName;
   var nowIso = new Date().toISOString();
+  var npcModeChoice = OS.extractCreatureModeChoice
+    ? OS.extractCreatureModeChoice(clonedData)
+    : null;
   var npcItem = {
     mesaNpcId: generateUid("mnpc"),
     baseName: baseName,
@@ -5318,6 +5904,13 @@ OS.addBestiarioEntryToMesa = async function (sourceEntry) {
     sourceType: sourceEntry.sourceType || "oficial",
     sourceCategory: sourceEntry.sourceCategory || sourceEntry.category || null,
     sourceId: sourceEntry.id || null,
+    isCriatura: npcModeChoice,
+    operationalMode:
+      npcModeChoice === true
+        ? "creature_mode"
+        : npcModeChoice === false
+        ? "full_sheet"
+        : null,
     updatedAt: nowIso,
     data: clonedData
   };
@@ -5334,7 +5927,7 @@ OS.addBestiarioEntryToMesa = async function (sourceEntry) {
 
 OS.removeMesaNpc = async function (mesaNpcId) {
   var st = OS.activeMesaState;
-  if (!st || !Array.isArray(st.npcsMesa)) return;
+  if (!st || !st.isMestre || !Array.isArray(st.npcsMesa)) return;
   st.npcsMesa = st.npcsMesa.filter(function (item) {
     return item && item.mesaNpcId !== mesaNpcId;
   });
@@ -5364,7 +5957,7 @@ OS.openMesaNpcFullSheet = function (mesaNpcId) {
   OS.openSheetInGmWorkspace(item.data, {
     mode: "mesa-npc",
     mesaNpcId: item.mesaNpcId,
-    tipoFicha: item.data.tipo_ficha || "monstro",
+    tipoFicha: item.data.tipo_ficha || null,
     title: "Editando NPC/Monstro da Mesa: " + (item.name || "Criatura")
   });
 };
@@ -5388,11 +5981,14 @@ OS.renderMesaNpcsList = function () {
 
   list.forEach(function (item) {
     var d = (item && item.data) || {};
-    OS.sanitizeCreature6BData(d);
-    var info6B = OS.resolveCreature6BInfo(d);
+    var norm = OS.normalizeLegacyNpcDataReadOnly ? OS.normalizeLegacyNpcDataReadOnly(item) : null;
+    var opInfo = norm ? norm.operationalInfo : OS.resolveCombatantOperationalInfo(item);
+    var modeMeta = getCombatantModeBadgeMeta(opInfo);
+    var info6B = norm ? norm.sixBInfo : OS.resolveCreature6BInfo(d);
     var row = document.createElement("article");
     row.className = "mesa-compact-row mesa-npc-row";
     row.dataset.mesaNpcId = item.mesaNpcId;
+    row.dataset.operationalMode = opInfo.operationalMode || "unset";
 
     var npcName = item.name || d.nome || "Criatura";
     var defVal = d.defesa || "0";
@@ -5414,7 +6010,8 @@ OS.renderMesaNpcsList = function () {
       '  <div class="mesa-compact-info">' +
       '    <strong class="mesa-compact-title">' +
       escHtml(npcName) +
-      "</strong>" +
+      '      <span class="mesa-mode-badge ' + modeMeta.cls + '" title="Modalidade operacional em combate">' + escHtml(modeMeta.label) + '</span>' +
+      "    </strong>" +
       '    <span class="mesa-compact-meta">Def ' +
       escHtml(defVal) +
       " • Inic " +
@@ -6296,6 +6893,9 @@ OS.openPlayerSheetReadOnlyForGm = function (fichaRow) {
 
 OS.openSheetInGmWorkspace = function (stateData, contextMeta) {
   contextMeta = contextMeta || {};
+  if (OS.activeMesaState && OS.activeMesaState.mesaId && !OS.activeMesaState.isMestre) {
+    return null;
+  }
   OS.closeBestiarioModal();
   if (OS.setReadOnlyMode) OS.setReadOnlyMode(false);
 
@@ -6312,7 +6912,8 @@ OS.openSheetInGmWorkspace = function (stateData, contextMeta) {
     mesaNpcId: contextMeta.mesaNpcId || null,
     instanceId: contextMeta.instanceId || null,
     _uploadSuffix: freshSuffix,
-    tipoFicha: contextMeta.tipoFicha || "npc",
+    isNewCustomNpc: !!contextMeta.isNewCustomNpc,
+    tipoFicha: contextMeta.tipoFicha !== undefined ? contextMeta.tipoFicha : null,
     title: contextMeta.title || "Modo Edição Livre — Criatura / NPC"
   };
 
@@ -6321,7 +6922,10 @@ OS.openSheetInGmWorkspace = function (stateData, contextMeta) {
   OS.clearForm({ freeEdit: true });
   OS._freeEditUploadSuffix = freshSuffix;
   OS.setFreeEditMode(true);
-  OS.activeSheetTipo = contextMeta.tipoFicha || "npc";
+  OS.activeSheetTipo =
+    stateData && Object.keys(stateData).length > 0
+      ? stateData.tipo_ficha || contextMeta.tipoFicha || null
+      : contextMeta.tipoFicha || "npc";
   OS.isBestiaryCustom = contextMeta.mode === "custom" || !contextMeta.mode;
 
   if (stateData && Object.keys(stateData).length > 0) {
@@ -6330,6 +6934,17 @@ OS.openSheetInGmWorkspace = function (stateData, contextMeta) {
     OS.sanitizeCreature6BData(cloned);
     OS.applyState(cloned, { readOnlyMode: false });
     OS.setFreeEditMode(true);
+  } else {
+    OS._loadedHasTipoFicha = !!OS.activeSheetTipo;
+    var initMode =
+      contextMeta.initialCriaturaMode !== undefined
+        ? contextMeta.initialCriaturaMode
+        : false;
+    if (OS.setCriaturaMode) {
+      OS.setCriaturaMode(initMode, true);
+    } else {
+      OS.isCriatura = initMode;
+    }
   }
   if (OS.renderPortraitPreview) {
     OS.renderPortraitPreview(OS.characterPortraitUrl || "");
@@ -6382,6 +6997,8 @@ OS.startCreateCustomNpc = function () {
     {
       mode: "custom",
       customId: null,
+      isNewCustomNpc: true,
+      initialCriaturaMode: false,
       tipoFicha: "npc",
       title: "Criar Novo NPC / Monstro (Edição Livre)"
     }
@@ -6394,7 +7011,7 @@ OS.openSceneCreatureFullSheet = function (instanceId) {
   OS.openSheetInGmWorkspace(inst.data, {
     mode: "scene",
     instanceId: inst.instanceId,
-    tipoFicha: inst.data.tipo_ficha || "monstro",
+    tipoFicha: inst.data.tipo_ficha || null,
     title: "Editando Criatura em Cena: " + (inst.name || "Criatura")
   });
 };
@@ -6406,6 +7023,9 @@ OS.saveActiveGmEditedSheet = function (stateArg) {
   if (!editCtx || editCtx.mode === "player-readonly" || OS.isReadOnlySheet) {
     return Promise.resolve(null);
   }
+  if (OS.activeMesaState && OS.activeMesaState.mesaId && !OS.activeMesaState.isMestre) {
+    return Promise.resolve(null);
+  }
   var capturedState = stateArg ? deepClone(stateArg) : OS.collectState();
 
   gmSheetSaveChain = gmSheetSaveChain
@@ -6414,11 +7034,21 @@ OS.saveActiveGmEditedSheet = function (stateArg) {
       var state = deepClone(capturedState);
       state.freeEdit = true;
       OS.sanitizeCreature6BData(state);
+      var editedModeChoice = OS.extractCreatureModeChoice
+        ? OS.extractCreatureModeChoice(state)
+        : null;
 
       if (editCtx.mode === "mesa-npc" && editCtx.mesaNpcId) {
         var npcItem = OS.getMesaNpcById(editCtx.mesaNpcId);
         if (npcItem) {
           npcItem.data = deepClone(state);
+          npcItem.isCriatura = editedModeChoice;
+          npcItem.operationalMode =
+            editedModeChoice === true
+              ? "creature_mode"
+              : editedModeChoice === false
+              ? "full_sheet"
+              : null;
           if (state.nome) npcItem.name = state.nome;
           npcItem.updatedAt = new Date().toISOString();
           OS.renderMesaNpcsList();
@@ -6439,6 +7069,13 @@ OS.saveActiveGmEditedSheet = function (stateArg) {
               ? deepClone(inst.data.sceneAttackRolls)
               : {};
           inst.data = deepClone(state);
+          inst.isCriatura = editedModeChoice;
+          inst.operationalMode =
+            editedModeChoice === true
+              ? "creature_mode"
+              : editedModeChoice === false
+              ? "full_sheet"
+              : null;
           if (state.skillRollResults && typeof state.skillRollResults === "object") {
             Object.keys(state.skillRollResults).forEach(function (rk) {
               if (rk.indexOf("natural-") === 0) {
@@ -6497,11 +7134,14 @@ OS.saveActiveGmEditedSheet = function (stateArg) {
 
       // mode === "custom"
       state.isBestiaryCustom = true;
-      state.tipo_ficha = editCtx.tipoFicha || state.tipo_ficha || "npc";
+      var targetTipo = state.tipo_ficha || editCtx.tipoFicha || null;
+      if (targetTipo && !state.tipo_ficha) {
+        state.tipo_ficha = targetTipo;
+      }
       var savedRow = await OS.saveCustomNpcToSupabase(
         state,
         editCtx.customId,
-        state.tipo_ficha
+        targetTipo
       );
       if (savedRow && savedRow.id) {
         editCtx.customId = savedRow.id;
@@ -6733,7 +7373,7 @@ OS.editSelectedBestiarioEntry = async function (entryArg) {
     OS.openSheetInGmWorkspace(deepClone(entry.data), {
       mode: "custom",
       customId: entry.id,
-      tipoFicha: entry.data.tipo_ficha || "npc",
+      tipoFicha: entry.data.tipo_ficha || null,
       title: "Editando NPC Customizado: " + (entry.name || "NPC")
     });
   }
@@ -6889,6 +7529,11 @@ OS.renderBestiarioModal = function () {
       "</div>";
   }
 
+  var opInfo = OS.resolveCombatantOperationalInfo
+    ? OS.resolveCombatantOperationalInfo(selected)
+    : null;
+  var modeMeta = getCombatantModeBadgeMeta(opInfo);
+
   detailEl.innerHTML =
     portraitSectionHtml +
     '<h4 class="catalog-detail-title">' +
@@ -6904,6 +7549,11 @@ OS.renderBestiarioModal = function () {
       ? "Bestiário Oficial (Somente Leitura)"
       : "Meus NPCs & Monstros (Customizado)") +
     "</span></div>" +
+    '<div class="catalog-attr"><span class="catalog-attr-label">Modalidade</span> <span class="catalog-attr-val"><span class="mesa-mode-badge ' +
+    modeMeta.cls +
+    '">' +
+    escHtml((opInfo && opInfo.statusLabel) || modeMeta.label) +
+    "</span></span></div>" +
     '<div class="catalog-attr"><span class="catalog-attr-label">Defesa</span> <span class="catalog-attr-val">' +
     escHtml(sd.defesa || "0") +
     "</span></div>" +

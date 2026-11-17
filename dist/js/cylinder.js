@@ -11,6 +11,10 @@ import {
   calculateInitiative,
   calculateActionsFromInitiative,
   calculateMovementPerAction,
+  computeTurnActionBudget,
+  inspectCombatConditionsForActions,
+  resolveIndividual6BInitiative,
+  evaluateSheetOverloadForActions,
   BASE_MOVEMENT_METERS,
   applyShortRest,
   applyLongRest,
@@ -21,6 +25,11 @@ import {
   levelToDice,
   diceToLevel
 } from "./rules/index.js";
+
+OS.computeTurnActionBudget = computeTurnActionBudget;
+OS.inspectCombatConditionsForActions = inspectCombatConditionsForActions;
+OS.resolveIndividual6BInitiative = resolveIndividual6BInitiative;
+OS.evaluateSheetOverloadForActions = evaluateSheetOverloadForActions;
 
 OS.usedChambers = [];
 OS.damagedChambers = [];
@@ -113,9 +122,37 @@ OS.fatigueZeroAddedUsed = [];
   OS.BASE_MOVEMENT_METERS = BASE_MOVEMENT_METERS;
 
   OS.calculateInitiativeActionsBreakdown = function () {
-    var initScore = OS.calculateInitiative();
+    var conds = Array.isArray(OS.activeConditions) ? OS.activeConditions : [];
     var ov = OS.getOverloadPenalties ? OS.getOverloadPenalties() : { overloaded: false, bonusActionsLost: 2 };
-    return calculateActionsFromInitiative(initScore, !!ov.overloaded, ov.bonusActionsLost);
+    var initEl = OS.$("iniciativa");
+    var initScore = OS.freeEdit
+      ? OS.toIntOrZero(initEl ? initEl.value : OS.calculateInitiative())
+      : OS.calculateInitiative();
+    if (OS.freeEdit && OS.isCriatura === null) {
+      return calculateActionsFromInitiative(initScore, !!ov.overloaded, ov.bonusActionsLost);
+    }
+    var kind = OS.freeEdit
+      ? OS.isVeterano
+        ? "npc_veteran"
+        : "npc_human"
+      : "player";
+    var opMode = OS.freeEdit && OS.isCriatura === true ? "creature_mode" : "full_sheet";
+    var budget = computeTurnActionBudget({
+      kind: kind,
+      operationalMode: opMode,
+      currentInitiative: initScore,
+      conditions: conds,
+      isOverloaded: opMode === "full_sheet" ? !!ov.overloaded : false,
+      overloadBonusPenalty: ov.bonusActionsLost
+    });
+    var baseCalc = calculateActionsFromInitiative(initScore, !!ov.overloaded, ov.bonusActionsLost);
+    return {
+      baseActions: budget.baseActions,
+      baseBonusActions: opMode === "creature_mode" ? 0 : baseCalc.baseBonusActions,
+      effectiveBonusActions: budget.effectiveBonusActions,
+      lostBonusActions: budget.bonusActionsLostOverload,
+      totalActions: budget.initialBudget
+    };
   };
 
   OS.calculateActionsPerTurn = function () {
@@ -726,6 +763,21 @@ OS.fatigueZeroAddedUsed = [];
     OS.updateStatsFields(false);
     OS.updateReloadButtonState();
     OS.scheduleSave();
+    if (
+      OS.recordNextRoundInitiative &&
+      OS.activeMesaState &&
+      OS.activeMesaState.combateAtivo &&
+      OS.activeMesaState.combateAtivo.ativo &&
+      OS.activeMesaState.gmEditingSheet &&
+      OS.activeMesaState.gmEditingSheet.mode === "scene" &&
+      OS.activeMesaState.gmEditingSheet.instanceId &&
+      OS.isCriatura === false
+    ) {
+      var initSceneEl = OS.$("iniciativa");
+      if (initSceneEl) {
+        OS.recordNextRoundInitiative(OS.activeMesaState.gmEditingSheet.instanceId, initSceneEl.value);
+      }
+    }
     return;
   }
 
@@ -772,6 +824,18 @@ OS.fatigueZeroAddedUsed = [];
       OS.updateStatsFields(true);
       OS.updateReloadButtonState();
       OS.scheduleSave();
+      if (
+        OS.recordNextRoundInitiative &&
+        OS.activeMesaState &&
+        OS.activeMesaState.combateAtivo &&
+        OS.activeMesaState.combateAtivo.ativo &&
+        OS.activeMesaState.playerFichaId
+      ) {
+        var initPlayerEl = OS.$("iniciativa");
+        if (initPlayerEl) {
+          OS.recordNextRoundInitiative(OS.activeMesaState.playerFichaId, initPlayerEl.value);
+        }
+      }
       
       btnConfirm.removeEventListener("click", novoClique);
     };
@@ -1884,6 +1948,126 @@ OS.fatigueZeroAddedUsed = [];
 
   OS.sceneTerrorLevel = 0;
   OS.isVeterano = false;
+  OS.isCriatura = null;
+
+  OS.extractCreatureModeChoice = function (targetOrData) {
+    if (!targetOrData || typeof targetOrData !== "object") return null;
+    var wrapperOp = targetOrData.operationalMode;
+    var wrapperFlag = targetOrData.isCriatura;
+    var wrapperDash = targetOrData["is-criatura"];
+    var d =
+      targetOrData.data && typeof targetOrData.data === "object"
+        ? targetOrData.data
+        : targetOrData.dados && typeof targetOrData.dados === "object"
+        ? targetOrData.dados
+        : targetOrData;
+
+    var rawOp = d.operationalMode !== undefined ? d.operationalMode : wrapperOp;
+    if (rawOp === "creature_mode") return true;
+    if (rawOp === "full_sheet") return false;
+
+    var rawCamel = d.isCriatura !== undefined ? d.isCriatura : wrapperFlag;
+    if (rawCamel === true) return true;
+    if (rawCamel === false) return false;
+
+    var rawDash = d["is-criatura"] !== undefined ? d["is-criatura"] : wrapperDash;
+    if (rawDash === true) return true;
+    if (rawDash === false) return false;
+
+    return null;
+  };
+
+  OS.syncCriaturaModeUI = function () {
+    var wrap = OS.$("criatura-toggle-wrap");
+    var cb = OS.$("is-criatura");
+    var badge = OS.$("criatura-mode-badge");
+    var fichaEl = OS.$("ficha");
+    var showToggle = !!OS.freeEdit;
+
+    if (wrap) {
+      wrap.hidden = !showToggle;
+      if (showToggle) wrap.removeAttribute("hidden");
+      else wrap.setAttribute("hidden", "");
+    }
+
+    var modeKey =
+      OS.isCriatura === true
+        ? "creature_mode"
+        : OS.isCriatura === false
+        ? "full_sheet"
+        : "unset";
+
+    if (fichaEl) {
+      if (showToggle) {
+        fichaEl.setAttribute("data-operational-mode", modeKey);
+      } else {
+        fichaEl.removeAttribute("data-operational-mode");
+      }
+    }
+
+    if (cb) {
+      if (!showToggle) {
+        cb.checked = false;
+        cb.indeterminate = false;
+        cb.removeAttribute("data-mode-state");
+      } else if (OS.isCriatura === true) {
+        cb.checked = true;
+        cb.indeterminate = false;
+        cb.dataset.modeState = "true";
+      } else if (OS.isCriatura === false) {
+        cb.checked = false;
+        cb.indeterminate = false;
+        cb.dataset.modeState = "false";
+      } else {
+        cb.checked = false;
+        cb.indeterminate = true;
+        cb.dataset.modeState = "unset";
+      }
+    }
+
+    if (badge) {
+      if (!showToggle) {
+        badge.hidden = true;
+        badge.setAttribute("hidden", "");
+        badge.textContent = "";
+        badge.className = "criatura-mode-badge";
+      } else {
+        badge.hidden = false;
+        badge.removeAttribute("hidden");
+        if (OS.isCriatura === true) {
+          badge.textContent = "Modo Criatura";
+          badge.className = "criatura-mode-badge is-creature-mode";
+        } else if (OS.isCriatura === false) {
+          badge.textContent = "Ficha Completa";
+          badge.className = "criatura-mode-badge is-full-sheet";
+        } else {
+          badge.textContent = "Não definido";
+          badge.className = "criatura-mode-badge is-unset";
+        }
+      }
+    }
+  };
+
+  OS.setCriaturaMode = function (modeVal, skipSave) {
+    if (!skipSave) {
+      var inUnauthorizedMesa = !!(
+        OS.activeMesaState &&
+        OS.activeMesaState.mesaId &&
+        !OS.activeMesaState.isMestre
+      );
+      if (OS.isReadOnlySheet || !OS.freeEdit || inUnauthorizedMesa) {
+        OS.syncCriaturaModeUI();
+        return OS.isCriatura;
+      }
+    }
+    var nextVal = modeVal === true ? true : modeVal === false ? false : null;
+    OS.isCriatura = nextVal;
+    OS.syncCriaturaModeUI();
+    if (!skipSave && typeof OS.scheduleSave === "function") {
+      OS.scheduleSave();
+    }
+    return OS.isCriatura;
+  };
 
   OS.getSceneTerrorLevel = function () {
     var inp = OS.$("scene-terror-input") || OS.$("scene-terror-slider");
@@ -3126,6 +3310,15 @@ OS.fatigueZeroAddedUsed = [];
         OS.setVeterano(vetCb.checked);
       });
     }
+
+    var criaturaCb = OS.$("is-criatura");
+    if (criaturaCb && !criaturaCb._bound) {
+      criaturaCb._bound = true;
+      criaturaCb.addEventListener("change", function () {
+        OS.setCriaturaMode(!!criaturaCb.checked);
+      });
+    }
+    if (OS.syncCriaturaModeUI) OS.syncCriaturaModeUI();
 
     // 2. Calculadora de Dificuldade de Testes
     var calcDb = OS.$("test-calc-db");

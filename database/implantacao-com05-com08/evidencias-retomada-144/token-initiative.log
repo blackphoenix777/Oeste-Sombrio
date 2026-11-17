@@ -1,0 +1,12 @@
+PASS: 11 grupos (backend/DOM simulados)
+  addNpcMesaToScene cria duas cópias/linhas independentes e não duplica eco INSERT
+  editar #1 atualiza só owner_ref da instância; #2 e catálogo preservados
+  edições rápidas serializadas mantêm último valor por instância
+  rolagem 6B preserva regra vigente e isolamento da iniciativa
+  API ordena cópias separadas, usa cache único e retorna snapshot independente
+  Realtime UPDATE durante arraste atualiza iniciativa, preserva posição e rejeita pacote antigo
+  Realtime DELETE remove combatente e dispara hook
+  desempate estável por nome e tokenId
+  jogador recebe iniciativa via RPC após evento; ocultos excluídos; hook sem repetição no refresh idêntico
+  evento de outra mesa ignorado
+  resposta atrasada não contamina a mesa aberta depois
