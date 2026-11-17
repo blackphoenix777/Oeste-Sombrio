@@ -5919,11 +5919,27 @@ body.mesa-fullscreen-active #mesa-sidebar-feed {
 }
 
 body.mesa-fullscreen-active #mesa-sidebar-feed.is-fichas-expanded {
-  width: min(1090px, calc(100vw - 32px));
+  width: min(var(--mesa-sheet-panel-width, 1090px), calc(100vw - 32px));
   z-index: 40;
   border-left: 2px solid var(--accent);
   box-shadow: -16px 0 44px rgba(0, 0, 0, 0.82);
 }
+
+#mesa-sidebar-resizer { display: none; }
+body.mesa-fullscreen-active .is-fichas-expanded > #mesa-sidebar-resizer {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  touch-action: none;
+  z-index: 2;
+}
+body.mesa-fullscreen-active #mesa-sidebar-feed.is-resizing { transition: none; user-select: none; }
+#mesa-sidebar-resizer:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.mesa-map-token.is-selected { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* 3 listas simultâneas no painel 👤 Fichas do Mestre */
 .mesa-gm-lists-view {

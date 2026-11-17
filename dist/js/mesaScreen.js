@@ -34,6 +34,8 @@ OS.activeMesaState = {
   gridCols: 24,
   npcsMesa: [],
   mesaTokens: [],
+  selectedMapToken: null,
+  tokenDeletePending: false,
   sceneCreatures: [],
   gmPopups: [],
   gmPopupsHubExpanded: false,
@@ -1585,6 +1587,31 @@ OS.bindMapCameraEvents = function () {
   var viewport = OS.$("mesa-map-viewport");
   if (!viewport || viewport._cameraBound) return;
   viewport._cameraBound = true;
+  viewport.tabIndex = 0;
+  viewport.addEventListener("pointerdown", function (ev) {
+    if (ev.button !== 0 || ev.target.closest(".mesa-map-token")) return;
+    OS.selectMesaMapToken(null);
+    viewport.focus({ preventScroll: true });
+  });
+  viewport.addEventListener("keydown", async function (ev) {
+    var st = OS.activeMesaState;
+    if (ev.key !== "Delete" || ev.repeat || ev.isComposing || ev.ctrlKey || ev.altKey || ev.metaKey || ev.shiftKey) return;
+    if (ev.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]')) return;
+    if (!viewport.getClientRects().length || !st.isMestre || st.isDraggingLocal || OS.mapCamera.isPanning || st.tokenDeletePending) return;
+    var token = OS.getSelectedMesaMapToken();
+    if (!token || !["player", "creature"].includes(token.owner_type)) return;
+    ev.preventDefault();
+    st.tokenDeletePending = true;
+    try {
+      var removed = token.owner_type === "player"
+        ? await OS.removePlayerFromScene(token.owner_ref, token.id)
+        : await OS.removeCreatureFromScene(token.owner_ref, token.id);
+      if (removed && st === OS.activeMesaState && st.selectedMapToken && st.selectedMapToken.id === String(token.id)) OS.selectMesaMapToken(null);
+      if (!removed && OS.showToast) OS.showToast("Não foi possível remover o token da cena.", "error");
+    } catch (err) {
+      if (OS.showToast) OS.showToast("Não foi possível remover o token da cena.", "error");
+    } finally { st.tokenDeletePending = false; }
+  });
   viewport.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
   viewport.addEventListener("wheel", function (ev) {
     ev.preventDefault();
@@ -1843,6 +1870,28 @@ var DEFAULT_CREATURE_TOKEN_ICON_SVG =
   '<path d="M12 2C7.6 2 4 5.4 4 9.6c0 2.7 1.5 5.1 3.8 6.4V19c0 .6.4 1 1 1h1.2v-2h1.3v2h1.4v-2H14v2h1.2c.6 0 1-.4 1-1v-3c2.3-1.3 3.8-3.7 3.8-6.4C20 5.4 16.4 2 12 2zm-3 8.5c-.8 0-1.5-.7-1.5-1.5S8.2 7.5 9 7.5s1.5.7 1.5 1.5S9.8 10.5 9 10.5zm6 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5z"/>' +
   "</svg>";
 
+// A seleção pertence ao mapa atual, nunca à ficha de origem ou ao template do NPC.
+OS.getSelectedMesaMapToken = function () {
+  var st = OS.activeMesaState, selected = st && st.selectedMapToken;
+  if (!selected) return null;
+  var token = selected.mesaId === st.mesaId && selected.mapId === st.activeMapId
+    ? (st.mesaTokens || []).find(function (t) { return String(t.id) === selected.id; }) : null;
+  if (!token) st.selectedMapToken = null;
+  return token || null;
+};
+
+OS.selectMesaMapToken = function (tokenId) {
+  var st = OS.activeMesaState;
+  st.selectedMapToken = tokenId ? { id: String(tokenId), mesaId: st.mesaId, mapId: st.activeMapId } : null;
+  var selected = OS.getSelectedMesaMapToken();
+  var layer = OS.$("mesa-map-tokens-layer");
+  if (layer) layer.querySelectorAll(".mesa-map-token").forEach(function (node) {
+    var active = !!selected && node.dataset.tokenId === String(selected.id);
+    node.classList.toggle("is-selected", active);
+    node.setAttribute("aria-pressed", String(active));
+  });
+};
+
 function syncMesaMapTokenDom(el, token, metricsArg) {
   if (!el || !token || !token.id) return;
   var metrics = metricsArg || OS.getMesaGridMetrics();
@@ -1858,12 +1907,18 @@ function syncMesaMapTokenDom(el, token, metricsArg) {
   );
   var imgUrl = token.image_url ? String(token.image_url).trim() : "";
   var wasDragging = el.classList.contains("is-dragging");
+  var selected = OS.getSelectedMesaMapToken();
+  var isSelected = !!selected && String(selected.id) === String(token.id);
 
   el.className =
     "mesa-map-token " +
     (isPlayer ? "token-type-player" : "token-type-creature") +
     (movable ? " is-movable" : " is-locked") +
-    (wasDragging ? " is-dragging" : "");
+    (wasDragging ? " is-dragging" : "") + (isSelected ? " is-selected" : "");
+  el.tabIndex = 0;
+  el.setAttribute("role", "button");
+  el.setAttribute("aria-label", dispName);
+  el.setAttribute("aria-pressed", String(isSelected));
   el.dataset.tokenId = token.id;
   el.dataset.ownerType = token.owner_type;
   el.dataset.ownerRef = token.owner_ref;
@@ -1938,17 +1993,30 @@ function buildMesaMapTokenElement(token, metricsArg) {
   if (OS.renderMesaTokenBars) OS.renderMesaTokenBars(el, token);
 
   var tokenId = String(token.id);
+  var tokenMesaId = OS.activeMesaState.mesaId, tokenMapId = OS.activeMesaState.activeMapId;
+  var suppressDoubleClickUntil = 0;
+  function currentToken() {
+    var st = OS.activeMesaState;
+    if (st.mesaId !== tokenMesaId || st.activeMapId !== tokenMapId) return null;
+    return (st.mesaTokens || []).find(function (t) { return String(t.id) === tokenId; });
+  }
+  el.addEventListener("focus", function () { if (currentToken()) OS.selectMesaMapToken(tokenId); });
+  el.addEventListener("dblclick", function (ev) {
+    var liveTok = currentToken();
+    if (ev.button !== 0 || !liveTok || Date.now() < suppressDoubleClickUntil || OS.activeMesaState.isDraggingLocal || OS.mapCamera.isPanning) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (liveTok.owner_type === "player") OS.openOrFocusPlayerPopup(liveTok.owner_ref);
+    else if (liveTok.owner_type === "creature") OS.openOrFocusCreaturePopup({ from: "scene", instanceId: liveTok.owner_ref });
+  });
   el.addEventListener("pointerdown", function (ev) {
     if (ev.button !== undefined && ev.button !== 0) return;
     if (OS.mapCamera.isPanning || OS.activeMesaState.isDraggingLocal) return;
     var stNow = OS.activeMesaState;
-    var liveTok =
-      (stNow &&
-        Array.isArray(stNow.mesaTokens) &&
-        stNow.mesaTokens.find(function (t) {
-          return t && String(t.id) === tokenId;
-        })) ||
-      token;
+    var liveTok = currentToken();
+    if (!liveTok) return;
+    OS.selectMesaMapToken(tokenId);
+    el.focus({ preventScroll: true });
 
     if (!OS.canCurrentUserMoveToken(liveTok)) {
       return;
@@ -1992,6 +2060,7 @@ function buildMesaMapTokenElement(token, metricsArg) {
       if (finished || moveEv.pointerId !== dragPointerId) return;
       var dx = (moveEv.clientX - startClientX) / dragZoom;
       var dy = (moveEv.clientY - startClientY) / dragZoom;
+      if (Math.abs(moveEv.clientX - startClientX) > 4 || Math.abs(moveEv.clientY - startClientY) > 4) suppressDoubleClickUntil = Date.now() + 500;
       currentLeftPx = Math.max(0, Math.min(maxLeft, startLeftPx + dx));
       currentTopPx = Math.max(0, Math.min(maxTop, startTopPx + dy));
       el.style.left = currentLeftPx.toFixed(2) + "px";
@@ -2134,12 +2203,15 @@ OS.renderMesaMapTokens = function () {
   OS.dispatchMesaCombatantsChange();
   var layerEl = OS.$("mesa-map-tokens-layer");
   if (!layerEl) return;
+  var hadTokenFocus = layerEl.contains(document.activeElement);
 
   var st = OS.activeMesaState;
   var tokens = st && Array.isArray(st.mesaTokens) ? st.mesaTokens : [];
+  OS.getSelectedMesaMapToken();
   layerEl.innerHTML = "";
 
   if (!st || !st.mesaId || !tokens.length) {
+    if (hadTokenFocus && OS.$("mesa-map-viewport")) OS.$("mesa-map-viewport").focus({ preventScroll: true });
     return;
   }
 
@@ -2150,6 +2222,10 @@ OS.renderMesaMapTokens = function () {
       layerEl.appendChild(el);
     }
   });
+  if (hadTokenFocus) {
+    var focusTarget = layerEl.querySelector(".is-selected") || OS.$("mesa-map-viewport");
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
+  }
 };
 
 OS.updateMesaTokenPosition = async function (tokenId, newGridX, newGridY) {
@@ -2807,7 +2883,77 @@ OS.adjustMesaGridCols = async function (delta) {
 
 /* ─── Alternância da Lateral Direita (💬 Chat | 👤 Fichas) ──────── */
 
+OS.bindMesaSidebarResize = function () {
+  var panel = OS.$("mesa-sidebar-feed"), handle = OS.$("mesa-sidebar-resizer");
+  if (!panel || !handle || handle._resizeBound) return;
+  handle._resizeBound = true;
+  var preferenceKey = "oesteSombrio.mesa.sheetPanelWidth", drag = null;
+  function bounds() { var max = Math.max(1, window.innerWidth - 32); return { min: Math.min(330, max), max: max }; }
+  function syncAria() {
+    var b = bounds();
+    handle.setAttribute("aria-valuemin", b.min);
+    handle.setAttribute("aria-valuemax", b.max);
+    handle.setAttribute("aria-valuenow", Math.round(panel.getBoundingClientRect().width));
+  }
+  function resize(width) {
+    var b = bounds();
+    panel.style.setProperty("--mesa-sheet-panel-width", Math.max(b.min, Math.min(b.max, width)) + "px");
+    syncAria();
+  }
+  function persist() {
+    try { localStorage.setItem(preferenceKey, String(parseFloat(panel.style.getPropertyValue("--mesa-sheet-panel-width")))); } catch (err) { /* preferência opcional */ }
+  }
+  try {
+    var saved = Number(localStorage.getItem(preferenceKey));
+    if (Number.isFinite(saved) && saved > 0) resize(saved);
+  } catch (err) { /* armazenamento indisponível */ }
+  function move(ev) {
+    if (!drag || ev.pointerId !== drag.id) return;
+    resize(drag.width + drag.x - ev.clientX);
+  }
+  function finish(ev) {
+    if (!drag || (ev && ev.pointerId !== undefined && ev.pointerId !== drag.id)) return;
+    var previous = drag;
+    if (ev && ev.type === "pointerup") { move(ev); persist(); }
+    else panel.style.setProperty("--mesa-sheet-panel-width", previous.preference);
+    drag = null;
+    panel.classList.remove("is-resizing");
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", finish);
+    window.removeEventListener("pointercancel", finish);
+    window.removeEventListener("blur", finish);
+    if (handle.hasPointerCapture && handle.hasPointerCapture(previous.id)) handle.releasePointerCapture(previous.id);
+    syncAria();
+  }
+  OS.cancelMesaSidebarResize = function () { finish(); };
+  handle.addEventListener("lostpointercapture", finish);
+  handle.addEventListener("pointerdown", function (ev) {
+    if (ev.button !== 0 || drag || !panel.classList.contains("is-fichas-expanded") || OS.activeMesaState.isDraggingLocal || OS.mapCamera.isPanning) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    drag = { id: ev.pointerId, x: ev.clientX, width: panel.getBoundingClientRect().width, preference: panel.style.getPropertyValue("--mesa-sheet-panel-width") };
+    panel.classList.add("is-resizing");
+    handle.focus({ preventScroll: true });
+    try { handle.setPointerCapture(ev.pointerId); } catch (err) { /* pointer sintético */ }
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
+    window.addEventListener("blur", finish);
+  });
+  handle.addEventListener("keydown", function (ev) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(ev.key)) return;
+    ev.preventDefault();
+    var b = bounds();
+    resize(ev.key === "Home" ? b.min : ev.key === "End" ? b.max : panel.getBoundingClientRect().width + (ev.key === "ArrowLeft" ? 20 : -20));
+    persist();
+  });
+  window.addEventListener("resize", function () { finish(); syncAria(); });
+  panel.addEventListener("transitionend", syncAria);
+  syncAria();
+};
+
 OS.switchMesaSidebarTab = function (tabName) {
+  if (OS.cancelMesaSidebarResize) OS.cancelMesaSidebarResize();
   var target = tabName === "notes" && OS.activeMesaState.isMestre ? "notes" : tabName === "fichas" ? "fichas" : "chat";
   var notesPanel = OS.$("mesa-sidebar-panel-notes"), notesTab = OS.$("btn-mesa-tab-notes");
   if (notesPanel) notesPanel.hidden = target !== "notes";
@@ -4551,32 +4697,28 @@ OS.addPlayerToScene = async function (fichaId) {
   return insRes.data;
 };
 
-OS.removePlayerFromScene = async function (fichaId) {
+OS.removePlayerFromScene = async function (fichaId, tokenId) {
   var st = OS.activeMesaState;
-  if (!st || !st.mesaId || !st.isMestre || !fichaId) return false;
+  if (!st || !st.mesaId || !st.activeMapId || !st.isMestre || !fichaId) return false;
+  var room = st.mesaId, mid = st.activeMapId;
 
   var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
-  if (client) {
-    var delRes = await client
-      .from("mesa_tokens")
-      .delete()
-      .eq("mesa_id", st.mesaId)
-      .eq("mapa_id", st.activeMapId)
-      .eq("owner_type", "player")
-      .eq("owner_ref", fichaId);
+  if (!client) return false;
+  var query = client
+    .from("mesa_tokens")
+    .delete()
+    .eq("mesa_id", room)
+    .eq("mapa_id", mid)
+    .eq("owner_type", "player")
+    .eq("owner_ref", fichaId);
+  if (tokenId) query = query.eq("id", tokenId);
+  var delRes = await query.select("id");
 
-    if (delRes && delRes.error) {
-      console.warn("[removePlayerFromScene] Erro ao remover token:", delRes.error);
-      return false;
-    }
-  }
+  if (!delRes || delRes.error || !delRes.data || !delRes.data.length) return false;
+  if (OS.activeMesaState !== st || st.mesaId !== room || st.activeMapId !== mid) return false;
 
   st.mesaTokens = (st.mesaTokens || []).filter(function (t) {
-    return !(
-      t &&
-      t.owner_type === "player" &&
-      String(t.owner_ref) === String(fichaId)
-    );
+    return !delRes.data.some(function (deleted) { return String(deleted.id) === String(t.id); });
   });
 
   OS.renderMesaSceneCards();
@@ -4700,14 +4842,17 @@ OS.addNpcMesaToScene = async function (mesaNpcId) {
   };
 };
 
-OS.removeCreatureFromScene = async function (instanceId) {
+OS.removeCreatureFromScene = async function (instanceId, tokenId) {
   var st = OS.activeMesaState, room = st.mesaId, mid = st.activeMapId;
-  if (!st.isMestre || !room || !mid) return false;
+  if (!st.isMestre || !room || !mid || !instanceId) return false;
   var client = OS.getSupabaseClient();
-  var result = await client.from("mesa_tokens").delete().eq("mesa_id", room).eq("mapa_id", mid).eq("owner_type", "creature").eq("owner_ref", instanceId);
-  if (result.error) return false;
+  if (!client) return false;
+  var query = client.from("mesa_tokens").delete().eq("mesa_id", room).eq("mapa_id", mid).eq("owner_type", "creature").eq("owner_ref", instanceId);
+  if (tokenId) query = query.eq("id", tokenId);
+  var result = await query.select("id");
+  if (result.error || !result.data || !result.data.length || OS.activeMesaState !== st || st.mesaId !== room || st.activeMapId !== mid) return false;
   var remaining = await client.from("mesa_tokens").select("id").eq("mesa_id", room).eq("owner_type", "creature").eq("owner_ref", instanceId);
-  if (remaining.error || st.mesaId !== room) return false;
+  if (remaining.error || OS.activeMesaState !== st || st.mesaId !== room || st.activeMapId !== mid) return false;
   if (!remaining.data.length) {
     st.sceneCreatures = st.sceneCreatures.filter(function (c) { return c.instanceId !== instanceId; });
     st.gmPopups = st.gmPopups.filter(function (p) { return !(p.targetType === "scene" && p.targetId === instanceId); });
@@ -4720,10 +4865,14 @@ OS.removeCreatureFromScene = async function (instanceId) {
 
 function resolvePlayerFichaRow(fichaId) {
   var st = OS.activeMesaState;
-  if (!st || !fichaId) return null;
+  if (!st || !fichaId || (!st.isMestre && !st.currentUserId)) return null;
   var fichaRow = (st.playerSheets || []).find(function (r) {
     return r && String(r.id) === String(fichaId);
   });
+  // Mesmo com cache antigo, a UI nunca abre a ficha de outro jogador.
+  if (!st.isMestre && !(st.playerFichaId && String(st.playerFichaId) === String(fichaId)) &&
+      !(fichaRow && st.currentUserId && String(fichaRow.usuario_id) === String(st.currentUserId))) return null;
+  if (fichaRow && fichaRow.mesa_id && String(fichaRow.mesa_id) !== String(st.mesaId)) return null;
   if (!fichaRow && st.playerFichaId && String(st.playerFichaId) === String(fichaId)) {
     var liveData =
       OS.activeCharacterState && typeof OS.activeCharacterState === "object"
@@ -6173,7 +6322,7 @@ OS.saveGmPopupsStateLocal = function () {
 OS.resolveGmPopupTarget = function (popupEntry) {
   if (!popupEntry || !popupEntry.targetType || !popupEntry.targetId) return null;
   var st = OS.activeMesaState;
-  if (!st) return null;
+  if (!st || !st.mesaId || (!st.isMestre && popupEntry.targetType !== "player")) return null;
 
   if (popupEntry.targetType === "player") {
     var fichaRow = resolvePlayerFichaRow(popupEntry.targetId);
@@ -6257,7 +6406,7 @@ OS.openOrFocusCreaturePopup = function (spec) {
 
   if (spec.from === "player" || spec.targetType === "player") {
     var fId = spec.fichaId || spec.targetId;
-    if (!fId) return null;
+    if (!fId || !resolvePlayerFichaRow(fId)) return null;
     resolvedType = "player";
     resolvedId = String(fId);
   } else if (spec.from === "scene" || spec.targetType === "scene") {
@@ -8133,6 +8282,7 @@ OS.handleGmNovaSessaoMesa = async function () {
 /* ─── Bind de Eventos da Tela de Mesa e Modais ───────────────── */
 
 OS.bindMesaScreenEvents = function () {
+  OS.bindMesaSidebarResize();
   if (OS.bindMesaMapEvents) OS.bindMesaMapEvents();
   OS.bindMapCameraEvents();
   var btnCriarMesa = OS.$("btn-criar-mesa");

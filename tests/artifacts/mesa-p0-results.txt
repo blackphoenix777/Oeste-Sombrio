@@ -1,0 +1,34 @@
+PASS: 33 verificações
+MESA-01: arraste altera a largura pela borda esquerda
+MESA-01: grade, tokens, câmera 1.7x e persistência de cena inalterados
+MESA-01: preferência local persistida
+MESA-01: cancelamento restaura largura e encerra arraste
+MESA-01: limite mínimo e teclado acessível
+MESA-01: limite máximo conserva margem
+MESA-01: largura adaptada a viewport móvel de 320px
+MESA-01: Chat preserva largura original e oculta arraste
+MESA-02: clique seleciona sem mover nem gravar
+MESA-02: atualização do token conserva seleção
+MESA-02: recarga dos tokens conserva seleção e foco
+MESA-01/03: arraste após resize respeita zoom e não abre ficha acidentalmente
+MESA-02: digitação, composição, repetição e foco fora do mapa não removem
+MESA-02: jogador não exclui nem o próprio token
+MESA-02: zero linhas afetadas mantém token e seleção
+MESA-02: erro do servidor mantém token
+MESA-02: exclusão confirmada remove só token selecionado
+MESA-02: ficha original do jogador permanece após Delete
+MESA-02: exclusão filtrada por mesa, mapa e ID
+MESA-02: sem seleção não há exclusão
+MESA-03: duas instâncias do mesmo NPC abrem fichas próprias
+MESA-03: reabertura foca popup existente sem duplicar
+MESA-02/03: token DOM de mapa antigo não atua
+MESA-03: jogador não abre NPC mesmo com cache
+MESA-03: ficha alheia em cache não concede acesso
+MESA-03: jogador abre a própria ficha vinculada
+MESA-03: Xerife abre ficha de jogador pelo fluxo existente
+MESA-02: instância compartilhada permanece no outro mapa
+MESA-02: última ocorrência limpa somente a instância descartável
+MESA-02: fichas e NPCs originais intactos
+MESA-02: resposta atrasada não remove token de outro mapa
+MESA-02: sair da mesa limpa seleção
+MESA-01: ficha completa em painel de 330px conserva conteúdo e geometria do mapa

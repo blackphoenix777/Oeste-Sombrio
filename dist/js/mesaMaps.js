@@ -5,6 +5,7 @@ function mapStatus(message, error) {
   if (el) { el.hidden = !message; el.textContent = message || ""; el.className = "mesa-map-upload-status" + (error ? " is-error" : ""); }
 }
 OS.clearMesaMaps = function () {
+  if (OS.selectMesaMapToken) OS.selectMesaMapToken(null);
   var st = OS.activeMesaState;
   st._mapReadId = (st._mapReadId || 0) + 1;
   st._tokenReadId = (st._tokenReadId || 0) + 1;
