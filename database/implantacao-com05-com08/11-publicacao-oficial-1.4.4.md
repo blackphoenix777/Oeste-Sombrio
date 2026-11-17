@@ -1,6 +1,25 @@
 # Publicação oficial v1.4.4
 
-17/11/2026 — publicação autorizada expressamente pelo proprietário, com aceitação do risco de upgrade Windows não ensaiado. Registro inicial anterior ao envio; o resultado público será acrescentado após verificação.
+17/11/2026 — **PUBLICADO** com autorização expressa do proprietário e aceitação do risco de upgrade Windows não ensaiado.
+
+## Resultado público confirmado
+
+- Release estável: https://github.com/blackphoenix777/Oeste-Sombrio/releases/tag/v1.4.4 — ID `448063212`, draft=false, prerelease=false.
+- Commit do produto/release: `71ab25720eb4688c8d7d23d109f215034825e7d5`; tag anotada `v1.4.4`.
+- Verificação pública em 17/11/2026, 06:39 BRT: três assets HTTP 200 por HTTPS, bytes e hashes iguais aos aprovados, payload e comentário autenticado Minisign PASS, chave pública compatível.
+- Endpoint https://github.com/blackphoenix777/Oeste-Sombrio/releases/latest/download/latest.json retornou 1.4.4, windows-x86_64, URL e assinatura corretas. A nova versão está anunciada aos clientes que consultam esse endpoint; não houve instalação ou descoberta na interface do 1.4.3 autêntico nesta máquina.
+- 1.4.3 continua público; instalador baixado com HTTP 200 e SHA-256 `8ee0ea275c372dc128c07a3cc9be2f4547a9603a797970dded015a60e02a5f75`.
+- [Evidência estruturada](evidencia-publicacao-1.4.4.json).
+
+### GitHub Actions e recuperação da publicação
+
+As execuções [44009232574](https://github.com/blackphoenix777/Oeste-Sombrio/actions/runs/44009232574) e [44009522277](https://github.com/blackphoenix777/Oeste-Sombrio/actions/runs/44009522277) terminaram em failure sem iniciar o job de publicação. A anotação informou: `The job was not started because your account is locked due to a billing issue.` O build genérico foi skipped. Não foi alterada cobrança ou contratado serviço. **GitHub Actions não passou**; esse impedimento operacional permanece para futuros workflows.
+
+Depois de confirmar a conclusão do Actions, o mesmo verificador foi executado localmente com credencial existente em memória, baixou os assets do rascunho pela API, validou hashes/Minisign/manifesto/commit e publicou esse único rascunho como estável/latest pela API oficial. Nenhum processo de publicação permaneceu concorrente.
+
+Foi corrigida a busca de rascunhos: a consulta por tag retornou 404, então o publicador passou a usar a listagem autenticada. A correção gerou o commit final `71ab257`; antes de qualquer release público, a tag própria foi atualizada de `04c9a70` para esse commit usando force-with-lease. O produto e os artefatos não mudaram. Ao atualizar o destino, o GitHub apresentou o rascunho como `untagged`; ele foi reassociado explicitamente à tag v1.4.4, preservando ID e assets. A publicação final passou, e não houve criação de release duplicado.
+
+O commit posterior de documentação registra o resultado em main sem mover a tag publicada. Os relatórios locais de pré-implantação e homologação não selecionados continuam preservados, fora dos commits deste lançamento.
 
 ## Origem e código aprovado
 

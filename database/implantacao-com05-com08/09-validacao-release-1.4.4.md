@@ -1,5 +1,13 @@
 # Validação do release 1.4.4
 
+## Estado final — PUBLICADO em 17/11/2026
+
+[Release oficial estável v1.4.4](https://github.com/blackphoenix777/Oeste-Sombrio/releases/tag/v1.4.4), tag apontando para `71ab25720eb4688c8d7d23d109f215034825e7d5`. Os três assets foram baixados publicamente por HTTPS e seus SHA-256 conferiram integralmente com os aprovados; assinatura Minisign e chave pública compatíveis. O endpoint público `releases/latest/download/latest.json` retorna **1.4.4**, plataforma windows-x86_64, URL e assinatura corretas. O instalador 1.4.3 continua acessível e seu hash também foi confirmado.
+
+O GitHub Actions terminou em **failure antes de iniciar o job**, por bloqueio da conta devido a cobrança. A publicação foi concluída pela API REST oficial, executando localmente o mesmo verificador depois de confirmar que não havia job em execução. Não houve pipeline concorrente ou substituição de artefatos. O risco de upgrade real não ensaiado permanece aceito pelo proprietário; a verificação pública foi uma consulta do manifesto e download de arquivos, não execução de instalação ou descoberta na interface do cliente autêntico.
+
+[Registro completo](11-publicacao-oficial-1.4.4.md) · [Evidência pública](evidencia-publicacao-1.4.4.json). Nenhuma alteração de Supabase ou dados de produção foi realizada.
+
 ## Autorização de publicação — 17/11/2026
 
 O proprietário autorizou expressamente a publicação geral da v1.4.4 e seu anúncio pelo updater, aceitando o risco do upgrade real Windows não ensaiado. Essa decisão substitui o bloqueio de publicação registrado abaixo, sem transformar o teste ausente em PASS. Permanecem os riscos de ausência de Authenticode e instalação automática sem ensaio isolado.
