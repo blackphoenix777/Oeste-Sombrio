@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Dark West Character Sheet",
   "mainBinaryName": "DarkWest",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "identifier": "com.stefano.darkwest",
   "build": {
     "frontendDist": "../dist",
