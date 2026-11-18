@@ -1,0 +1,318 @@
+{
+  "files": [
+    {
+      "file": "20261106000343_create_character_portraits_bucket_and_policies.sql",
+      "version": "20261106000343",
+      "bytes": 1244,
+      "sha256": "8c6129d42c9ec88bbdbffc2c9f9faa24105e2d1c62fec01d33d0dbb85e94ba86"
+    },
+    {
+      "file": "20261108013940_create_mesa_maps_bucket_and_mesas_columns.sql",
+      "version": "20261108013940",
+      "bytes": 2117,
+      "sha256": "5143c247912b4313985d6227a97c27abdcb5ed294190eebbbad26c7b26bb8441"
+    },
+    {
+      "file": "20261108022143_create_mesa_tokens_table_and_policies.sql",
+      "version": "20261108022143",
+      "bytes": 1889,
+      "sha256": "cb1fb28901af395089dd32022de6376f474ba8e1c88d1ab01c28e5d142e26eae"
+    },
+    {
+      "file": "20261108025202_add_mesa_tables_to_supabase_realtime.sql",
+      "version": "20261108025202",
+      "bytes": 192,
+      "sha256": "c1d4bc5ea892a861db6ade8f8205a3425dc84f1fe5f8b7adb9c04f52ae371f83"
+    },
+    {
+      "file": "20261109160047_require_auth_for_event_reads.sql",
+      "version": "20261109160047",
+      "bytes": 77,
+      "sha256": "848c185ac0431ce270a604ff546846e63773a3809353db33b8bec87501dfcf47"
+    },
+    {
+      "file": "20261109171323_restrict_membership_events_and_sheet_reads.sql",
+      "version": "20261109171323",
+      "bytes": 2017,
+      "sha256": "a524707311ade5ad4df93e09ae16cd18716b2c29a3e485c3367c3eb1f56312c2"
+    },
+    {
+      "file": "20261109223117_public_scene_visibility_and_event_membership.sql",
+      "version": "20261109223117",
+      "bytes": 5104,
+      "sha256": "41d1a0b4386cee8d99d1c5d8c4fece1299e185314d25869ecfb1f5bc72ca6036"
+    },
+    {
+      "file": "20261110010238_token_instance_initiative.sql",
+      "version": "20261110010238",
+      "bytes": 5555,
+      "sha256": "07938c6873b009ca769db2781e9cc3185cfd04d13bdbf9aa666b70a6580e5c78"
+    },
+    {
+      "file": "20261110105257_shared_turn_tracker.sql",
+      "version": "20261110105257",
+      "bytes": 10628,
+      "sha256": "bbfefc510633108d3c165623fa0a52ca5276ccbbec3af431191dd9c59a90d35d"
+    },
+    {
+      "file": "20261110110417_turn_tracker_late_fixed_order.sql",
+      "version": "20261110110417",
+      "bytes": 5043,
+      "sha256": "778615066cbd161672b8abb848fb09caa640a933a175c467784547b38d38386c"
+    },
+    {
+      "file": "20261110184126_multiple_maps_private_storage.sql",
+      "version": "20261110184126",
+      "bytes": 17801,
+      "sha256": "836b000ce5ca5d8b8b498b72dfdd176556f0d95ee512f38038a6aab9bdd3d4a0"
+    },
+    {
+      "file": "20261111103530_multiple_maps_combat_guard.sql",
+      "version": "20261111103530",
+      "bytes": 645,
+      "sha256": "64749474a9d8c7139246172e45a8bf6b929b912428773085d7ae44fa49279166"
+    },
+    {
+      "file": "20261111151557_gm_tools_inbox_notes_token_status.sql",
+      "version": "20261111151557",
+      "bytes": 15635,
+      "sha256": "35b7820bd11e02983cd857aeb8e184e05db1de9244fa3e04904dcdc9d9e76297"
+    },
+    {
+      "file": "20261111163758_gm_tools_status_metadata_sync.sql",
+      "version": "20261111163758",
+      "bytes": 1927,
+      "sha256": "49a34ee6668335d210cca1dcb6b176a1976287874d500582c1dc90e71d9fe2c1"
+    },
+    {
+      "file": "20261111164149_gm_tools_preserve_legacy_inventory.sql",
+      "version": "20261111164149",
+      "bytes": 1335,
+      "sha256": "9ac3f95f358eeeaf576f9b1d5dbef23fc5034be3a4b3922bbca1bcfdd0d16e2d"
+    },
+    {
+      "file": "20261116210603_com05_com08_combat_state_and_actions.sql",
+      "version": "20261116210603",
+      "bytes": 46473,
+      "sha256": "3aae98fc5dfe7ca466f55281d5fb7958ff3beec6b21a1cb688c389fc730280ce"
+    },
+    {
+      "file": "20261117151310_xerife_6b_foundation.sql",
+      "version": "20261117151310",
+      "bytes": 17777,
+      "sha256": "bef172a634f736752f29f0f88483be3362fc8bbed11cb48595c1e3e06161ea09"
+    }
+  ],
+  "remoteHashes": [
+    {
+      "version": "20261106000343",
+      "name": "create_character_portraits_bucket_and_policies",
+      "bytes": 1244,
+      "sha256": "8c6129d42c9ec88bbdbffc2c9f9faa24105e2d1c62fec01d33d0dbb85e94ba86"
+    },
+    {
+      "version": "20261108013940",
+      "name": "create_mesa_maps_bucket_and_mesas_columns",
+      "bytes": 2117,
+      "sha256": "5143c247912b4313985d6227a97c27abdcb5ed294190eebbbad26c7b26bb8441"
+    },
+    {
+      "version": "20261108022143",
+      "name": "create_mesa_tokens_table_and_policies",
+      "bytes": 1889,
+      "sha256": "cb1fb28901af395089dd32022de6376f474ba8e1c88d1ab01c28e5d142e26eae"
+    },
+    {
+      "version": "20261108025202",
+      "name": "add_mesa_tables_to_supabase_realtime",
+      "bytes": 192,
+      "sha256": "c1d4bc5ea892a861db6ade8f8205a3425dc84f1fe5f8b7adb9c04f52ae371f83"
+    },
+    {
+      "version": "20261109160047",
+      "name": "require_auth_for_event_reads",
+      "bytes": 77,
+      "sha256": "848c185ac0431ce270a604ff546846e63773a3809353db33b8bec87501dfcf47"
+    },
+    {
+      "version": "20261109171323",
+      "name": "restrict_membership_events_and_sheet_reads",
+      "bytes": 2017,
+      "sha256": "a524707311ade5ad4df93e09ae16cd18716b2c29a3e485c3367c3eb1f56312c2"
+    },
+    {
+      "version": "20261109223117",
+      "name": "public_scene_visibility_and_event_membership",
+      "bytes": 5104,
+      "sha256": "41d1a0b4386cee8d99d1c5d8c4fece1299e185314d25869ecfb1f5bc72ca6036"
+    },
+    {
+      "version": "20261110010238",
+      "name": "token_instance_initiative",
+      "bytes": 5555,
+      "sha256": "07938c6873b009ca769db2781e9cc3185cfd04d13bdbf9aa666b70a6580e5c78"
+    },
+    {
+      "version": "20261110105257",
+      "name": "shared_turn_tracker",
+      "bytes": 10628,
+      "sha256": "bbfefc510633108d3c165623fa0a52ca5276ccbbec3af431191dd9c59a90d35d"
+    },
+    {
+      "version": "20261110110417",
+      "name": "turn_tracker_late_fixed_order",
+      "bytes": 5043,
+      "sha256": "778615066cbd161672b8abb848fb09caa640a933a175c467784547b38d38386c"
+    },
+    {
+      "version": "20261110184126",
+      "name": "multiple_maps_private_storage",
+      "bytes": 17801,
+      "sha256": "836b000ce5ca5d8b8b498b72dfdd176556f0d95ee512f38038a6aab9bdd3d4a0"
+    },
+    {
+      "version": "20261111103530",
+      "name": "multiple_maps_combat_guard",
+      "bytes": 645,
+      "sha256": "64749474a9d8c7139246172e45a8bf6b929b912428773085d7ae44fa49279166"
+    },
+    {
+      "version": "20261111151557",
+      "name": "gm_tools_inbox_notes_token_status",
+      "bytes": 15635,
+      "sha256": "35b7820bd11e02983cd857aeb8e184e05db1de9244fa3e04904dcdc9d9e76297"
+    },
+    {
+      "version": "20261111163758",
+      "name": "gm_tools_status_metadata_sync",
+      "bytes": 1927,
+      "sha256": "49a34ee6668335d210cca1dcb6b176a1976287874d500582c1dc90e71d9fe2c1"
+    },
+    {
+      "version": "20261111164149",
+      "name": "gm_tools_preserve_legacy_inventory",
+      "bytes": 1335,
+      "sha256": "9ac3f95f358eeeaf576f9b1d5dbef23fc5034be3a4b3922bbca1bcfdd0d16e2d"
+    },
+    {
+      "version": "20261116210603",
+      "name": "com05_com08_combat_state_and_actions",
+      "bytes": 46473,
+      "sha256": "3aae98fc5dfe7ca466f55281d5fb7958ff3beec6b21a1cb688c389fc730280ce"
+    }
+  ],
+  "functions": [
+    {
+      "name": "public.presenca_6b_xerife",
+      "bodyMatches": true,
+      "secdef": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "public.ler_6b_xerife",
+      "bodyMatches": true,
+      "secdef": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "public.rolar_6b_xerife",
+      "bodyMatches": true,
+      "secdef": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "public.renovar_6b_xerife",
+      "bodyMatches": true,
+      "secdef": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "public.consumir_6b_xerife",
+      "bodyMatches": true,
+      "secdef": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.autorizar",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.composicao",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.presenca",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.ler",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.rolar",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.consumir",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "name": "xerife_6b.renovar",
+      "bodyMatches": true,
+      "secdef": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    }
+  ],
+  "pendingProduction": [
+    "20261117151310"
+  ],
+  "officialDryRun": "NOT_EXECUTED"
+}

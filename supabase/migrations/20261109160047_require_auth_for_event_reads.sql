@@ -1,0 +1,1 @@
+alter policy eventos_select_visiveis on public.eventos_mesa to authenticated;
