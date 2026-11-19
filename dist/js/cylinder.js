@@ -23,13 +23,39 @@ import {
   getMisticismoLevel,
   calculateRemMax,
   levelToDice,
-  diceToLevel
+  diceToLevel,
+  ALLOWED_6B_DIE_TYPES,
+  MIN_OWN_6B_DICE,
+  MAX_OWN_6B_DICE,
+  createEmptyOwn6BCounts,
+  formatOwn6BComposition,
+  parseStrictOwn6BString,
+  validateOwn6BComposition,
+  extractOwn6BTemplate,
+  entityHasExplicitOwn6B,
+  MAX_OP_LEDGER_ENTRIES,
+  applyFatigueCascadeToInstanceRoll,
+  createOwn6BInstanceStateContract,
+  validateAndProjectOwn6BInstanceCommand
 } from "./rules/index.js";
 
 OS.computeTurnActionBudget = computeTurnActionBudget;
 OS.inspectCombatConditionsForActions = inspectCombatConditionsForActions;
 OS.resolveIndividual6BInitiative = resolveIndividual6BInitiative;
 OS.evaluateSheetOverloadForActions = evaluateSheetOverloadForActions;
+OS.ALLOWED_6B_DIE_TYPES = ALLOWED_6B_DIE_TYPES;
+OS.MIN_OWN_6B_DICE = MIN_OWN_6B_DICE;
+OS.MAX_OWN_6B_DICE = MAX_OWN_6B_DICE;
+OS.MAX_OP_LEDGER_ENTRIES = MAX_OP_LEDGER_ENTRIES;
+OS.createEmptyOwn6BCounts = createEmptyOwn6BCounts;
+OS.formatOwn6BComposition = formatOwn6BComposition;
+OS.parseStrictOwn6BString = parseStrictOwn6BString;
+OS.validateOwn6BComposition = validateOwn6BComposition;
+OS.extractOwn6BTemplate = extractOwn6BTemplate;
+OS.entityHasOwn6B = entityHasExplicitOwn6B;
+OS.applyFatigueCascadeToInstanceRoll = applyFatigueCascadeToInstanceRoll;
+OS.createOwn6BInstanceStateContract = createOwn6BInstanceStateContract;
+OS.validateAndProjectOwn6BInstanceCommand = validateAndProjectOwn6BInstanceCommand;
 
 OS.usedChambers = [];
 OS.damagedChambers = [];
@@ -260,6 +286,15 @@ OS.fatigueZeroAddedUsed = [];
   var btn = OS.$("btn-roll");
   if (!btn) return;
 
+  if (OS.freeEdit && OS.hasOwn6B === false && OS._own6BExplicit) {
+    btn.classList.remove("empty");
+    btn.classList.add("locked");
+    btn.disabled = true;
+    btn.textContent = "Sem 6B Próprio";
+    btn.setAttribute("aria-label", "NPC sem 6B próprio — usa o 6B compartilhado do Xerife em cena");
+    return;
+  }
+
   if (OS.hasPerformedInitialReload === false) {
     btn.classList.add("empty");
     btn.classList.remove("locked");
@@ -316,7 +351,9 @@ OS.fatigueZeroAddedUsed = [];
 
   OS.syncUsedChambersVisual = function (skipAnimation) {
     var activeLimit = 6;
-    if (OS.freeEdit && typeof OS.get6BDiceArray === "function") {
+    if (OS.freeEdit && OS.hasOwn6B === false && OS._own6BExplicit) {
+      activeLimit = 0;
+    } else if (OS.freeEdit && typeof OS.get6BDiceArray === "function") {
       activeLimit = Math.max(1, Math.min(6, OS.get6BDiceArray().length || 1));
     }
     for (var i = 0; i < 6; i++) {
@@ -1369,14 +1406,33 @@ OS.fatigueZeroAddedUsed = [];
   };
 
   OS.get6BDiceArray = function () {
+    if (OS.freeEdit && OS.hasOwn6B === false && OS._own6BExplicit) {
+      return [];
+    }
     var cfg = OS.config6B || { d6: 6 };
-    if (OS.freeEdit && typeof OS.$ === "function" && typeof OS.parse6BConfigString === "function") {
+    if (OS.freeEdit && typeof OS.$ === "function") {
       var cfgEl = OS.$("config-6b");
-      if (cfgEl && String(cfgEl.value || "").trim()) {
-        var parsedFromInput = OS.parse6BConfigString(cfgEl.value);
-        if (Object.keys(parsedFromInput).length) {
-          cfg = parsedFromInput;
-          OS.config6B = Object.assign({}, parsedFromInput);
+      var rawInputStr = cfgEl ? String(cfgEl.value || "").trim() : "";
+      if (rawInputStr) {
+        var vInput = validateOwn6BComposition(rawInputStr, { enabled: true });
+        if (vInput.valid) {
+          cfg = Object.assign({}, vInput.compactCounts);
+          OS.config6B = Object.assign({}, vInput.compactCounts);
+          OS.own6BCounts = Object.assign({}, vInput.counts);
+        } else if (typeof OS.parse6BConfigString === "function") {
+          var parsedFromInput = OS.parse6BConfigString(rawInputStr);
+          if (Object.keys(parsedFromInput).length) {
+            cfg = parsedFromInput;
+            OS.config6B = Object.assign({}, parsedFromInput);
+          }
+        }
+      } else if (OS.hasOwn6B === true && OS.own6BCounts && typeof OS.own6BCounts === "object") {
+        var totalOwn = 0;
+        ALLOWED_6B_DIE_TYPES.forEach(function (dt) {
+          totalOwn += parseInt(OS.own6BCounts[dt], 10) || 0;
+        });
+        if (totalOwn > 0) {
+          cfg = Object.assign({}, OS.own6BCounts);
         }
       }
     }
@@ -1388,7 +1444,7 @@ OS.fatigueZeroAddedUsed = [];
     });
     if (OS.freeEdit) {
       if (!pool.length) pool.push("d6");
-      return pool;
+      return pool.slice(0, MAX_OWN_6B_DICE);
     }
     while (pool.length < 6) pool.push("d6");
     return pool.slice(0, 6);
@@ -2067,6 +2123,376 @@ OS.fatigueZeroAddedUsed = [];
       OS.scheduleSave();
     }
     return OS.isCriatura;
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * XER-04: Editor de 6B Próprio para NPCs e Bosses (freeEdit)
+   * Regra de domínio: ter 6B próprio NÃO torna o NPC uma Criatura e NÃO altera
+   * iniciativa nem concede ações extras.
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  OS.hasOwn6B = null;
+  OS.own6BCounts = createEmptyOwn6BCounts();
+  OS._own6BExplicit = false;
+  OS._lastValidOwn6BCounts = { d4: 0, d6: 6, d8: 0, d10: 0, d12: 0 };
+  OS.own6BValidationError = null;
+  OS.own6BValidationCode = null;
+
+  OS.getOwn6BTemplateSnapshot = function () {
+    var enabled = OS.hasOwn6B === true;
+    if (!enabled) {
+      return {
+        schemaVersion: 1,
+        enabled: false,
+        totalDice: 0,
+        counts: createEmptyOwn6BCounts(),
+        diceTypes: [],
+        diceSides: [],
+        formatted: ""
+      };
+    }
+    var valRes = validateOwn6BComposition(OS.own6BCounts, { enabled: true });
+    if (!valRes.valid) {
+      valRes = validateOwn6BComposition(OS._lastValidOwn6BCounts || { d6: 6 }, { enabled: true });
+    }
+    return {
+      schemaVersion: 1,
+      enabled: true,
+      totalDice: valRes.totalDice,
+      counts: Object.assign({}, valRes.counts),
+      diceTypes: valRes.diceTypes.slice(),
+      diceSides: valRes.diceSides.slice(),
+      formatted: valRes.formatted
+    };
+  };
+
+  OS.syncOwn6BEditorUI = function (opts) {
+    var options = opts || {};
+    var toggleWrap = OS.$("own-6b-toggle-wrap");
+    var cb = OS.$("has-own-6b");
+    var badge = OS.$("own-6b-mode-badge");
+    var panel = OS.$("npc-own-6b-editor");
+    var summaryEl = OS.$("own-6b-composition-summary");
+    var counterEl = OS.$("own-6b-dice-counter");
+    var pillsEl = OS.$("own-6b-preview-pills");
+    var feedbackEl = OS.$("own-6b-validation-feedback");
+    var cfgInp = OS.$("config-6b");
+    var fichaEl = OS.$("ficha");
+    var showEditor = !!OS.freeEdit;
+
+    if (toggleWrap) {
+      toggleWrap.hidden = !showEditor;
+      if (showEditor) toggleWrap.removeAttribute("hidden");
+      else toggleWrap.setAttribute("hidden", "");
+    }
+
+    if (panel) {
+      panel.hidden = !showEditor;
+      if (showEditor) panel.removeAttribute("hidden");
+      else panel.setAttribute("hidden", "");
+    }
+
+    var isEnabled = OS.hasOwn6B === true;
+    var counts = OS.own6BCounts || createEmptyOwn6BCounts();
+    if (!isEnabled) {
+      counts = createEmptyOwn6BCounts();
+    }
+    var totalDice = 0;
+    ALLOWED_6B_DIE_TYPES.forEach(function (dt) {
+      totalDice += Math.max(0, parseInt(counts[dt], 10) || 0);
+    });
+    var formatted = isEnabled ? formatOwn6BComposition(counts) : "";
+
+    if (fichaEl) {
+      if (showEditor) {
+        fichaEl.setAttribute("data-has-own-6b", isEnabled ? "true" : "false");
+      } else {
+        fichaEl.removeAttribute("data-has-own-6b");
+      }
+    }
+
+    if (cb) {
+      cb.checked = showEditor && isEnabled;
+      cb.disabled = !showEditor || !!OS.isReadOnlySheet;
+    }
+
+    if (badge) {
+      if (!showEditor) {
+        badge.hidden = true;
+        badge.setAttribute("hidden", "");
+        badge.textContent = "";
+        badge.className = "own-6b-mode-badge";
+      } else {
+        badge.hidden = false;
+        badge.removeAttribute("hidden");
+        badge.textContent = isEnabled ? (formatted || "ATIVADO") : "DESATIVADO";
+        badge.className = "own-6b-mode-badge " + (isEnabled ? "badge-enabled" : "badge-disabled");
+      }
+    }
+
+    if (panel) {
+      panel.classList.toggle("is-disabled", !isEnabled);
+    }
+
+    if (summaryEl) {
+      summaryEl.textContent = isEnabled
+        ? (formatted || "Defina 1 a 15 dados")
+        : "Sem 6B próprio (usa 6B compartilhado do Xerife em cena)";
+    }
+
+    if (counterEl) {
+      counterEl.textContent = totalDice + " / " + MAX_OWN_6B_DICE + " dados";
+      counterEl.classList.toggle("is-max", isEnabled && totalDice === MAX_OWN_6B_DICE);
+      counterEl.classList.toggle("is-invalid", !!OS.own6BValidationError);
+    }
+
+    if (cfgInp && showEditor && !options.preserveConfigInput) {
+      cfgInp.placeholder = isEnabled ? "Ex.: 4d6+2d8 (máx. 15)" : "Sem 6B próprio";
+    }
+
+    ALLOWED_6B_DIE_TYPES.forEach(function (dt) {
+      var val = isEnabled ? (Math.max(0, parseInt(counts[dt], 10) || 0)) : 0;
+      var inp = OS.$("own-6b-count-" + dt);
+      if (inp && !options.preserveInputValues) {
+        inp.value = String(val);
+      }
+      if (inp) {
+        inp.disabled = !showEditor || !!OS.isReadOnlySheet;
+      }
+      if (panel && typeof panel.querySelector === "function") {
+        var card = panel.querySelector('.own-6b-die-control[data-die-type="' + dt + '"]');
+        if (card) {
+          card.classList.toggle("has-dice", isEnabled && val > 0);
+        }
+        var decBtn = panel.querySelector('button[data-own6b-die="' + dt + '"][data-own6b-step="-1"]');
+        var incBtn = panel.querySelector('button[data-own6b-die="' + dt + '"][data-own6b-step="1"]');
+        if (decBtn) {
+          decBtn.disabled = !showEditor || !!OS.isReadOnlySheet || !isEnabled || val <= 0;
+        }
+        if (incBtn) {
+          incBtn.disabled = !showEditor || !!OS.isReadOnlySheet || (isEnabled && totalDice >= MAX_OWN_6B_DICE);
+        }
+      }
+    });
+
+    if (pillsEl) {
+      pillsEl.innerHTML = "";
+      if (!isEnabled || totalDice <= 0) {
+        var hint = document.createElement("span");
+        hint.className = "own-6b-empty-hint";
+        hint.textContent = isEnabled
+          ? "Selecione de 1 a 15 dados (d4, d6, d8, d10, d12)."
+          : "6B próprio desativado neste template.";
+        pillsEl.appendChild(hint);
+      } else {
+        var orderDesc = ["d12", "d10", "d8", "d6", "d4"];
+        orderDesc.forEach(function (dt) {
+          var qty = Math.max(0, parseInt(counts[dt], 10) || 0);
+          for (var i = 0; i < qty; i++) {
+            var pill = document.createElement("span");
+            pill.className = "own-6b-die-pill";
+            pill.setAttribute("data-die-type", dt);
+            pill.textContent = dt;
+            pillsEl.appendChild(pill);
+          }
+        });
+      }
+    }
+
+    if (feedbackEl) {
+      if (showEditor && OS.own6BValidationError) {
+        feedbackEl.textContent = OS.own6BValidationError;
+        feedbackEl.hidden = false;
+        feedbackEl.removeAttribute("hidden");
+      } else {
+        feedbackEl.textContent = "";
+        feedbackEl.hidden = true;
+        feedbackEl.setAttribute("hidden", "");
+      }
+    }
+  };
+
+  OS.setOwn6BEnabled = function (enabled, opts) {
+    var options = opts || {};
+    if (!options.skipSave) {
+      var inUnauthorizedMesa = !!(
+        OS.activeMesaState &&
+        OS.activeMesaState.mesaId &&
+        !OS.activeMesaState.isMestre
+      );
+      if (OS.isReadOnlySheet || !OS.freeEdit || inUnauthorizedMesa) {
+        OS.syncOwn6BEditorUI();
+        return OS.hasOwn6B;
+      }
+    }
+
+    if (enabled === null || enabled === undefined) {
+      OS.hasOwn6B = null;
+      OS._own6BExplicit = false;
+      OS.own6BValidationError = null;
+      OS.own6BValidationCode = null;
+      OS.syncOwn6BEditorUI(options);
+      return OS.hasOwn6B;
+    }
+
+    if (enabled === false) {
+      var prevTotal = 0;
+      ALLOWED_6B_DIE_TYPES.forEach(function (dt) {
+        prevTotal += Math.max(0, parseInt((OS.own6BCounts || {})[dt], 10) || 0);
+      });
+      if (prevTotal >= MIN_OWN_6B_DICE && prevTotal <= MAX_OWN_6B_DICE) {
+        OS._lastValidOwn6BCounts = Object.assign({}, OS.own6BCounts);
+      }
+      OS.hasOwn6B = false;
+      if (options.markExplicit !== false) {
+        OS._own6BExplicit = true;
+      }
+      OS.own6BCounts = createEmptyOwn6BCounts();
+      OS.config6B = {};
+      OS.own6BValidationError = null;
+      OS.own6BValidationCode = null;
+      var cfgInpOff = OS.$("config-6b");
+      if (cfgInpOff && OS.freeEdit && !options.preserveConfigInput) {
+        cfgInpOff.value = "";
+      }
+      OS.syncOwn6BEditorUI(options);
+      if (OS.syncUsedChambersVisual) OS.syncUsedChambersVisual(true);
+      if (OS.updateReloadButtonState) OS.updateReloadButtonState();
+      if (!options.skipSave && typeof OS.scheduleSave === "function") {
+        OS.scheduleSave();
+      }
+      return OS.hasOwn6B;
+    }
+
+    // enabled === true
+    var seedInput = options.composition !== undefined
+      ? options.composition
+      : options.counts !== undefined
+      ? options.counts
+      : null;
+
+    if (!seedInput) {
+      var currTotal = 0;
+      ALLOWED_6B_DIE_TYPES.forEach(function (dt) {
+        currTotal += Math.max(0, parseInt((OS.own6BCounts || {})[dt], 10) || 0);
+      });
+      if (currTotal >= MIN_OWN_6B_DICE && currTotal <= MAX_OWN_6B_DICE) {
+        seedInput = OS.own6BCounts;
+      }
+    }
+    if (!seedInput) {
+      var cfgEl = OS.$("config-6b");
+      var rawCfgVal = cfgEl ? String(cfgEl.value || "").trim() : "";
+      if (rawCfgVal) {
+        var checkStr = validateOwn6BComposition(rawCfgVal, { enabled: true });
+        if (checkStr.valid) {
+          seedInput = checkStr.counts;
+        }
+      }
+    }
+    if (!seedInput && OS._lastValidOwn6BCounts) {
+      var checkLast = validateOwn6BComposition(OS._lastValidOwn6BCounts, { enabled: true });
+      if (checkLast.valid) {
+        seedInput = checkLast.counts;
+      }
+    }
+    if (!seedInput) {
+      seedInput = { d4: 0, d6: 6, d8: 0, d10: 0, d12: 0 };
+    }
+
+    OS.setOwn6BComposition(seedInput, {
+      skipSave: !!options.skipSave,
+      markExplicit: options.markExplicit !== false
+    });
+    return OS.hasOwn6B;
+  };
+
+  OS.setOwn6BComposition = function (input, opts) {
+    var options = opts || {};
+    if (!options.skipSave) {
+      var inUnauthorizedMesa = !!(
+        OS.activeMesaState &&
+        OS.activeMesaState.mesaId &&
+        !OS.activeMesaState.isMestre
+      );
+      if (OS.isReadOnlySheet || !OS.freeEdit || inUnauthorizedMesa) {
+        return {
+          valid: false,
+          errorCode: "READ_ONLY",
+          errorMessage: "Edição não permitida no modo somente leitura."
+        };
+      }
+    }
+
+    var res = validateOwn6BComposition(input, { enabled: true });
+    if (!res.valid) {
+      OS.own6BValidationError = res.errorMessage || "Composição de 6B inválida.";
+      OS.own6BValidationCode = res.errorCode || "INVALID_COMPOSITION";
+      OS.syncOwn6BEditorUI({
+        preserveInputValues: !!options.preserveInputValues,
+        preserveConfigInput: !!options.preserveConfigInput
+      });
+      return res;
+    }
+
+    OS.hasOwn6B = true;
+    if (options.markExplicit !== false) {
+      OS._own6BExplicit = true;
+    }
+    OS.own6BCounts = Object.assign({}, res.counts);
+    OS._lastValidOwn6BCounts = Object.assign({}, res.counts);
+    OS.config6B = Object.assign({}, res.compactCounts);
+    OS.own6BValidationError = null;
+    OS.own6BValidationCode = null;
+
+    var cfgEl = OS.$("config-6b");
+    if (cfgEl && !options.preserveConfigInput) {
+      cfgEl.value = res.formatted;
+    }
+
+    OS.syncOwn6BEditorUI(options);
+    if (OS.syncUsedChambersVisual) OS.syncUsedChambersVisual(true);
+    if (OS.updateReloadButtonState) OS.updateReloadButtonState();
+    if (!options.skipSave && typeof OS.scheduleSave === "function") {
+      OS.scheduleSave();
+    }
+    return res;
+  };
+
+  OS.setOwn6BDieCount = function (dieType, rawCount, opts) {
+    var options = opts || {};
+    var dt = String(dieType || "").trim().toLowerCase();
+    if (ALLOWED_6B_DIE_TYPES.indexOf(dt) === -1) {
+      var invalidTypeRes = validateOwn6BComposition(
+        (function () {
+          var m = {};
+          m[dt || "invalid"] = 1;
+          return m;
+        })(),
+        { enabled: true }
+      );
+      OS.own6BValidationError = invalidTypeRes.errorMessage;
+      OS.own6BValidationCode = invalidTypeRes.errorCode;
+      OS.syncOwn6BEditorUI({ preserveInputValues: true });
+      return invalidTypeRes;
+    }
+
+    var baseCounts = OS.hasOwn6B === true && OS.own6BCounts
+      ? Object.assign({}, OS.own6BCounts)
+      : createEmptyOwn6BCounts();
+    baseCounts[dt] = rawCount;
+    return OS.setOwn6BComposition(baseCounts, options);
+  };
+
+  OS.adjustOwn6BDieCount = function (dieType, delta, opts) {
+    var dt = String(dieType || "").trim().toLowerCase();
+    var step = parseInt(delta, 10) || 0;
+    var currentCounts = OS.hasOwn6B === true && OS.own6BCounts
+      ? Object.assign({}, OS.own6BCounts)
+      : createEmptyOwn6BCounts();
+    var curVal = Math.max(0, parseInt(currentCounts[dt], 10) || 0);
+    var nextVal = curVal + step;
+    return OS.setOwn6BDieCount(dt, nextVal, opts);
   };
 
   OS.getSceneTerrorLevel = function () {
@@ -3319,6 +3745,71 @@ OS.fatigueZeroAddedUsed = [];
       });
     }
     if (OS.syncCriaturaModeUI) OS.syncCriaturaModeUI();
+
+    var own6bCb = OS.$("has-own-6b");
+    if (own6bCb && !own6bCb._bound) {
+      own6bCb._bound = true;
+      own6bCb.addEventListener("change", function () {
+        OS.setOwn6BEnabled(!!own6bCb.checked);
+      });
+    }
+
+    var cfg6bDirectInp = OS.$("config-6b");
+    if (cfg6bDirectInp && !cfg6bDirectInp._own6bBound) {
+      cfg6bDirectInp._own6bBound = true;
+      var onDirectCfg6b = function () {
+        if (!OS.freeEdit) return;
+        var rawTxt = String(cfg6bDirectInp.value || "").trim();
+        if (rawTxt) {
+          OS.setOwn6BComposition(rawTxt, {
+            preserveConfigInput: true,
+            markExplicit: true
+          });
+        } else if (OS.hasOwn6B === true) {
+          OS.setOwn6BComposition("", {
+            preserveConfigInput: true,
+            skipSave: true
+          });
+        }
+      };
+      cfg6bDirectInp.addEventListener("input", onDirectCfg6b);
+      cfg6bDirectInp.addEventListener("change", onDirectCfg6b);
+    }
+
+    var own6bPresetBtn = OS.$("btn-own-6b-preset-6d6");
+    if (own6bPresetBtn && !own6bPresetBtn._bound) {
+      own6bPresetBtn._bound = true;
+      own6bPresetBtn.addEventListener("click", function () {
+        OS.setOwn6BComposition({ d4: 0, d6: 6, d8: 0, d10: 0, d12: 0 });
+      });
+    }
+
+    var own6bControlsWrap = OS.$("own-6b-die-controls");
+    if (own6bControlsWrap && !own6bControlsWrap._bound) {
+      own6bControlsWrap._bound = true;
+      own6bControlsWrap.addEventListener("click", function (ev) {
+        var t = ev && ev.target;
+        var btn = t && typeof t.closest === "function" ? t.closest("button[data-own6b-die][data-own6b-step]") : null;
+        if (!btn || btn.disabled) return;
+        var dt = btn.getAttribute("data-own6b-die");
+        var step = parseInt(btn.getAttribute("data-own6b-step"), 10) || 0;
+        if (dt && step) {
+          OS.adjustOwn6BDieCount(dt, step);
+        }
+      });
+      ALLOWED_6B_DIE_TYPES.forEach(function (dt) {
+        var dieInp = OS.$("own-6b-count-" + dt);
+        if (dieInp && !dieInp._bound) {
+          dieInp._bound = true;
+          dieInp.addEventListener("change", function () {
+            var rawVal = String(dieInp.value || "").trim();
+            var parsed = rawVal === "" ? 0 : Number(rawVal);
+            OS.setOwn6BDieCount(dt, parsed);
+          });
+        }
+      });
+    }
+    if (OS.syncOwn6BEditorUI) OS.syncOwn6BEditorUI();
 
     // 2. Calculadora de Dificuldade de Testes
     var calcDb = OS.$("test-calc-db");

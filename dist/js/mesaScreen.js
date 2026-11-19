@@ -5,7 +5,7 @@
  * Compilado de Magias somente leitura e Modal de Resumo de Regras (#regras-modal).
  */
 import { OS } from "./app.js";
-import { computeTurnActionBudget, resolveIndividual6BInitiative, resolveCombatantInitiativeMode, computeCascadeInitiatives, extractMonsterFixedActions, inspectCombatConditionsForActions, evaluateSheetOverloadForActions, CANONICAL_ACTION_COSTS, ALLOWED_REACTION_ACTION_TYPES, resolveCanonicalActionCost, createCombatantActionState, computeAvailableActionsFromState, hasPendingActionReservations, applyActionControllerOperation } from "./rules/index.js";
+import { computeTurnActionBudget, resolveIndividual6BInitiative, resolveCombatantInitiativeMode, computeCascadeInitiatives, extractMonsterFixedActions, inspectCombatConditionsForActions, evaluateSheetOverloadForActions, CANONICAL_ACTION_COSTS, ALLOWED_REACTION_ACTION_TYPES, resolveCanonicalActionCost, createCombatantActionState, computeAvailableActionsFromState, hasPendingActionReservations, applyActionControllerOperation, applyFatigueCascadeToInstanceRoll, createOwn6BInstanceStateContract, validateAndProjectOwn6BInstanceCommand, extractOwn6BTemplate, entityHasExplicitOwn6B } from "./rules/index.js";
 
 var BESTIARIO_INDEX_URL = "data/bestiario/bestiario-index.json";
 var SCENE_LS_PREFIX = "oesteSombrioMesaScene_";
@@ -51,7 +51,11 @@ OS.activeMesaState = {
   gmEditingSheet: null, // { mode: "custom" | "mesa-npc" | "scene" | "player-readonly", customId, mesaNpcId, instanceId, title }
   playerFichaId: null,
   playerSheets: [],
-  feedEvents: []
+  feedEvents: [],
+  instance6BStates: {},
+  instance6BSelected: {},
+  instance6BFeedback: {},
+  instance6BBusy: {}
 };
 
 var mesaRealtimeReconnectTimer = null;
@@ -323,16 +327,69 @@ OS.resolveCreature6BInfo = function (data, options) {
       : data && typeof data === "object"
       ? data
       : {};
+
+  var isExplicitNoOwn6B =
+    !isPlayerSheetData(d, options) &&
+    (d.hasOwn6B === false ||
+      d["has-own-6b"] === false ||
+      Boolean(d.own6B && typeof d.own6B === "object" && d.own6B.enabled === false));
+
+  if (isExplicitNoOwn6B) {
+    var mutOff = false;
+    if (d["config-6b"] !== "" && d["config-6b"] !== undefined) {
+      d["config-6b"] = "";
+      mutOff = true;
+    }
+    if (d.config6B && typeof d.config6B === "object" && Object.keys(d.config6B).length > 0) {
+      d.config6B = {};
+      mutOff = true;
+    }
+    return {
+      hasOwn6B: false,
+      cfg: {},
+      cfgText: "Sem 6B próprio",
+      diceList: [],
+      count: 0,
+      mutated: mutOff
+    };
+  }
+
   var rawStr =
     d["config-6b"] !== undefined && d["config-6b"] !== null
       ? String(d["config-6b"]).trim()
       : "";
+  if (
+    !rawStr &&
+    d.own6B &&
+    typeof d.own6B === "object" &&
+    d.own6B.enabled === true &&
+    d.own6B.formatted
+  ) {
+    rawStr = String(d.own6B.formatted).trim();
+  }
   var parsedFromStr =
     rawStr && typeof OS.parse6BConfigString === "function"
       ? OS.parse6BConfigString(rawStr)
       : {};
   var existingObj =
     d.config6B && typeof d.config6B === "object" ? d.config6B : {};
+  if (
+    !Object.keys(existingObj).length &&
+    d.own6B &&
+    typeof d.own6B === "object" &&
+    d.own6B.enabled === true &&
+    d.own6B.counts &&
+    typeof d.own6B.counts === "object"
+  ) {
+    var compactFromOwn = {};
+    ["d4", "d6", "d8", "d10", "d12"].forEach(function (dk) {
+      var q = parseInt(String(d.own6B.counts[dk] || 0), 10) || 0;
+      if (q > 0) compactFromOwn[dk] = q;
+    });
+    if (Object.keys(compactFromOwn).length > 0) {
+      existingObj = compactFromOwn;
+    }
+  }
 
   var cfg = null;
   var mutated = false;
@@ -397,6 +454,9 @@ OS.resolveCreature6BInfo = function (data, options) {
   if (!diceList.length) {
     diceList.push("d6");
   }
+  if (diceList.length > 15) {
+    diceList = diceList.slice(0, 15);
+  }
 
   var cfgText =
     d["config-6b"] ||
@@ -404,7 +464,13 @@ OS.resolveCreature6BInfo = function (data, options) {
       ? OS.format6BConfig(cfg)
       : "1d6");
 
+  var explicitHasOwn =
+    d.hasOwn6B === true ||
+    d["has-own-6b"] === true ||
+    Boolean(d.own6B && typeof d.own6B === "object" && d.own6B.enabled === true);
+
   return {
+    hasOwn6B: explicitHasOwn ? true : null,
     cfg: cfg,
     cfgText: cfgText,
     diceList: diceList,
@@ -824,6 +890,1090 @@ if (typeof hasPendingActionReservations === "function") {
 if (typeof applyActionControllerOperation === "function") {
   OS.applyActionControllerOperation = applyActionControllerOperation;
 }
+if (typeof applyFatigueCascadeToInstanceRoll === "function" && !OS.applyFatigueCascadeToInstanceRoll) {
+  OS.applyFatigueCascadeToInstanceRoll = applyFatigueCascadeToInstanceRoll;
+}
+if (typeof createOwn6BInstanceStateContract === "function" && !OS.createOwn6BInstanceStateContract) {
+  OS.createOwn6BInstanceStateContract = createOwn6BInstanceStateContract;
+}
+if (typeof validateAndProjectOwn6BInstanceCommand === "function" && !OS.validateAndProjectOwn6BInstanceCommand) {
+  OS.validateAndProjectOwn6BInstanceCommand = validateAndProjectOwn6BInstanceCommand;
+}
+if (typeof extractOwn6BTemplate === "function" && !OS.extractOwn6BTemplate) {
+  OS.extractOwn6BTemplate = extractOwn6BTemplate;
+}
+if (typeof entityHasExplicitOwn6B === "function" && !OS.entityHasOwn6B) {
+  OS.entityHasOwn6B = entityHasExplicitOwn6B;
+}
+
+/* ─── XER-05 & XER-06: Motor de Estado e Combate 6B por Instância ─── */
+
+function isUserAuthorizedForInstance6B(instanceId, mode) {
+  var st = OS.activeMesaState;
+  if (!st || !st.mesaId || !st.currentUserId || !instanceId) return false;
+  if (st.isMestre) return true;
+  if (mode === "read" || mode === "defender") {
+    var tokens = Array.isArray(st.mesaTokens) ? st.mesaTokens : [];
+    return tokens.some(function (t) {
+      return (
+        t &&
+        t.owner_type === "creature" &&
+        String(t.owner_ref) === String(instanceId) &&
+        t.owner_user_id &&
+        String(t.owner_user_id) === String(st.currentUserId)
+      );
+    });
+  }
+  return false;
+}
+
+function isInstance6BConflictError(error) {
+  if (!error || typeof error !== "object") return false;
+  var code = String(error.code || error.errorCode || "").toUpperCase();
+  var status = Number(error.status || error.statusCode || 0) || 0;
+  var reason = String(error.reason || error.message || "");
+  return (
+    code === "PT409" ||
+    code === "409" ||
+    status === 409 ||
+    code === "40001" ||
+    code === "P0409" ||
+    reason === "VERSION_CONFLICT"
+  );
+}
+
+function isInstance6BGatewayTimeoutError(error) {
+  if (!error || typeof error !== "object") return false;
+  var code = String(error.code || error.errorCode || "").toUpperCase();
+  var status = Number(error.status || error.statusCode || 0) || 0;
+  var reason = String(error.reason || error.message || "");
+  return (
+    status === 504 ||
+    code === "504" ||
+    /upstream request timeout|gateway time-?out|timed?\s*out/i.test(reason)
+  );
+}
+
+function formatInstance6BError(error, cmdType) {
+  var code = error && (error.code || error.errorCode);
+  var reason = error && (error.reason || error.message || "");
+  if (code === "42501" || reason === "UNAUTHORIZED") {
+    return "Operação não autorizada para este usuário.";
+  }
+  if (isInstance6BConflictError(error)) {
+    return "O conjunto 6B da instância mudou em outra sessão. Estado atualizado; tente novamente se necessário.";
+  }
+  if (isInstance6BGatewayTimeoutError(error)) {
+    return "Tempo esgotado na comunicação com o servidor (timeout de gateway). Estado recarregado; confira antes de tentar novamente.";
+  }
+  if (code === "0A000" || reason === "ALREADY_ROLLED") {
+    return "O conjunto já foi rolado. Gaste os dados disponíveis antes de renovar.";
+  }
+  if (code === "55000") {
+    if (cmdType === "RENEW" || reason === "POOL_NOT_EXHAUSTED") {
+      return "Renovação exige esgotar todos os dados intactos disponíveis.";
+    }
+    if (reason === "ALL_CHAMBERS_DAMAGED") {
+      return "Todos os dados da instância estão bloqueados por dano.";
+    }
+    return "Conjunto ainda não foi rolado ou está indisponível.";
+  }
+  if (code === "22023") {
+    if (reason === "CHAMBER_ALREADY_SPENT_OR_BLOCKED") {
+      return "Dado indisponível (já consumido, bloqueado por dano ou zerado por fadiga).";
+    }
+    if (reason === "DEFENDER_CHOICE_COUNT_MISMATCH" || reason === "INVALID_DEFENDER_DAMAGE_CHOICE") {
+      return "Escolha de dados perdidos pelo defensor inválida ou já bloqueada.";
+    }
+    return "Parâmetros inválidos para a operação no 6B da instância.";
+  }
+  return "Não foi possível concluir a operação no 6B da instância.";
+}
+
+function normalizeRawInstance6BSnapshot(raw, fallbackMesaId) {
+  if (!raw || typeof raw !== "object") return null;
+  var instId = String(raw.instanceId || raw.instance_id || "").trim();
+  if (!instId) return null;
+  var dados = Array.isArray(raw.dados) ? raw.dados.map(Number) : [];
+  var n = dados.length;
+  var bloqueados = Array.isArray(raw.bloqueados)
+    ? Array.from(new Set(raw.bloqueados.map(Number))).filter(function (i) { return Number.isInteger(i) && i >= 0 && i < n; }).sort(function (a, b) { return a - b; })
+    : [];
+  var orig = Array.isArray(raw.resultadosOriginais || raw.resultados_originais)
+    ? (raw.resultadosOriginais || raw.resultados_originais).map(Number)
+    : [];
+  var fadiga = Math.max(0, Math.min(40, Math.trunc(Number(raw.fadiga || 0) || 0)));
+  var res = Array.isArray(raw.resultados) ? raw.resultados.map(Number) : [];
+  var zerados = Array.isArray(raw.zeradosPorFadiga || raw.zerados_fadiga)
+    ? (raw.zeradosPorFadiga || raw.zerados_fadiga).map(Number)
+    : [];
+
+  if (orig.length === n && OS.applyFatigueCascadeToInstanceRoll) {
+    var casc = OS.applyFatigueCascadeToInstanceRoll(orig, bloqueados, fadiga);
+    res = casc.values;
+    zerados = casc.zeroedByFatigue;
+  }
+
+  var rawUsados = Array.isArray(raw.usados) ? raw.usados.map(Number) : [];
+  var consumidos = Array.isArray(raw.consumidos)
+    ? raw.consumidos.map(Number)
+    : rawUsados.filter(function (i) { return bloqueados.indexOf(i) === -1 && zerados.indexOf(i) === -1; });
+  consumidos = Array.from(new Set(consumidos)).filter(function (i) {
+    return Number.isInteger(i) && i >= 0 && i < n && bloqueados.indexOf(i) === -1;
+  }).sort(function (a, b) { return a - b; });
+
+  var unionSet = {};
+  consumidos.forEach(function (i) { unionSet[i] = true; });
+  bloqueados.forEach(function (i) { unionSet[i] = true; });
+  zerados.forEach(function (i) { unionSet[i] = true; });
+  var usados = Object.keys(unionSet).map(Number).sort(function (a, b) { return a - b; });
+
+  var esgotado = false;
+  if (n > 0 && res.length === n) {
+    esgotado = true;
+    for (var k = 0; k < n; k++) {
+      if (bloqueados.indexOf(k) === -1 && usados.indexOf(k) === -1 && Number(res[k]) > 0) {
+        esgotado = false;
+        break;
+      }
+    }
+  }
+
+  return {
+    schemaVersion: 1,
+    mesaId: String(raw.mesaId || raw.mesa_id || fallbackMesaId || ""),
+    mapaId: raw.mapaId || raw.mapa_id || null,
+    instanceId: instId,
+    tokenId: raw.tokenId || raw.token_id || null,
+    sourceId: raw.sourceId || raw.source_id || null,
+    sourceType: raw.sourceType || raw.source_type || "custom",
+    enabled: raw.enabled !== false && n > 0,
+    versao: Math.max(0, Math.trunc(Number(raw.versao || 0) || 0)),
+    dados: dados,
+    resultadosOriginais: orig,
+    resultados: res,
+    consumidos: consumidos,
+    bloqueados: bloqueados,
+    zeradosPorFadiga: zerados,
+    usados: usados,
+    fadiga: fadiga,
+    esgotado: esgotado,
+    lastOpId: raw.lastOpId || raw.last_op_id || null,
+    opLedger: (raw.opLedger && typeof raw.opLedger === "object") ? deepClone(raw.opLedger) : {},
+    opOrder: Array.isArray(raw.opOrder) ? raw.opOrder.slice() : Object.keys(raw.opLedger || {})
+  };
+}
+
+OS.syncInstanceDataFromOwn6BState = function (instance, stateSnapshot) {
+  if (!instance || !instance.data || !stateSnapshot) return null;
+  var st = OS.activeMesaState;
+  var norm = normalizeRawInstance6BSnapshot(stateSnapshot, st && st.mesaId);
+  if (!norm) return null;
+
+  if (st && st.instance6BStates) {
+    st.instance6BStates[norm.instanceId] = deepClone(norm);
+    // Limpa seleções de consumo que não estejam mais disponíveis
+    if (st.instance6BSelected && Array.isArray(st.instance6BSelected[norm.instanceId])) {
+      st.instance6BSelected[norm.instanceId] = st.instance6BSelected[norm.instanceId].filter(function (idx) {
+        return (
+          Number.isInteger(idx) &&
+          idx >= 0 &&
+          idx < norm.dados.length &&
+          norm.usados.indexOf(idx) === -1 &&
+          norm.bloqueados.indexOf(idx) === -1 &&
+          Number(norm.resultados[idx]) > 0
+        );
+      });
+    }
+  }
+
+  var publicCopy = deepClone(norm);
+  delete publicCopy.opLedger;
+  delete publicCopy.opOrder;
+  instance.own6BInstance = publicCopy;
+
+  var d = instance.data;
+  var n = norm.dados.length;
+  d.damagedChambers = norm.bloqueados.slice();
+  d.consumedChambers = norm.consumidos.slice();
+  d.fatigueZeroedChambers = norm.zeradosPorFadiga.slice();
+  d.usedChambers = norm.usados.slice();
+  setFadigaInState(d, norm.fadiga);
+
+  if (norm.resultados.length === n) {
+    var prevOrigLen = Array.isArray(d.originalChambers) ? d.originalChambers.length : 0;
+    var nextOrig = norm.resultadosOriginais.map(function (v) { return String(v); });
+    for (var oi = nextOrig.length; oi < prevOrigLen; oi++) {
+      nextOrig.push("0");
+    }
+    d.originalChambers = nextOrig;
+    for (var i = 0; i < n; i++) {
+      d["chamber-" + i] = String(norm.resultados[i] !== undefined ? norm.resultados[i] : 0);
+    }
+  } else {
+    d.originalChambers = [];
+    for (var j = 0; j < n; j++) {
+      d["chamber-" + j] = "0";
+    }
+  }
+
+  // Sincroniza mesa_token_status em memória para o Mestre
+  if (st && st.isMestre && Array.isArray(st.mesaTokens)) {
+    var tok = st.mesaTokens.find(function (t) {
+      return t && t.owner_type === "creature" && String(t.owner_ref) === String(norm.instanceId);
+    });
+    if (tok) {
+      st.tokenStatus = st.tokenStatus || {};
+      var curStatus = st.tokenStatus[tok.id] || {
+        token_id: tok.id,
+        mesa_id: st.mesaId,
+        mapa_id: tok.mapa_id,
+        owner_type: "creature",
+        owner_ref: norm.instanceId
+      };
+      curStatus.six_b_total = Math.max(1, n);
+      curStatus.danos_bloqueados = Math.min(n, norm.bloqueados.length);
+      st.tokenStatus[tok.id] = curStatus;
+      if (OS.refreshTokenBars) OS.refreshTokenBars();
+    }
+  }
+
+  return norm;
+};
+
+OS.ensureInstanceOwn6BState = function (instanceOrId, options) {
+  options = options || {};
+  var st = OS.activeMesaState;
+  var inst =
+    typeof instanceOrId === "string"
+      ? OS.getSceneCreatureById(instanceOrId)
+      : instanceOrId;
+  if (!inst || !inst.instanceId || !inst.data) return null;
+
+  var d = inst.data;
+  var isExplicitDisabled =
+    d.hasOwn6B === false ||
+    d["has-own-6b"] === false ||
+    Boolean(d.own6B && typeof d.own6B === "object" && d.own6B.enabled === false);
+  if (isExplicitDisabled) {
+    if (st && st.instance6BStates) {
+      delete st.instance6BStates[inst.instanceId];
+    }
+    delete inst.own6BInstance;
+    return null;
+  }
+
+  if (st && !st.instance6BStates) st.instance6BStates = {};
+  var existing = st && st.instance6BStates ? st.instance6BStates[inst.instanceId] : null;
+  if (existing && !options.forceReinit) {
+    var tokRef = OS.getSceneToken ? OS.getSceneToken(inst.instanceId) : null;
+    if (tokRef) {
+      existing.tokenId = tokRef.id || existing.tokenId;
+      existing.mapaId = tokRef.mapa_id || existing.mapaId;
+    }
+    return existing;
+  }
+
+  if (
+    !options.resetRuntimeIfTemplate &&
+    inst.own6BInstance &&
+    typeof inst.own6BInstance === "object" &&
+    String(inst.own6BInstance.instanceId) === String(inst.instanceId) &&
+    Array.isArray(inst.own6BInstance.dados) &&
+    inst.own6BInstance.dados.length > 0
+  ) {
+    return OS.syncInstanceDataFromOwn6BState(inst, inst.own6BInstance);
+  }
+
+  var info6B = OS.resolveCreature6BInfo(d);
+  if (!info6B || !info6B.count || info6B.hasOwn6B === false) return null;
+
+  var diceSides =
+    d.own6B && Array.isArray(d.own6B.diceSides) && d.own6B.diceSides.length > 0
+      ? d.own6B.diceSides.slice(0, 15).map(Number)
+      : info6B.diceList.slice(0, 15).map(function (dt) {
+          return parseInt(String(dt).replace(/\D/g, ""), 10) || 6;
+        });
+
+  var sceneTok = OS.getSceneToken ? OS.getSceneToken(inst.instanceId) : null;
+  var fadigaInit = countFadigaFromState(d);
+
+  var contract = OS.createOwn6BInstanceStateContract
+    ? OS.createOwn6BInstanceStateContract(
+        {
+          schemaVersion: 1,
+          enabled: true,
+          totalDice: diceSides.length,
+          diceSides: diceSides
+        },
+        {
+          mesaId: (st && st.mesaId) || "",
+          mapaId: (sceneTok && sceneTok.mapa_id) || (st && st.activeMapId) || null,
+          instanceId: inst.instanceId,
+          tokenId: (sceneTok && sceneTok.id) || null,
+          sourceId: inst.sourceId || null,
+          sourceType: inst.sourceType || "custom",
+          fadiga: fadigaInit
+        }
+      )
+    : {
+        schemaVersion: 1,
+        mesaId: (st && st.mesaId) || null,
+        mapaId: (sceneTok && sceneTok.mapa_id) || (st && st.activeMapId) || null,
+        instanceId: inst.instanceId,
+        tokenId: (sceneTok && sceneTok.id) || null,
+        sourceId: inst.sourceId || null,
+        sourceType: inst.sourceType || "custom",
+        enabled: true,
+        versao: 0,
+        dados: diceSides,
+        resultados: [],
+        resultadosOriginais: [],
+        consumidos: [],
+        bloqueados: [],
+        zeradosPorFadiga: [],
+        usados: [],
+        fadiga: fadigaInit,
+        esgotado: false,
+        lastOpId: null,
+        opLedger: {},
+        opOrder: []
+      };
+
+  if (!options.resetRuntimeIfTemplate) {
+    var n = diceSides.length;
+    var damaged = OS.getRealDamagedChambers
+      ? OS.getRealDamagedChambers(d, n)
+      : Array.isArray(d.damagedChambers)
+      ? d.damagedChambers.filter(function (i) { return Number.isInteger(i) && i >= 0 && i < n; })
+      : [];
+    var hasAnyChamberVal = false;
+    var rawOrig = [];
+    for (var ci = 0; ci < n; ci++) {
+      var origEntry = Array.isArray(d.originalChambers) && d.originalChambers[ci] !== undefined
+        ? parseInt(String(d.originalChambers[ci]), 10)
+        : parseInt(String(d["chamber-" + ci] || "0"), 10);
+      if (isNaN(origEntry) || origEntry < 0) origEntry = 0;
+      if (damaged.indexOf(ci) >= 0) origEntry = 0;
+      if (origEntry > 0) hasAnyChamberVal = true;
+      rawOrig.push(origEntry);
+    }
+    contract.bloqueados = damaged.slice().sort(function (a, b) { return a - b; });
+    if (hasAnyChamberVal) {
+      contract.resultadosOriginais = rawOrig;
+      var cascHydrate = OS.applyFatigueCascadeToInstanceRoll
+        ? OS.applyFatigueCascadeToInstanceRoll(rawOrig, contract.bloqueados, fadigaInit)
+        : { values: rawOrig.slice(), zeroedByFatigue: [] };
+      contract.resultados = cascHydrate.values;
+      contract.zeradosPorFadiga = cascHydrate.zeroedByFatigue;
+      var rawUsed = Array.isArray(d.usedChambers) ? d.usedChambers.map(Number) : [];
+      contract.consumidos = rawUsed.filter(function (idx) {
+        return (
+          Number.isInteger(idx) &&
+          idx >= 0 &&
+          idx < n &&
+          contract.bloqueados.indexOf(idx) === -1 &&
+          contract.zeradosPorFadiga.indexOf(idx) === -1
+        );
+      });
+      contract.versao = 1;
+    } else {
+      contract.usados = contract.bloqueados.slice();
+    }
+  } else {
+    // Nova instância a partir de molde XER-04: inicia sempre com saldo limpo e independente do molde
+    for (var rst = 0; rst < diceSides.length; rst++) {
+      d["chamber-" + rst] = "0";
+    }
+    d.originalChambers = [];
+    d.usedChambers = [];
+    d.consumedChambers = [];
+    d.damagedChambers = [];
+    d.fatigueZeroedChambers = [];
+  }
+
+  return OS.syncInstanceDataFromOwn6BState(inst, contract);
+};
+
+OS.getInstanceOwn6BState = function (instanceId) {
+  if (!isUserAuthorizedForInstance6B(instanceId, "read")) return null;
+  var st = OS.activeMesaState;
+  var state = st && st.instance6BStates ? st.instance6BStates[instanceId] : null;
+  if (!state) {
+    var inst = OS.getSceneCreatureById(instanceId);
+    if (inst) {
+      state = OS.ensureInstanceOwn6BState(inst);
+    }
+  }
+  if (!state) return null;
+  var copy = deepClone(state);
+  delete copy.opLedger;
+  delete copy.opOrder;
+  return copy;
+};
+
+OS.initInstanceOwn6BOnServer = async function (instanceOrId, options) {
+  options = options || {};
+  var st = OS.activeMesaState;
+  var inst =
+    typeof instanceOrId === "string"
+      ? OS.getSceneCreatureById(instanceOrId)
+      : instanceOrId;
+  if (!st || !st.mesaId || !st.isMestre || !inst || !inst.instanceId) return null;
+  var localState = OS.ensureInstanceOwn6BState(inst, options);
+  if (!localState || !localState.enabled || !localState.dados.length) return null;
+
+  var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
+  if (!client || typeof client.rpc !== "function") return localState;
+
+  try {
+    var opId = options.opId || "init_" + inst.instanceId;
+    var res = await client.rpc("inicializar_6b_instancia", {
+      p_mesa: st.mesaId,
+      p_instance: inst.instanceId,
+      p_dados: localState.dados.slice(),
+      p_op_id: opId,
+      p_mapa: options.mapaId || localState.mapaId || st.activeMapId || null,
+      p_token: options.tokenId || localState.tokenId || null,
+      p_source_id: inst.sourceId || localState.sourceId || null,
+      p_source_type: inst.sourceType || localState.sourceType || "custom",
+      p_fadiga: localState.fadiga || 0,
+      p_resultados_iniciais: localState.resultadosOriginais.length === localState.dados.length
+        ? localState.resultadosOriginais.slice()
+        : null,
+      p_consumidos_iniciais: localState.consumidos.slice(),
+      p_bloqueados_iniciais: localState.bloqueados.slice()
+    });
+    if (res && !res.error && res.data && typeof res.data === "object" && !Array.isArray(res.data) && (res.data.instanceId || res.data.instance_id)) {
+      return OS.syncInstanceDataFromOwn6BState(inst, res.data);
+    }
+  } catch (e) {
+    /* fallback local quando RPC ainda não estiver publicada */
+  }
+  return localState;
+};
+
+OS.refreshInstanceOwn6B = async function (instanceId) {
+  var st = OS.activeMesaState;
+  if (!st || !st.mesaId || !st.currentUserId) return null;
+  if (instanceId && !isUserAuthorizedForInstance6B(instanceId, "read")) return null;
+  if (!instanceId && !st.isMestre) {
+    // Jogador comum só sincroniza instâncias das quais seja defensor explícito
+    var anyOwned = Array.isArray(st.mesaTokens) && st.mesaTokens.some(function (t) {
+      return t && t.owner_type === "creature" && t.owner_user_id && String(t.owner_user_id) === String(st.currentUserId);
+    });
+    if (!anyOwned) return [];
+  }
+
+  var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
+  if (!client || typeof client.rpc !== "function") {
+    return instanceId ? OS.getInstanceOwn6BState(instanceId) : [];
+  }
+
+  var room = st.mesaId;
+  try {
+    var res = await client.rpc("ler_6b_instancia", {
+      p_mesa: room,
+      p_instance: instanceId || null
+    });
+    if (OS.activeMesaState !== st || st.mesaId !== room) return null;
+    if (res && res.error) return null;
+
+    if (instanceId) {
+      var singleData = res && res.data;
+      if (singleData && typeof singleData === "object" && !Array.isArray(singleData) && (singleData.instanceId || singleData.instance_id)) {
+        var targetInst = OS.getSceneCreatureById(instanceId);
+        if (targetInst) {
+          OS.syncInstanceDataFromOwn6BState(targetInst, singleData);
+        } else {
+          st.instance6BStates = st.instance6BStates || {};
+          st.instance6BStates[instanceId] = normalizeRawInstance6BSnapshot(singleData, room);
+        }
+        if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+        if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+        return OS.getInstanceOwn6BState(instanceId);
+      }
+      return OS.getInstanceOwn6BState(instanceId);
+    }
+
+    var list = res && Array.isArray(res.data) ? res.data : [];
+    var synced = [];
+    list.forEach(function (item) {
+      if (!item || typeof item !== "object" || !(item.instanceId || item.instance_id)) return;
+      var iId = String(item.instanceId || item.instance_id);
+      var instObj = OS.getSceneCreatureById(iId);
+      if (instObj) {
+        var s = OS.syncInstanceDataFromOwn6BState(instObj, item);
+        if (s) synced.push(s);
+      } else {
+        st.instance6BStates = st.instance6BStates || {};
+        var normItem = normalizeRawInstance6BSnapshot(item, room);
+        if (normItem) {
+          st.instance6BStates[iId] = normItem;
+          synced.push(normItem);
+        }
+      }
+    });
+    if (synced.length > 0) {
+      if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+      if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+    }
+    return synced;
+  } catch (e) {
+    return null;
+  }
+};
+
+OS.handleRealtimeInstance6BChange = function (payload) {
+  var st = OS.activeMesaState;
+  var row = payload && payload.new;
+  if (!st || !st.mesaId || !row) return;
+  var rowMesaId = String(row.mesaId || row.mesa_id || "");
+  var instId = String(row.instanceId || row.instance_id || "");
+  if (!instId || (rowMesaId && rowMesaId !== String(st.mesaId))) return;
+  if (!isUserAuthorizedForInstance6B(instId, "read")) return;
+
+  var current = st.instance6BStates && st.instance6BStates[instId];
+  var incomingVer = Number(row.versao);
+  if (current && Number.isFinite(incomingVer) && incomingVer < Number(current.versao)) {
+    return;
+  }
+
+  var inst = OS.getSceneCreatureById(instId);
+  if (inst) {
+    OS.syncInstanceDataFromOwn6BState(inst, row);
+    if (st.isMestre) {
+      OS.persistMesaSceneImmediateLocal();
+    }
+  } else {
+    st.instance6BStates = st.instance6BStates || {};
+    st.instance6BStates[instId] = normalizeRawInstance6BSnapshot(row, st.mesaId);
+  }
+  if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+  if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+};
+
+OS.executeInstanceOwn6BCommand = async function (instanceId, command, rpcSpec) {
+  var st = OS.activeMesaState;
+  command = command || {};
+  var cmdType = String(command.type || "").toUpperCase();
+  var authMode = cmdType === "APPLY_DAMAGE" ? "defender" : "mestre";
+
+  if (!isUserAuthorizedForInstance6B(instanceId, authMode)) {
+    return {
+      ok: false,
+      errorCode: "42501",
+      reason: "UNAUTHORIZED",
+      errorMessage: formatInstance6BError({ code: "42501" }, cmdType)
+    };
+  }
+
+  var inst = OS.getSceneCreatureById(instanceId);
+  if (!inst || !inst.data) {
+    return {
+      ok: false,
+      errorCode: "55000",
+      reason: "INSTANCE_NOT_FOUND",
+      errorMessage: "Instância não encontrada na cena."
+    };
+  }
+
+  var curState = (st.instance6BStates && st.instance6BStates[instanceId]) || OS.ensureInstanceOwn6BState(inst);
+  if (!curState || !curState.enabled) {
+    return {
+      ok: false,
+      errorCode: "55000",
+      reason: "OWN_6B_DISABLED",
+      errorMessage: "Esta instância não utiliza 6B próprio."
+    };
+  }
+
+  var opId = command.opId ? String(command.opId).trim() : generateUuidV4();
+  var expectedVer =
+    command.expectedVersion !== undefined && command.expectedVersion !== null
+      ? Number(command.expectedVersion)
+      : Number(curState.versao);
+
+  st.instance6BBusy = st.instance6BBusy || {};
+  st.instance6BFeedback = st.instance6BFeedback || {};
+  st.instance6BBusy[instanceId] = true;
+
+  var room = st.mesaId;
+  var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
+
+  try {
+    if (client && typeof client.rpc === "function" && rpcSpec && rpcSpec.name) {
+      var rpcArgs = Object.assign({}, rpcSpec.args || {}, {
+        p_mesa: room,
+        p_instance: instanceId,
+        p_versao: expectedVer,
+        p_op_id: opId
+      });
+      var rpcRes = await client.rpc(rpcSpec.name, rpcArgs);
+      if (OS.activeMesaState !== st || st.mesaId !== room) {
+        return { ok: false, errorCode: "ABORTED", reason: "SESSION_CHANGED" };
+      }
+
+      if (rpcRes && rpcRes.error) {
+        var httpStatus = Number(rpcRes.status || rpcRes.error.status || rpcRes.error.statusCode || 0) || 0;
+        var normErr = Object.assign({}, rpcRes.error, { status: httpStatus });
+        var isTimeout = isInstance6BGatewayTimeoutError(normErr);
+        var isConflict = !isTimeout && isInstance6BConflictError(normErr);
+        var errCode = String(
+          normErr.code ||
+          normErr.errorCode ||
+          (isConflict ? "PT409" : isTimeout ? "504" : "55000")
+        );
+        if (errCode !== "PGRST202" && errCode !== "42883") {
+          var errMsg = formatInstance6BError(normErr, cmdType);
+          st.instance6BFeedback[instanceId] = { text: errMsg, isError: true };
+          if (isConflict || isTimeout) {
+            await OS.refreshInstanceOwn6B(instanceId);
+          }
+          if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+          if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+          return {
+            ok: false,
+            errorCode: errCode,
+            httpStatus: httpStatus || (isConflict ? 409 : isTimeout ? 504 : 0),
+            isConflict: isConflict,
+            isGatewayTimeout: isTimeout,
+            reason: normErr.reason || normErr.message || "RPC_ERROR",
+            errorMessage: errMsg,
+            state: OS.getInstanceOwn6BState(instanceId)
+          };
+        }
+      } else if (
+        rpcRes &&
+        rpcRes.data &&
+        typeof rpcRes.data === "object" &&
+        !Array.isArray(rpcRes.data) &&
+        (rpcRes.data.instanceId || rpcRes.data.instance_id)
+      ) {
+        var syncedRpcState = OS.syncInstanceDataFromOwn6BState(inst, rpcRes.data);
+        st.instance6BFeedback[instanceId] = {
+          text: rpcSpec.successMessage || "",
+          isError: false
+        };
+        if (
+          (cmdType === "ROLL_INITIAL" || cmdType === "RENEW") &&
+          OS.resolveCombatantOperationalInfo &&
+          OS.resolveIndividual6BInitiative
+        ) {
+          var opInfo = OS.resolveCombatantOperationalInfo(inst);
+          if (opInfo && opInfo.operationalMode === "full_sheet" && opInfo.kind !== "bestiary_monster") {
+            inst.data.iniciativa = String(OS.resolveIndividual6BInitiative(inst.data, { fromChambersOnly: true }));
+            inst.data._initiativeFrom6B = true;
+            OS.syncSceneTokenInitiative(inst);
+          }
+        }
+        if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+        if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+        OS.scheduleMesaSceneSave();
+        return {
+          ok: true,
+          idempotentReplay: !!rpcRes.data.idempotentReplay,
+          opId: opId,
+          versionBefore: expectedVer,
+          versionAfter: syncedRpcState.versao,
+          consumedIndices: rpcRes.data.consumedIndices || [],
+          consumedValues: rpcRes.data.consumedValues || [],
+          consumedBonus: rpcRes.data.consumedBonus || 0,
+          state: OS.getInstanceOwn6BState(instanceId)
+        };
+      }
+    }
+
+    // Projeção local usando o contrato puro XER-05/XER-06
+    var latestState = (st.instance6BStates && st.instance6BStates[instanceId]) || curState;
+    var localCmd = Object.assign({}, command, {
+      opId: opId,
+      expectedVersion: expectedVer
+    });
+    if ((cmdType === "ROLL_INITIAL" || cmdType === "RENEW") && !Array.isArray(localCmd.rolls)) {
+      localCmd.rolls = latestState.dados.map(function (sides, idx) {
+        if (latestState.bloqueados.indexOf(idx) >= 0) return 1;
+        return OS.generateDiceResult
+          ? OS.generateDiceResult("d" + sides)
+          : Math.floor(Math.random() * sides) + 1;
+      });
+    }
+
+    var proj = OS.validateAndProjectOwn6BInstanceCommand(latestState, localCmd);
+    if (!proj.ok) {
+      var localErrMsg = formatInstance6BError({ code: proj.errorCode, reason: proj.reason }, cmdType);
+      st.instance6BFeedback[instanceId] = { text: localErrMsg, isError: true };
+      if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+      if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+      return Object.assign({}, proj, {
+        errorMessage: localErrMsg,
+        state: OS.getInstanceOwn6BState(instanceId)
+      });
+    }
+
+    OS.syncInstanceDataFromOwn6BState(inst, proj.state);
+    st.instance6BFeedback[instanceId] = {
+      text: rpcSpec && rpcSpec.successMessage ? rpcSpec.successMessage : "",
+      isError: false
+    };
+    if (
+      (cmdType === "ROLL_INITIAL" || cmdType === "RENEW") &&
+      OS.resolveCombatantOperationalInfo &&
+      OS.resolveIndividual6BInitiative
+    ) {
+      var opInfoLocal = OS.resolveCombatantOperationalInfo(inst);
+      if (opInfoLocal && opInfoLocal.operationalMode === "full_sheet" && opInfoLocal.kind !== "bestiary_monster") {
+        inst.data.iniciativa = String(OS.resolveIndividual6BInitiative(inst.data, { fromChambersOnly: true }));
+        inst.data._initiativeFrom6B = true;
+        OS.syncSceneTokenInitiative(inst);
+      }
+    }
+    if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+    if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+    OS.scheduleMesaSceneSave();
+    return Object.assign({}, proj, {
+      state: OS.getInstanceOwn6BState(instanceId)
+    });
+  } finally {
+    if (st && st.instance6BBusy) {
+      st.instance6BBusy[instanceId] = false;
+    }
+  }
+};
+
+OS.rollInstanceOwn6B = async function (instanceId, options) {
+  options = options || {};
+  return OS.executeInstanceOwn6BCommand(
+    instanceId,
+    {
+      type: "ROLL_INITIAL",
+      expectedVersion: options.expectedVersion,
+      opId: options.opId,
+      rolls: options.rolls
+    },
+    {
+      name: "rolar_6b_instancia",
+      args: {},
+      successMessage: "6B da instância rolado com sucesso."
+    }
+  );
+};
+
+OS.consumeInstanceOwn6B = async function (instanceId, indices, options) {
+  options = options || {};
+  var cleanIndices = Array.isArray(indices)
+    ? indices.map(function (i) { return Number(i); })
+    : [];
+  return OS.executeInstanceOwn6BCommand(
+    instanceId,
+    {
+      type: "CONSUME",
+      expectedVersion: options.expectedVersion,
+      opId: options.opId,
+      indices: cleanIndices
+    },
+    {
+      name: "consumir_6b_instancia",
+      args: { p_indices: cleanIndices },
+      successMessage: "Dados consumidos (" + cleanIndices.length + ")."
+    }
+  );
+};
+
+OS.applyDamageInstanceOwn6B = async function (instanceId, damagePoints, chosenIndices, options) {
+  options = options || {};
+  var cleanChosen = Array.isArray(chosenIndices)
+    ? chosenIndices.map(function (i) { return Number(i); })
+    : [];
+  var dmg = Math.trunc(Number(damagePoints || 0));
+  return OS.executeInstanceOwn6BCommand(
+    instanceId,
+    {
+      type: "APPLY_DAMAGE",
+      expectedVersion: options.expectedVersion,
+      opId: options.opId,
+      damagePoints: dmg,
+      chosenIndices: cleanChosen
+    },
+    {
+      name: "aplicar_dano_6b_instancia",
+      args: {
+        p_dano: dmg,
+        p_indices_escolhidos: cleanChosen
+      },
+      successMessage: "Dano aplicado: " + cleanChosen.length + " dado(s) bloqueado(s)."
+    }
+  );
+};
+
+OS.healDamageInstanceOwn6B = async function (instanceId, healedIndices, options) {
+  options = options || {};
+  var cleanHeal = Array.isArray(healedIndices)
+    ? healedIndices.map(function (i) { return Number(i); })
+    : [];
+  return OS.executeInstanceOwn6BCommand(
+    instanceId,
+    {
+      type: "HEAL_DAMAGE",
+      expectedVersion: options.expectedVersion,
+      opId: options.opId,
+      healedIndices: cleanHeal
+    },
+    {
+      name: "curar_dano_6b_instancia",
+      args: { p_indices_curados: cleanHeal },
+      successMessage: "Dano curado: " + cleanHeal.length + " dado(s) desbloqueado(s)."
+    }
+  );
+};
+
+OS.setFatigueInstanceOwn6B = async function (instanceId, newFatigue, options) {
+  options = options || {};
+  var fat = Math.trunc(Number(newFatigue));
+  return OS.executeInstanceOwn6BCommand(
+    instanceId,
+    {
+      type: "SET_FATIGUE",
+      expectedVersion: options.expectedVersion,
+      opId: options.opId,
+      fatigue: fat
+    },
+    {
+      name: "ajustar_fadiga_6b_instancia",
+      args: { p_nova_fadiga: fat },
+      successMessage: "Fadiga atualizada para " + fat + " (redução automática aplicada nos maiores dados)."
+    }
+  );
+};
+
+OS.renewInstanceOwn6B = async function (instanceId, options) {
+  options = options || {};
+  var applyFatigue = options.applyFatigue !== false;
+  return OS.executeInstanceOwn6BCommand(
+    instanceId,
+    {
+      type: "RENEW",
+      expectedVersion: options.expectedVersion,
+      opId: options.opId,
+      rolls: options.rolls,
+      applyFatigue: applyFatigue
+    },
+    {
+      name: "renovar_6b_instancia",
+      args: { p_aplicar_fadiga: applyFatigue },
+      successMessage: "6B renovado (+1 Fadiga aplicada automaticamente)."
+    }
+  );
+};
+
+OS.toggleSelectInstance6BChamber = function (instanceId, chamberIndex) {
+  var st = OS.activeMesaState;
+  if (!st || !st.isMestre || !instanceId) return [];
+  var state = OS.getInstanceOwn6BState(instanceId);
+  if (!state || !state.enabled) return [];
+  var idx = Number(chamberIndex);
+  if (
+    !Number.isInteger(idx) ||
+    idx < 0 ||
+    idx >= state.dados.length ||
+    state.usados.indexOf(idx) >= 0 ||
+    state.bloqueados.indexOf(idx) >= 0 ||
+    Number(state.resultados[idx]) <= 0
+  ) {
+    return (st.instance6BSelected && st.instance6BSelected[instanceId]) || [];
+  }
+  st.instance6BSelected = st.instance6BSelected || {};
+  var list = Array.isArray(st.instance6BSelected[instanceId])
+    ? st.instance6BSelected[instanceId].slice()
+    : [];
+  var pos = list.indexOf(idx);
+  if (pos >= 0) list.splice(pos, 1);
+  else list.push(idx);
+  list.sort(function (a, b) { return a - b; });
+  st.instance6BSelected[instanceId] = list;
+  if (OS.renderMesaSceneCards) OS.renderMesaSceneCards();
+  if (OS.renderMesaFloatingPopups) OS.renderMesaFloatingPopups();
+  return list;
+};
+
+/* ─── Modal de Escolha dos Dados Perdidos pelo Defensor (XER-06) ─── */
+
+var defenderDamageModalState = {
+  instanceId: null,
+  damagePoints: 1,
+  selectedIndices: [],
+  onConfirmed: null
+};
+
+function renderDefenderDamageModalUi() {
+  var modal = OS.$("defender-damage-modal");
+  if (!modal) return;
+  var grid = OS.$("defender-damage-dice-grid");
+  var hint = OS.$("defender-damage-modal-hint");
+  var confirmBtn = OS.$("defender-damage-confirm");
+  var ptsInp = OS.$("defender-damage-points-input");
+
+  var state = OS.getInstanceOwn6BState(defenderDamageModalState.instanceId);
+  if (!state || !state.enabled) {
+    if (grid) grid.innerHTML = "";
+    if (confirmBtn) confirmBtn.disabled = true;
+    return;
+  }
+
+  var n = state.dados.length;
+  var intactIndices = [];
+  for (var i = 0; i < n; i++) {
+    if (state.bloqueados.indexOf(i) === -1) intactIndices.push(i);
+  }
+  var maxDmg = Math.max(1, intactIndices.length);
+  var dmgPts = Math.max(1, Math.min(15, parseInt(ptsInp ? ptsInp.value : defenderDamageModalState.damagePoints, 10) || 1));
+  defenderDamageModalState.damagePoints = dmgPts;
+  var required = Math.min(dmgPts, intactIndices.length);
+
+  defenderDamageModalState.selectedIndices = (defenderDamageModalState.selectedIndices || []).filter(function (idx) {
+    return intactIndices.indexOf(idx) >= 0;
+  }).slice(0, required);
+
+  if (grid) {
+    grid.innerHTML = "";
+    state.dados.forEach(function (sides, idx) {
+      var isDamaged = state.bloqueados.indexOf(idx) >= 0;
+      var isSel = defenderDamageModalState.selectedIndices.indexOf(idx) >= 0;
+      var isSpent = state.consumidos.indexOf(idx) >= 0;
+      var isFatZero = state.zeradosPorFadiga.indexOf(idx) >= 0;
+      var valTxt = state.resultados.length === n ? String(state.resultados[idx]) : "—";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className =
+        "defender-die-choice-btn" +
+        (isSel ? " selected" : "") +
+        (isDamaged ? " is-already-damaged" : "");
+      btn.dataset.dieIndex = String(idx);
+      btn.disabled = isDamaged || (!isSel && defenderDamageModalState.selectedIndices.length >= required);
+      btn.innerHTML =
+        "<strong>#" + (idx + 1) + " (d" + sides + ")</strong>" +
+        "<span>" + (isDamaged ? "✕ Bloqueado" : "Valor: " + escHtml(valTxt)) + "</span>" +
+        "<small>" +
+        (isDamaged
+          ? "Dano anterior"
+          : isFatZero
+          ? "Zerado (Fadiga)"
+          : isSpent
+          ? "Consumido"
+          : "Disponível") +
+        "</small>";
+      btn.addEventListener("click", function () {
+        if (isDamaged) return;
+        var cur = defenderDamageModalState.selectedIndices.slice();
+        var p = cur.indexOf(idx);
+        if (p >= 0) cur.splice(p, 1);
+        else if (cur.length < required) cur.push(idx);
+        cur.sort(function (a, b) { return a - b; });
+        defenderDamageModalState.selectedIndices = cur;
+        renderDefenderDamageModalUi();
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  var ready = required > 0 && defenderDamageModalState.selectedIndices.length === required;
+  if (confirmBtn) confirmBtn.disabled = !ready;
+  if (hint) {
+    if (intactIndices.length === 0) {
+      hint.textContent = "Todos os dados desta instância já estão bloqueados por dano.";
+    } else {
+      hint.textContent =
+        "Selecionados: " +
+        defenderDamageModalState.selectedIndices.length +
+        " / " +
+        required +
+        " dado(s) intacto(s) a perder.";
+    }
+  }
+  if (ptsInp) {
+    ptsInp.max = String(maxDmg);
+  }
+}
+
+OS.openDefenderDamageModal = function (instanceId, initialDamagePoints, onConfirmed) {
+  if (!isUserAuthorizedForInstance6B(instanceId, "defender")) return false;
+  var modal = OS.$("defender-damage-modal");
+  if (!modal) return false;
+  var inst = OS.getSceneCreatureById(instanceId);
+  var state = OS.getInstanceOwn6BState(instanceId);
+  if (!inst || !state || !state.enabled) return false;
+
+  defenderDamageModalState.instanceId = instanceId;
+  defenderDamageModalState.damagePoints = Math.max(1, Math.min(15, parseInt(initialDamagePoints || 1, 10) || 1));
+  defenderDamageModalState.selectedIndices = [];
+  defenderDamageModalState.onConfirmed = typeof onConfirmed === "function" ? onConfirmed : null;
+
+  var titleEl = OS.$("defender-damage-modal-title");
+  if (titleEl) {
+    titleEl.textContent = "Escolha do Defensor — " + (inst.name || (inst.data && inst.data.nome) || "Instância");
+  }
+  var ptsInp = OS.$("defender-damage-points-input");
+  if (ptsInp) {
+    ptsInp.value = String(defenderDamageModalState.damagePoints);
+    if (!ptsInp._bound) {
+      ptsInp._bound = true;
+      ptsInp.addEventListener("input", function () {
+        renderDefenderDamageModalUi();
+      });
+      ptsInp.addEventListener("change", function () {
+        renderDefenderDamageModalUi();
+      });
+    }
+  }
+  var cancelBtn = OS.$("defender-damage-cancel");
+  if (cancelBtn && !cancelBtn._bound) {
+    cancelBtn._bound = true;
+    cancelBtn.addEventListener("click", function () {
+      OS.closeDefenderDamageModal();
+    });
+  }
+  var confirmBtn = OS.$("defender-damage-confirm");
+  if (confirmBtn && !confirmBtn._bound) {
+    confirmBtn._bound = true;
+    confirmBtn.addEventListener("click", function () {
+      OS.confirmDefenderDamageModal();
+    });
+  }
+
+  renderDefenderDamageModalUi();
+  modal.classList.add("open");
+  return true;
+};
+
+OS.closeDefenderDamageModal = function () {
+  var modal = OS.$("defender-damage-modal");
+  if (modal) modal.classList.remove("open");
+  defenderDamageModalState.instanceId = null;
+  defenderDamageModalState.selectedIndices = [];
+  defenderDamageModalState.onConfirmed = null;
+};
+
+OS.confirmDefenderDamageModal = async function () {
+  var instId = defenderDamageModalState.instanceId;
+  if (!instId) return null;
+  var dmg = defenderDamageModalState.damagePoints;
+  var chosen = defenderDamageModalState.selectedIndices.slice();
+  var cb = defenderDamageModalState.onConfirmed;
+  var res = await OS.applyDamageInstanceOwn6B(instId, dmg, chosen);
+  if (res && res.ok) {
+    OS.closeDefenderDamageModal();
+    if (cb) cb(res);
+  } else {
+    var hint = OS.$("defender-damage-modal-hint");
+    if (hint && res && res.errorMessage) {
+      hint.textContent = res.errorMessage;
+    }
+  }
+  return res;
+};
+
+
 
 /**
  * Resolve o orçamento de ações inicial (COM-06) para qualquer item de combate,
@@ -2556,6 +3706,23 @@ OS.subscribeMesaRealtimeChannel = function (mesaId, opts) {
   if (OS.subscribeMesaTokenStatus) OS.subscribeMesaTokenStatus(channel, mesaId);
   if (OS.subscribeMesaDeliveries) OS.subscribeMesaDeliveries(channel);
 
+  ["INSERT", "UPDATE"].forEach(function (evName) {
+    channel.on(
+      "postgres_changes",
+      {
+        event: evName,
+        schema: "public",
+        table: "mesa_6b_instancia",
+        filter: "mesa_id=eq." + mesaId
+      },
+      function (payload) {
+        if (OS.activeMesaChannel === channel && OS.handleRealtimeInstance6BChange) {
+          OS.handleRealtimeInstance6BChange(payload);
+        }
+      }
+    );
+  });
+
   channel.on("postgres_changes", { event: "*", schema: "public", table: "mesa_mapa_sinais", filter: "mesa_id=eq." + mesaId }, function (payload) {
     var st = OS.activeMesaState;
     if (OS.activeMesaChannel !== channel || !payload.new || payload.new.mesa_id !== st.mesaId) return;
@@ -2674,6 +3841,7 @@ OS.subscribeMesaRealtimeChannel = function (mesaId, opts) {
         OS.setMesaRealtimeStatusUi("live");
         if (OS.processMesaDeliveries) OS.processMesaDeliveries();
         if (OS.loadMesaCombat) OS.loadMesaCombat();
+        if (OS.refreshInstanceOwn6B) OS.refreshInstanceOwn6B();
         if (shouldResync || OS.loadMesaMapView) {
           Promise.all([
             OS.refreshMesaStageAndTokens(),
@@ -3066,6 +4234,10 @@ OS.openMesa = async function (mesaId) {
   OS.activeMesaState._isFlushingSceneRemote = false;
   OS.activeMesaState.gmEditingSheet = null;
   OS.activeMesaState.playerFichaId = null;
+  OS.activeMesaState.instance6BStates = {};
+  OS.activeMesaState.instance6BSelected = {};
+  OS.activeMesaState.instance6BFeedback = {};
+  OS.activeMesaState.instance6BBusy = {};
   OS.setMesaRealtimeStatusUi("connecting");
 
   // Esconder outras telas e exibir #mesa-screen em tela cheia (100vw × 100vh)
@@ -3207,6 +4379,7 @@ OS.openMesa = async function (mesaId) {
 
   if (OS.initMesaNotes) OS.initMesaNotes();
   if (OS.initXerife6B) await OS.initXerife6B();
+  if (OS.refreshInstanceOwn6B) await OS.refreshInstanceOwn6B();
   clearInterval(OS.deliveryTimer);
   if (!isMestre && OS.processMesaDeliveries) {
     await OS.processMesaDeliveries();
@@ -3582,6 +4755,10 @@ OS.saveCustomNpcToSupabase = async function (stateData, existingId, tipoFicha) {
   var cleanData = deepClone(stateData || {});
   cleanData.freeEdit = true;
   cleanData.isBestiaryCustom = true;
+  // XER-05: O molde mantém somente a configuração de dados, nunca estado vivo de instância
+  delete cleanData.own6BInstance;
+  delete cleanData.consumedChambers;
+  delete cleanData.fatigueZeroedChambers;
   if (tipoFicha && (!cleanData.tipo_ficha || String(cleanData.tipo_ficha).trim() === "")) {
     cleanData.tipo_ficha = tipoFicha;
   }
@@ -3829,6 +5006,11 @@ OS.restoreMesaSceneState = async function (mesaRow) {
   }
 
   OS.activeMesaState.sceneCreatures = chosenList;
+  chosenList.forEach(function (c) {
+    if (c && OS.ensureInstanceOwn6BState) {
+      OS.ensureInstanceOwn6BState(c);
+    }
+  });
   OS.persistMesaSceneImmediateLocal();
 
   if (shouldSyncLocalToRemote) {
@@ -3864,6 +5046,10 @@ OS.addCreatureToScene = function (sourceEntry, options) {
 
   var clonedData = deepClone(sourceEntry.data);
   clonedData.freeEdit = true;
+  // XER-05: Cada instância recebe estado próprio isolado do molde e de outras instâncias
+  delete clonedData.own6BInstance;
+  delete clonedData.consumedChambers;
+  delete clonedData.fatigueZeroedChambers;
   var wrapperModeChoice = OS.extractCreatureModeChoice
     ? OS.extractCreatureModeChoice(sourceEntry)
     : null;
@@ -3960,6 +5146,9 @@ OS.addCreatureToScene = function (sourceEntry, options) {
   };
 
   st.sceneCreatures.push(instance);
+  if (OS.ensureInstanceOwn6BState) {
+    OS.ensureInstanceOwn6BState(instance);
+  }
 
   if (options.returnMeta) {
     return {
@@ -4063,11 +5252,49 @@ function applyCreatureStatsChanges(entity, changes) {
   var d = entity.data;
   if (changes.config6BText !== undefined) {
     var configText = String(changes.config6BText).trim();
-    if (!/^[1-9]\d*d(?:4|6|8|10|12)(?:\s*\+\s*[1-9]\d*d(?:4|6|8|10|12))*$/i.test(configText)) return false;
-    d["config-6b"] = configText.toLowerCase();
+    if (OS.validateOwn6BComposition) {
+      var vRes = OS.validateOwn6BComposition(configText, { enabled: true });
+      if (!vRes.valid) return false;
+      d["config-6b"] = vRes.formatted;
+      d.config6B = deepClone(vRes.compactCounts);
+      if (d.hasOwn6B === true || (d.own6B && typeof d.own6B === "object")) {
+        d.hasOwn6B = true;
+        d["has-own-6b"] = true;
+        d.own6B = {
+          schemaVersion: 1,
+          enabled: true,
+          totalDice: vRes.totalDice,
+          counts: deepClone(vRes.counts),
+          diceTypes: vRes.diceTypes.slice(),
+          diceSides: vRes.diceSides.slice(),
+          formatted: vRes.formatted
+        };
+      }
+    } else {
+      if (!/^[1-9]\d*d(?:4|6|8|10|12)(?:\s*\+\s*[1-9]\d*d(?:4|6|8|10|12))*$/i.test(configText)) return false;
+      d["config-6b"] = configText.toLowerCase();
+    }
   }
   var info6B = OS.resolveCreature6BInfo(d);
   var maxChambers = info6B.count;
+  if (
+    changes.config6BText !== undefined &&
+    entity.instanceId &&
+    OS.activeMesaState &&
+    OS.activeMesaState.instance6BStates &&
+    OS.activeMesaState.instance6BStates[entity.instanceId]
+  ) {
+    var stCfg = OS.activeMesaState.instance6BStates[entity.instanceId];
+    stCfg.dados = info6B.diceList.map(function (dt) {
+      return parseInt(String(dt).replace(/\D/g, ""), 10) || 6;
+    });
+    stCfg.resultadosOriginais = (stCfg.resultadosOriginais || []).slice(0, maxChambers);
+    stCfg.resultados = (stCfg.resultados || []).slice(0, maxChambers);
+    stCfg.consumidos = (stCfg.consumidos || []).filter(function (i) { return i < maxChambers; });
+    stCfg.bloqueados = (stCfg.bloqueados || []).filter(function (i) { return i < maxChambers; });
+    stCfg.zeradosPorFadiga = (stCfg.zeradosPorFadiga || []).filter(function (i) { return i < maxChambers; });
+    stCfg.usados = (stCfg.usados || []).filter(function (i) { return i < maxChambers; });
+  }
 
   if (changes.defesa !== undefined) {
     d.defesa = String(changes.defesa);
@@ -4077,6 +5304,39 @@ function applyCreatureStatsChanges(entity, changes) {
   }
   if (changes.fadiga !== undefined) {
     setFadigaInState(d, changes.fadiga);
+    var nextFad = countFadigaFromState(d);
+    if (
+      entity.instanceId &&
+      OS.activeMesaState &&
+      OS.activeMesaState.instance6BStates &&
+      OS.activeMesaState.instance6BStates[entity.instanceId] &&
+      OS.validateAndProjectOwn6BInstanceCommand
+    ) {
+      var curInstState = OS.activeMesaState.instance6BStates[entity.instanceId];
+      var fatProj = OS.validateAndProjectOwn6BInstanceCommand(curInstState, {
+        type: "SET_FATIGUE",
+        fatigue: nextFad
+      });
+      if (fatProj && fatProj.ok) {
+        OS.syncInstanceDataFromOwn6BState(entity, fatProj.state);
+      }
+    } else if (Array.isArray(d.originalChambers) && d.originalChambers.length > 0 && OS.applyFatigueCascadeToInstanceRoll) {
+      var origNums = d.originalChambers.slice(0, maxChambers).map(function (v) { return parseInt(String(v || "0"), 10) || 0; });
+      var dmgList = OS.getRealDamagedChambers ? OS.getRealDamagedChambers(d, maxChambers) : (d.damagedChambers || []);
+      var cascRes = OS.applyFatigueCascadeToInstanceRoll(origNums, dmgList, nextFad);
+      d.fatigueZeroedChambers = cascRes.zeroedByFatigue;
+      for (var fi = 0; fi < cascRes.values.length; fi++) {
+        d["chamber-" + fi] = String(cascRes.values[fi]);
+      }
+      var prevCons = Array.isArray(d.consumedChambers)
+        ? d.consumedChambers
+        : (d.usedChambers || []).filter(function (u) { return dmgList.indexOf(u) === -1; });
+      var unionUsed = {};
+      prevCons.forEach(function (u) { unionUsed[u] = true; });
+      dmgList.forEach(function (u) { unionUsed[u] = true; });
+      cascRes.zeroedByFatigue.forEach(function (u) { unionUsed[u] = true; });
+      d.usedChambers = Object.keys(unionUsed).map(Number).sort(function (a, b) { return a - b; });
+    }
   }
   if (changes.addCondition) {
     if (!Array.isArray(d.activeConditions)) {
@@ -4104,19 +5364,73 @@ function applyCreatureStatsChanges(entity, changes) {
   if (changes.toggleChamber !== undefined) {
     var chIdx = parseInt(String(changes.toggleChamber), 10);
     if (!isNaN(chIdx) && chIdx >= 0 && chIdx < maxChambers) {
-      if (!Array.isArray(d.usedChambers)) d.usedChambers = [];
-      var pos = d.usedChambers.indexOf(chIdx);
-      if (pos >= 0) d.usedChambers.splice(pos, 1);
-      else d.usedChambers.push(chIdx);
+      var realDmg = OS.getRealDamagedChambers ? OS.getRealDamagedChambers(d, maxChambers) : (d.damagedChambers || []);
+      var fatZeros = Array.isArray(d.fatigueZeroedChambers) ? d.fatigueZeroedChambers : [];
+      if (realDmg.indexOf(chIdx) === -1 && fatZeros.indexOf(chIdx) === -1) {
+        if (!Array.isArray(d.usedChambers)) d.usedChambers = [];
+        var pos = d.usedChambers.indexOf(chIdx);
+        if (pos >= 0) d.usedChambers.splice(pos, 1);
+        else d.usedChambers.push(chIdx);
+        if (
+          entity.instanceId &&
+          OS.activeMesaState &&
+          OS.activeMesaState.instance6BStates &&
+          OS.activeMesaState.instance6BStates[entity.instanceId]
+        ) {
+          var instSt = OS.activeMesaState.instance6BStates[entity.instanceId];
+          instSt.consumidos = d.usedChambers.filter(function (u) {
+            return instSt.bloqueados.indexOf(u) === -1 && instSt.zeradosPorFadiga.indexOf(u) === -1;
+          });
+          instSt.usados = d.usedChambers.slice();
+          OS.syncInstanceDataFromOwn6BState(entity, instSt);
+        }
+      }
     }
   }
   if (changes.notas !== undefined) {
     // Notes on a creature remain separate from the GM notebook.
     d.notas = String(changes.notas);
   }
-  if (changes.damageCount !== undefined) {
+  if (changes.damageIndices !== undefined && Array.isArray(changes.damageIndices)) {
+    var chosenDmg = Array.from(new Set(changes.damageIndices.map(Number))).filter(function (i) {
+      return Number.isInteger(i) && i >= 0 && i < maxChambers;
+    });
+    if (
+      entity.instanceId &&
+      OS.activeMesaState &&
+      OS.activeMesaState.instance6BStates &&
+      OS.activeMesaState.instance6BStates[entity.instanceId] &&
+      OS.validateAndProjectOwn6BInstanceCommand
+    ) {
+      var stDmg = OS.activeMesaState.instance6BStates[entity.instanceId];
+      var newBlocked = chosenDmg.filter(function (i) { return stDmg.bloqueados.indexOf(i) === -1; });
+      if (newBlocked.length > 0) {
+        var dmgProj = OS.validateAndProjectOwn6BInstanceCommand(stDmg, {
+          type: "APPLY_DAMAGE",
+          damagePoints: newBlocked.length,
+          chosenIndices: newBlocked
+        });
+        if (dmgProj && dmgProj.ok) {
+          OS.syncInstanceDataFromOwn6BState(entity, dmgProj.state);
+        }
+      }
+    } else {
+      d.damagedChambers = chosenDmg.sort(function (a, b) { return a - b; });
+    }
+  } else if (changes.damageCount !== undefined) {
     var wounds = Math.max(0, Math.min(maxChambers, parseInt(changes.damageCount, 10) || 0));
     d.damagedChambers = Array.from({ length: wounds }, function (_, i) { return i; });
+    if (
+      entity.instanceId &&
+      OS.activeMesaState &&
+      OS.activeMesaState.instance6BStates &&
+      OS.activeMesaState.instance6BStates[entity.instanceId]
+    ) {
+      var stCnt = OS.activeMesaState.instance6BStates[entity.instanceId];
+      stCnt.bloqueados = d.damagedChambers.slice();
+      stCnt.versao += 1;
+      OS.syncInstanceDataFromOwn6BState(entity, stCnt);
+    }
   }
   if (changes.isCriatura !== undefined) {
     if (changes.isCriatura === true) {
@@ -4188,16 +5502,70 @@ function rollCreatureEntity6B(entity, forcedValues) {
   var info = OS.sanitizeCreature6BData(entity.data);
   var diceList = info.diceList;
   var forced = Array.isArray(forcedValues) ? forcedValues : null;
+  var d = entity.data;
+  var maxChambers = diceList.length;
+  var blocked = OS.getRealDamagedChambers
+    ? OS.getRealDamagedChambers(d, maxChambers)
+    : Array.isArray(d.damagedChambers)
+    ? d.damagedChambers.filter(function (i) { return Number.isInteger(i) && i >= 0 && i < maxChambers; })
+    : [];
+  var rawRolls = [];
 
-  for (var c = 0; c < diceList.length; c++) {
+  for (var c = 0; c < maxChambers; c++) {
     var sides = parseInt(diceList[c].slice(1), 10) || 6;
-    var rolled =
-      forced && c < forced.length && Number.isFinite(Number(forced[c]))
-        ? Math.max(0, Math.trunc(Number(forced[c])))
-        : Math.floor(Math.random() * sides) + 1;
-    entity.data["chamber-" + c] = String(rolled);
+    if (blocked.indexOf(c) >= 0) {
+      rawRolls.push(0);
+    } else {
+      var rolled =
+        forced && c < forced.length && Number.isFinite(Number(forced[c]))
+          ? Math.max(1, Math.min(sides, Math.trunc(Number(forced[c]))))
+          : Math.floor(Math.random() * sides) + 1;
+      rawRolls.push(rolled);
+    }
   }
-  entity.data.usedChambers = [];
+
+  var fadigaCount = countFadigaFromState(d);
+  var casc = OS.applyFatigueCascadeToInstanceRoll
+    ? OS.applyFatigueCascadeToInstanceRoll(rawRolls, blocked, fadigaCount)
+    : applyFatigueTo6BValues(rawRolls, fadigaCount);
+  var effVals = casc.values || rawRolls;
+  var fatZeroed = casc.zeroedByFatigue || casc.zeroedIndices || [];
+
+  var prevOrigLen = Array.isArray(d.originalChambers) ? d.originalChambers.length : 0;
+  var nextOrig = rawRolls.map(function (v) { return String(v); });
+  for (var oi = nextOrig.length; oi < prevOrigLen; oi++) {
+    nextOrig.push("0");
+  }
+  d.originalChambers = nextOrig;
+  for (var idx = 0; idx < maxChambers; idx++) {
+    d["chamber-" + idx] = String(effVals[idx] !== undefined ? effVals[idx] : 0);
+  }
+  d.consumedChambers = [];
+  d.fatigueZeroedChambers = fatZeroed.slice();
+  var unionU = {};
+  blocked.forEach(function (b) { unionU[b] = true; });
+  fatZeroed.forEach(function (z) { unionU[z] = true; });
+  d.usedChambers = Object.keys(unionU).map(Number).sort(function (a, b) { return a - b; });
+
+  if (
+    entity.instanceId &&
+    OS.activeMesaState &&
+    OS.activeMesaState.instance6BStates &&
+    OS.activeMesaState.instance6BStates[entity.instanceId]
+  ) {
+    var instSt = OS.activeMesaState.instance6BStates[entity.instanceId];
+    instSt.dados = diceList.map(function (dt) {
+      return parseInt(String(dt).replace(/\D/g, ""), 10) || 6;
+    });
+    instSt.resultadosOriginais = rawRolls.slice();
+    instSt.resultados = effVals.slice();
+    instSt.consumidos = [];
+    instSt.bloqueados = blocked.slice();
+    instSt.zeradosPorFadiga = fatZeroed.slice();
+    instSt.usados = d.usedChambers.slice();
+    instSt.versao = Math.max(1, (Number(instSt.versao) || 0) + 1);
+    OS.syncInstanceDataFromOwn6BState(entity, instSt);
+  }
 
   var opInfo = OS.resolveCombatantOperationalInfo
     ? OS.resolveCombatantOperationalInfo(entity)
@@ -4546,9 +5914,19 @@ function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onRel
   var hasExplicitChambers =
     (Array.isArray(optSelectedChambers) && optSelectedChambers.length > 0) ||
     (attackSpec && typeof attackSpec === "object" && Array.isArray(attackSpec.selectedChambers) && attackSpec.selectedChambers.length > 0);
+  var entityUsesOwn6B = OS.entityHasOwn6B
+    ? OS.entityHasOwn6B(entity)
+    : Boolean(
+        entity &&
+          entity.data &&
+          (entity.data.hasOwn6B === true ||
+            entity.data["has-own-6b"] === true ||
+            (entity.data.own6B && entity.data.own6B.enabled === true))
+      );
 
   if (
     !hasExplicitChambers &&
+    !entityUsesOwn6B &&
     OS.isXerife6BAvailable &&
     OS.isXerife6BAvailable() &&
     OS.openXerife6BCreatureAttackModal
@@ -4605,16 +5983,39 @@ function rollCreatureEntityAttack(entity, attackSpec, optSelectedChambers, onRel
 
   var chamberValues = [];
   var chamberBonus = 0;
+  var consumedNow = [];
   chosenChambers.forEach(function (idx) {
     var cIdx = parseInt(String(idx), 10);
     if (isNaN(cIdx) || cIdx < 0 || cIdx >= maxChambers) return;
+    if (d.usedChambers.indexOf(cIdx) >= 0) return;
+    if (OS.getRealDamagedChambers && OS.getRealDamagedChambers(d, maxChambers).includes(cIdx)) return;
     var val = parseInt(String(d["chamber-" + cIdx] || "0"), 10) || 0;
+    if (val <= 0) return;
     chamberValues.push(val);
     chamberBonus += val;
+    consumedNow.push(cIdx);
     if (d.usedChambers.indexOf(cIdx) < 0) {
       d.usedChambers.push(cIdx);
     }
   });
+
+  if (
+    consumedNow.length > 0 &&
+    entity.instanceId &&
+    OS.activeMesaState &&
+    OS.activeMesaState.instance6BStates &&
+    OS.activeMesaState.instance6BStates[entity.instanceId] &&
+    OS.validateAndProjectOwn6BInstanceCommand
+  ) {
+    var instStateBeforeAtk = OS.activeMesaState.instance6BStates[entity.instanceId];
+    var atkConsumeProj = OS.validateAndProjectOwn6BInstanceCommand(instStateBeforeAtk, {
+      type: "CONSUME",
+      indices: consumedNow
+    });
+    if (atkConsumeProj && atkConsumeProj.ok) {
+      OS.syncInstanceDataFromOwn6BState(entity, atkConsumeProj.state);
+    }
+  }
 
   return executeCreatureAttackRoll(entity, atk, chosenChambers, chamberValues, chamberBonus, false, afterUpdate);
 }
@@ -4837,6 +6238,13 @@ OS.addNpcMesaToScene = async function (mesaNpcId) {
   if (!Array.isArray(st.mesaTokens)) st.mesaTokens = [];
   if (st.activeMapId === targetMapId && !st.mesaTokens.some(function (t) { return t.id === insRes.data.id; })) st.mesaTokens.push(insRes.data);
 
+  if (OS.initInstanceOwn6BOnServer) {
+    await OS.initInstanceOwn6BOnServer(instance, {
+      tokenId: insRes.data.id,
+      mapaId: targetMapId
+    });
+  }
+
   // Se havia um popup apontando para este mesaNpcId (targetType === "mesa-npc") e esta é a única instância em cena,
   // redireciona/atualiza automaticamente o popup para a instância viva em cena (targetType === "scene")
   if (Array.isArray(st.gmPopups) && st.gmPopups.length > 0) {
@@ -4886,6 +6294,12 @@ OS.removeCreatureFromScene = async function (instanceId, tokenId) {
   if (!remaining.data.length) {
     st.sceneCreatures = st.sceneCreatures.filter(function (c) { return c.instanceId !== instanceId; });
     st.gmPopups = st.gmPopups.filter(function (p) { return !(p.targetType === "scene" && p.targetId === instanceId); });
+    if (st.instance6BStates) delete st.instance6BStates[instanceId];
+    if (st.instance6BSelected) delete st.instance6BSelected[instanceId];
+    if (st.instance6BFeedback) delete st.instance6BFeedback[instanceId];
+    if (client && typeof client.rpc === "function") {
+      Promise.resolve(client.rpc("remover_6b_instancia", { p_mesa: room, p_instance: instanceId })).catch(function () {});
+    }
     OS.persistMesaSceneImmediateLocal(); await OS.flushMesaSceneRemoteSave();
   }
   await OS.loadMesaTokens();
@@ -5124,6 +6538,32 @@ OS.buildPlayerCombatCardBody = function (fichaRow, callbacks) {
       if (typeof callbacks.onRoll6B === "function") {
         callbacks.onRoll6B();
       }
+    } else if (act === "consume-selected-6b" && isSceneInstance) {
+      var stNow = OS.getInstanceOwn6BState ? OS.getInstanceOwn6BState(target.instanceId) : null;
+      var toConsume = selectedConsume.slice();
+      if (!toConsume.length && stNow && Array.isArray(stNow.resultados)) {
+        for (var k = 0; k < stNow.dados.length; k++) {
+          if (
+            stNow.usados.indexOf(k) === -1 &&
+            stNow.bloqueados.indexOf(k) === -1 &&
+            Number(stNow.resultados[k]) > 0
+          ) {
+            toConsume = [k];
+            break;
+          }
+        }
+      }
+      if (toConsume.length && OS.consumeInstanceOwn6B) {
+        OS.consumeInstanceOwn6B(target.instanceId, toConsume);
+      }
+    } else if (act === "open-defender-damage-modal" && isSceneInstance) {
+      if (OS.openDefenderDamageModal) {
+        OS.openDefenderDamageModal(target.instanceId, 1);
+      }
+    } else if (act === "renew-6b" && isSceneInstance) {
+      if (OS.renewInstanceOwn6B) {
+        OS.renewInstanceOwn6B(target.instanceId);
+      }
     } else if (act === "toggle-chamber") {
       if (typeof callbacks.onUpdateStats === "function") {
         callbacks.onUpdateStats({
@@ -5334,33 +6774,94 @@ OS.rollPlayerPopupAttack = function (fichaId, attackSpec, optSelectedChambers) {
 OS.buildCreatureCombatCardBody = function (target, callbacks) {
   callbacks = callbacks || {};
   var d = (target && target.data) || {};
+  var isSceneInstance = !!(target && target.instanceId);
+  var inst6BState =
+    isSceneInstance && OS.getInstanceOwn6BState
+      ? OS.getInstanceOwn6BState(target.instanceId)
+      : null;
+
   OS.sanitizeCreature6BData(d);
   var info6B = OS.resolveCreature6BInfo(d);
   var chamberCount = info6B.count;
   var cfg6bText = info6B.cfgText;
 
-  var fadigaCount = countFadigaFromState(d);
+  var fadigaCount = inst6BState ? inst6BState.fadiga : countFadigaFromState(d);
   var usedChambers = Array.isArray(d.usedChambers) ? d.usedChambers : [];
+  var damagedChambers = inst6BState
+    ? inst6BState.bloqueados
+    : OS.getRealDamagedChambers
+    ? OS.getRealDamagedChambers(d, chamberCount)
+    : Array.isArray(d.damagedChambers)
+    ? d.damagedChambers
+    : [];
+  var fatigueZeroed = inst6BState
+    ? inst6BState.zeradosPorFadiga
+    : Array.isArray(d.fatigueZeroedChambers)
+    ? d.fatigueZeroedChambers
+    : [];
+  var consumedChambers = inst6BState
+    ? inst6BState.consumidos
+    : usedChambers.filter(function (i) {
+        return damagedChambers.indexOf(i) === -1 && fatigueZeroed.indexOf(i) === -1;
+      });
+  var selectedConsume =
+    isSceneInstance &&
+    OS.activeMesaState &&
+    OS.activeMesaState.instance6BSelected &&
+    Array.isArray(OS.activeMesaState.instance6BSelected[target.instanceId])
+      ? OS.activeMesaState.instance6BSelected[target.instanceId]
+      : [];
   var activeConds = Array.isArray(d.activeConditions) ? d.activeConditions : [];
 
   var chambersHtml = "";
   var compactChambersVals = [];
+  var availableCount = 0;
   for (var ci = 0; ci < chamberCount; ci++) {
     var cVal =
       d["chamber-" + ci] !== undefined && d["chamber-" + ci] !== ""
         ? d["chamber-" + ci]
         : "0";
     var isUsed = usedChambers.indexOf(ci) >= 0;
-    if (!isUsed && String(cVal) !== "0" && !(OS.getRealDamagedChambers && OS.getRealDamagedChambers(d, chamberCount).includes(ci))) {
+    var isDamaged = damagedChambers.indexOf(ci) >= 0;
+    var isFatZero = !isDamaged && fatigueZeroed.indexOf(ci) >= 0;
+    var isConsumed = !isDamaged && !isFatZero && consumedChambers.indexOf(ci) >= 0;
+    var isAvail = !isUsed && !isDamaged && !isFatZero && parseInt(String(cVal), 10) > 0;
+    var isSelConsume = isAvail && selectedConsume.indexOf(ci) >= 0;
+
+    if (isAvail) {
+      availableCount++;
       compactChambersVals.push(String(cVal));
     }
-    chambersHtml +=
-      '<button type="button" class="scene-chamber-pill' +
+
+    var pillCls =
+      "scene-chamber-pill" +
       (isUsed ? " is-used" : "") +
+      (isConsumed ? " is-consumed" : "") +
+      (isDamaged ? " is-damaged" : "") +
+      (isFatZero ? " is-fatigue-zero" : "") +
+      (isAvail ? " is-available" : "") +
+      (isSelConsume ? " is-selected-consume" : "");
+
+    var dieLabel = (info6B.diceList && info6B.diceList[ci]) || "d6";
+    var pillTitle = isDamaged
+      ? "Câmara " + (ci + 1) + " (" + dieLabel + ") — Bloqueada por Dano"
+      : isFatZero
+      ? "Câmara " + (ci + 1) + " (" + dieLabel + ") — Zerada por Fadiga"
+      : isConsumed
+      ? "Câmara " + (ci + 1) + " (" + dieLabel + ") — Consumida"
+      : "Clique para selecionar/alternar câmara " + (ci + 1) + " (" + dieLabel + ": " + cVal + ")";
+
+    chambersHtml +=
+      '<button type="button" class="' +
+      pillCls +
       '" data-action="toggle-chamber" data-chamber="' +
       ci +
-      '" title="Clique para marcar/desmarcar câmara ' +
-      (ci + 1) +
+      '" data-die-type="' +
+      escHtml(dieLabel) +
+      '" data-chamber-state="' +
+      (isDamaged ? "damaged" : isFatZero ? "fatigue-zero" : isConsumed ? "consumed" : isAvail ? "available" : "unrolled") +
+      '" title="' +
+      escHtml(pillTitle) +
       '">' +
       escHtml(cVal) +
       "</button>";
@@ -5368,6 +6869,66 @@ OS.buildCreatureCombatCardBody = function (target, callbacks) {
   var compact6bSummary = compactChambersVals.length
     ? compactChambersVals.join(",")
     : cfg6bText;
+
+  var instanceStatusHtml = "";
+  var instanceActionsHtml = "";
+  var instanceFeedbackHtml = "";
+  if (isSceneInstance && chamberCount > 0) {
+    var verNum = inst6BState ? inst6BState.versao : 0;
+    var isExhausted = inst6BState ? !!inst6BState.esgotado : (verNum > 0 && availableCount === 0);
+    var allDamaged = damagedChambers.length >= chamberCount;
+    var fbObj =
+      OS.activeMesaState &&
+      OS.activeMesaState.instance6BFeedback &&
+      OS.activeMesaState.instance6BFeedback[target.instanceId];
+
+    instanceStatusHtml =
+      '<div class="instance-6b-status-bar" data-instance-id="' +
+      escHtml(target.instanceId) +
+      '">' +
+      '  <span class="instance-6b-stat-chip chip-available">Disponíveis: <strong data-stat="available">' +
+      availableCount +
+      "</strong></span>" +
+      '  <span class="instance-6b-stat-chip chip-consumed">Consumidos: <strong data-stat="consumed">' +
+      consumedChambers.length +
+      "</strong></span>" +
+      '  <span class="instance-6b-stat-chip chip-damaged">Bloqueados: <strong data-stat="damaged">' +
+      damagedChambers.length +
+      "</strong></span>" +
+      '  <span class="instance-6b-stat-chip chip-fatigue">Fadiga: <strong data-stat="fatigue">' +
+      fadigaCount +
+      "</strong></span>" +
+      '  <span class="instance-6b-stat-chip">v<strong data-stat="version">' +
+      verNum +
+      "</strong></span>" +
+      "</div>";
+
+    instanceActionsHtml =
+      '<div class="instance-6b-actions-row">' +
+      '  <button type="button" class="btn btn-secondary btn-small" data-action="consume-selected-6b"' +
+      (availableCount === 0 ? " disabled" : "") +
+      ' title="Consumir dados disponíveis selecionados (ou o primeiro disponível)">' +
+      (selectedConsume.length > 0 ? "Consumir (" + selectedConsume.length + ")" : "Consumir 1º Disponível") +
+      "</button>" +
+      '  <button type="button" class="btn btn-secondary btn-small" data-action="open-defender-damage-modal"' +
+      (allDamaged ? " disabled" : "") +
+      ' title="Abrir modal para o defensor escolher quais dados intactos perderá por dano">🛡️ Dano (Escolha do Defensor)</button>' +
+      '  <button type="button" class="btn btn-secondary btn-small" data-action="renew-6b"' +
+      (!isExhausted || allDamaged ? " disabled" : "") +
+      ' title="Renovar 6B da instância (disponível ao esgotar todos os dados intactos; aplica +1 Fadiga)">🔄 Renovar 6B (+1 Fadiga)</button>' +
+      "</div>";
+
+    instanceFeedbackHtml =
+      '<div class="instance-6b-feedback' +
+      (fbObj && fbObj.isError ? " is-error" : "") +
+      '" data-instance-feedback="' +
+      escHtml(target.instanceId) +
+      '"' +
+      (fbObj && fbObj.text ? "" : " hidden") +
+      ">" +
+      escHtml((fbObj && fbObj.text) || "") +
+      "</div>";
+  }
 
   var condsHtml = "";
   if (!activeConds.length) {
@@ -5479,6 +7040,7 @@ OS.buildCreatureCombatCardBody = function (target, callbacks) {
     ")</span>" +
     '    <button type="button" class="btn btn-secondary btn-small" data-action="roll-6b">🎲 Rolar 6B</button>' +
     "  </div>" +
+    instanceStatusHtml +
     '  <label class="field-label">Configuração 6B <input type="text" class="field-line scene-config-6b-input" aria-label="Configuração 6B" value="' + escHtml(cfg6bText) + '" placeholder="2d6" pattern="[1-9][0-9]*[dD](4|6|8|10|12)(\\s*\\+\\s*[1-9][0-9]*[dD](4|6|8|10|12))*" required></label>' +
     '  <button type="button" class="btn btn-secondary btn-small" data-action="save-6b-config">Salvar 6B</button>' +
     '  <div class="scene-chambers-row" data-chamber-count="' +
@@ -5486,6 +7048,8 @@ OS.buildCreatureCombatCardBody = function (target, callbacks) {
     '">' +
     chambersHtml +
     "</div>" +
+    instanceActionsHtml +
+    instanceFeedbackHtml +
     "</div>" +
     '<label class="field-label">Dano real (câmaras bloqueadas) <input type="number" class="field-line scene-damage-count" min="0" max="' + chamberCount + '" value="' + (OS.getRealDamagedChambers ? OS.getRealDamagedChambers(d, chamberCount).length : 0) + '"></label>' +
     '<button type="button" class="btn btn-secondary btn-small" data-action="save-damage">Aplicar dano / cura</button>' +
@@ -5544,6 +7108,32 @@ OS.buildCreatureCombatCardBody = function (target, callbacks) {
     } else if (act === "roll-6b") {
       if (typeof callbacks.onRoll6B === "function") {
         callbacks.onRoll6B();
+      }
+    } else if (act === "consume-selected-6b" && isSceneInstance) {
+      var stNow = OS.getInstanceOwn6BState ? OS.getInstanceOwn6BState(target.instanceId) : null;
+      var toConsume = selectedConsume.slice();
+      if (!toConsume.length && stNow && Array.isArray(stNow.resultados)) {
+        for (var k = 0; k < stNow.dados.length; k++) {
+          if (
+            stNow.usados.indexOf(k) === -1 &&
+            stNow.bloqueados.indexOf(k) === -1 &&
+            Number(stNow.resultados[k]) > 0
+          ) {
+            toConsume = [k];
+            break;
+          }
+        }
+      }
+      if (toConsume.length && OS.consumeInstanceOwn6B) {
+        OS.consumeInstanceOwn6B(target.instanceId, toConsume);
+      }
+    } else if (act === "open-defender-damage-modal" && isSceneInstance) {
+      if (OS.openDefenderDamageModal) {
+        OS.openDefenderDamageModal(target.instanceId, 1);
+      }
+    } else if (act === "renew-6b" && isSceneInstance) {
+      if (OS.renewInstanceOwn6B) {
+        OS.renewInstanceOwn6B(target.instanceId);
       }
     } else if (act === "toggle-chamber") {
       if (typeof callbacks.onUpdateStats === "function") {
@@ -6028,6 +7618,10 @@ OS.addBestiarioEntryToMesa = async function (sourceEntry) {
 
   var clonedData = deepClone(sourceEntry.data);
   clonedData.freeEdit = true;
+  // XER-05: Cada instância recebe estado próprio isolado do molde e de outras instâncias
+  delete clonedData.own6BInstance;
+  delete clonedData.consumedChambers;
+  delete clonedData.fatigueZeroedChambers;
   var wrapperModeChoice = OS.extractCreatureModeChoice
     ? OS.extractCreatureModeChoice(sourceEntry)
     : null;
@@ -7601,7 +9195,11 @@ OS.renderBestiarioModal = function () {
 
         var d = entry.data || {};
         var defVal = d.defesa || "0";
-        var cfgVal = d["config-6b"] || "1d6";
+        var isOff6B =
+          d.hasOwn6B === false ||
+          d["has-own-6b"] === false ||
+          Boolean(d.own6B && typeof d.own6B === "object" && d.own6B.enabled === false);
+        var cfgVal = isOff6B ? "Sem 6B próprio" : (d["config-6b"] || "1d6");
 
         btn.innerHTML =
           '<span class="catalog-item-name">' +
@@ -7740,7 +9338,13 @@ OS.renderBestiarioModal = function () {
     escHtml(sd.iniciativa || "0") +
     "</span></div>" +
     '<div class="catalog-attr"><span class="catalog-attr-label">Dados 6B</span> <span class="catalog-attr-val">' +
-    escHtml(sd["config-6b"] || "1d6") +
+    escHtml(
+      sd.hasOwn6B === false ||
+      sd["has-own-6b"] === false ||
+      Boolean(sd.own6B && typeof sd.own6B === "object" && sd.own6B.enabled === false)
+        ? "Sem 6B próprio"
+        : (sd["config-6b"] || "1d6")
+    ) +
     "</span></div>" +
     '<div class="catalog-attr"><span class="catalog-attr-label">REM</span> <span class="catalog-attr-val">' +
     escHtml((sd["rem-atual"] || "0") + " / " + (sd["rem-total"] || "0")) +

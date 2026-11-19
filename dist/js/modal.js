@@ -454,6 +454,9 @@ var finalTotal = highest + bonus;
   /* ---- Seleção de câmaras (pós-rolagem) ---- */
 
 function isGmXerifeSheetMode() {
+  if (OS.freeEdit && OS.hasOwn6B === true && OS._own6BExplicit === true) {
+    return false;
+  }
   return !!(
     OS.freeEdit &&
     OS.activeMesaState &&

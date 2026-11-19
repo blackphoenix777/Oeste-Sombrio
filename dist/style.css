@@ -6862,3 +6862,358 @@ body.mesa-fullscreen-active #mesa-sidebar-feed.is-resizing { transition: none; u
 .player-fate-pill.pill-verde { background: rgba(30, 110, 45, 0.4); color: #99ff99; border-color: rgba(60, 180, 80, 0.5); }
 .player-fate-pill.pill-preta { background: rgba(20, 20, 20, 0.6); color: #cccccc; border-color: rgba(120, 120, 120, 0.5); }
 
+/* ─── XER-04: Editor de 6B Próprio para NPCs e Bosses (freeEdit) ─── */
+.own-6b-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(205, 155, 74, 0.38);
+  background: rgba(38, 26, 14, 0.65);
+  color: #e6c687;
+  font-size: 0.76rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.own-6b-toggle-label[hidden] {
+  display: none !important;
+}
+
+.own-6b-mode-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.own-6b-mode-badge.badge-enabled {
+  background: rgba(185, 132, 42, 0.28);
+  color: #ffd98e;
+  border-color: rgba(225, 175, 78, 0.55);
+}
+
+.own-6b-mode-badge.badge-disabled {
+  background: rgba(70, 70, 70, 0.35);
+  color: #b5aba0;
+  border-color: rgba(140, 130, 120, 0.35);
+}
+
+.npc-own-6b-editor {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(196, 146, 69, 0.42);
+  background: linear-gradient(180deg, rgba(34, 24, 15, 0.88), rgba(22, 16, 11, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 220, 160, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.npc-own-6b-editor[hidden] {
+  display: none !important;
+}
+
+.npc-own-6b-editor.is-disabled {
+  opacity: 0.68;
+  border-color: rgba(130, 115, 98, 0.32);
+}
+
+.npc-own-6b-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.npc-own-6b-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.npc-own-6b-summary {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffd584;
+  font-family: "Courier New", monospace;
+}
+
+.npc-own-6b-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.npc-own-6b-counter {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(205, 155, 74, 0.32);
+  color: #e6d2b5;
+}
+
+.npc-own-6b-counter.is-max {
+  color: #ffcc66;
+  border-color: rgba(255, 196, 77, 0.65);
+}
+
+.npc-own-6b-counter.is-invalid {
+  color: #ff9494;
+  border-color: rgba(235, 90, 90, 0.65);
+}
+
+.npc-own-6b-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+  gap: 6px;
+}
+
+.own-6b-die-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 5px;
+  border-radius: 4px;
+  background: rgba(14, 10, 7, 0.6);
+  border: 1px solid rgba(180, 140, 85, 0.24);
+}
+
+.own-6b-die-control.has-dice {
+  border-color: rgba(225, 174, 82, 0.65);
+  background: rgba(52, 35, 16, 0.58);
+}
+
+.own-6b-die-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #e4c590;
+  text-transform: lowercase;
+}
+
+.own-6b-stepper {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  justify-content: center;
+}
+
+.own-6b-step-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 3px;
+  border: 1px solid rgba(196, 148, 76, 0.42);
+  background: rgba(45, 31, 18, 0.85);
+  color: #f0d7a8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.own-6b-step-btn:hover:not(:disabled) {
+  background: rgba(82, 56, 28, 0.92);
+  border-color: rgba(235, 185, 96, 0.75);
+}
+
+.own-6b-step-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.own-6b-die-input {
+  width: 34px;
+  height: 22px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff2d6;
+  background: rgba(10, 8, 6, 0.8);
+  border: 1px solid rgba(175, 135, 78, 0.35);
+  border-radius: 3px;
+  padding: 0 2px;
+  -moz-appearance: textfield;
+}
+
+.own-6b-die-input::-webkit-outer-spin-button,
+.own-6b-die-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.npc-own-6b-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 20px;
+  align-items: center;
+}
+
+.own-6b-die-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+  background: rgba(196, 142, 54, 0.22);
+  border: 1px solid rgba(224, 172, 82, 0.52);
+  color: #ffe09e;
+}
+
+.own-6b-empty-hint {
+  font-size: 0.73rem;
+  color: #a89984;
+  font-style: italic;
+}
+
+.npc-own-6b-validation {
+  font-size: 0.74rem;
+  color: #ff9c9c;
+  background: rgba(120, 22, 22, 0.35);
+  border: 1px solid rgba(220, 75, 75, 0.5);
+  border-radius: 4px;
+  padding: 4px 7px;
+}
+
+.npc-own-6b-validation[hidden] {
+  display: none !important;
+}
+
+/* ─── XER-05 & XER-06: Estado de 6B por Instância, Consumo, Dano, Fadiga e Renovação ─── */
+.instance-6b-status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: #dec9aa;
+  background: rgba(18, 12, 8, 0.65);
+  border: 1px solid rgba(196, 146, 69, 0.3);
+  border-radius: 4px;
+  padding: 4px 7px;
+  margin-bottom: 5px;
+}
+
+.instance-6b-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.instance-6b-stat-chip.chip-available { color: #a8f0c0; }
+.instance-6b-stat-chip.chip-consumed { color: #d6c5b3; }
+.instance-6b-stat-chip.chip-damaged { color: #ff9999; }
+.instance-6b-stat-chip.chip-fatigue { color: #d4b2ff; }
+
+.scene-chamber-pill.is-available {
+  border-color: rgba(112, 204, 142, 0.55);
+}
+
+.scene-chamber-pill.is-selected-consume {
+  outline: 2px solid #ffd166;
+  background: rgba(214, 158, 46, 0.35);
+  color: #fff7df;
+}
+
+.scene-chamber-pill.is-damaged {
+  background: rgba(135, 24, 24, 0.55) !important;
+  border-color: rgba(235, 82, 82, 0.75) !important;
+  color: #ffb3b3 !important;
+  text-decoration: line-through;
+}
+
+.scene-chamber-pill.is-fatigue-zero {
+  background: rgba(88, 52, 135, 0.45) !important;
+  border-color: rgba(175, 130, 235, 0.65) !important;
+  color: #dec4ff !important;
+}
+
+.instance-6b-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+  margin-bottom: 4px;
+}
+
+.instance-6b-feedback {
+  font-size: 0.73rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  background: rgba(35, 25, 16, 0.78);
+  border: 1px solid rgba(205, 155, 74, 0.38);
+  color: #f3d79b;
+}
+
+.instance-6b-feedback.is-error {
+  background: rgba(115, 22, 22, 0.42);
+  border-color: rgba(225, 80, 80, 0.58);
+  color: #ffadad;
+}
+
+.instance-6b-feedback[hidden] {
+  display: none !important;
+}
+
+.defender-damage-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.defender-damage-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+  gap: 7px;
+  margin: 10px 0;
+}
+
+.defender-die-choice-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: 1px solid rgba(205, 155, 74, 0.45);
+  background: rgba(30, 21, 14, 0.88);
+  color: #f4dfc0;
+  cursor: pointer;
+}
+
+.defender-die-choice-btn.selected {
+  background: rgba(155, 32, 32, 0.58);
+  border-color: #ff7b7b;
+  color: #fff0f0;
+  box-shadow: 0 0 0 1px rgba(255, 120, 120, 0.45);
+}
+
+.defender-die-choice-btn.is-already-damaged,
+.defender-die-choice-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  border-color: rgba(140, 80, 80, 0.35);
+}
+
+
+

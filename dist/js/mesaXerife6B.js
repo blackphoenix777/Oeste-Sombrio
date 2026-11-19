@@ -204,7 +204,9 @@ OS.getXerife6BSnapshot = function (type) {
 // As instâncias consultam a MESMA projeção; não há cópia de dados em cada NPC.
 OS.getXerife6BForNpc = function (instanceId) {
   const s = session;
-  if (!s || !current(s) || !s.gm || !OS.getSceneCreatureById(instanceId)) return null;
+  const inst = OS.getSceneCreatureById ? OS.getSceneCreatureById(instanceId) : null;
+  if (!s || !current(s) || !s.gm || !inst) return null;
+  if (OS.entityHasOwn6B && OS.entityHasOwn6B(inst)) return null;
   const snapshot = s.snapshots.aberto;
   return snapshot ? JSON.parse(JSON.stringify(snapshot)) : null;
 };
