@@ -1,33 +1,22 @@
 name: 'Release Dark West'
 
+# Publicação oficial controlada (local assinada ou dispatch manual em draft).
+# Evita disparos concorrentes/duplicados a cada push de tag v* sem exigir lista hardcoded de versões.
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag de release alvo (ex: v1.4.7)'
+        required: true
+        type: string
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ inputs.tag_name || github.ref }}
   cancel-in-progress: false
 
 jobs:
-  publish-approved-144:
-    if: github.ref == 'refs/tags/v1.4.4'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - name: Verify approved hashes, Minisign and manifest; publish stable release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/verify-release-144.cjs --publish-draft
-
   release:
-    if: startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/tags/v1.4.4' && github.ref != 'refs/tags/v1.4.5' && github.ref != 'refs/tags/v1.4.6'
+    if: github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     strategy:
@@ -61,17 +50,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Tauri App and Publish Release
+      - name: Build Tauri App and Create Draft Release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: ${{ github.ref_name }}
+          tagName: ${{ inputs.tag_name }}
           releaseName: 'Dark West v__VERSION__'
-          releaseBody: 'Nova versão do Dark West lançada com atualizações automáticas.'
-          releaseDraft: false
+          releaseBody: 'Rascunho de release gerado manualmente para revisão criptográfica antes da publicação.'
+          releaseDraft: true
           prerelease: false
           updaterJsonPreferNsis: true
           args: ${{ matrix.args }}
