@@ -27,7 +27,7 @@ jobs:
         run: node scripts/verify-release-144.cjs --publish-draft
 
   release:
-    if: startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/tags/v1.4.4' && github.ref != 'refs/tags/v1.4.5'
+    if: startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/tags/v1.4.4' && github.ref != 'refs/tags/v1.4.5' && github.ref != 'refs/tags/v1.4.6'
     permissions:
       contents: write
     strategy:
