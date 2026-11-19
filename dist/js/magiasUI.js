@@ -2006,7 +2006,18 @@ OS.applyMagiasState = function (state) {
   var nivel = rawNivel === "" ? 0 : parseInt(rawNivel, 10);
   if (isNaN(nivel) || nivel < 0) nivel = 0;
 
-  if (OS.freeEdit && state["config-6b"] !== undefined && String(state["config-6b"]).trim() !== "") {
+  var isExplicitNoOwn6B = !!(
+    OS.freeEdit &&
+    (state.hasOwn6B === false ||
+      state["has-own-6b"] === false ||
+      (state.own6B && typeof state.own6B === "object" && state.own6B.enabled === false))
+  );
+
+  if (isExplicitNoOwn6B) {
+    OS.config6B = {};
+    var cfgDisabledEl = OS.$("config-6b");
+    if (cfgDisabledEl) cfgDisabledEl.value = "";
+  } else if (OS.freeEdit && state["config-6b"] !== undefined && String(state["config-6b"]).trim() !== "") {
     var cfgFreeEl = OS.$("config-6b");
     if (cfgFreeEl) cfgFreeEl.value = String(state["config-6b"]);
     var parsedCfg = OS.parse6BConfigString(state["config-6b"]);
@@ -2295,9 +2306,24 @@ OS.bindMagiasUI = function () {
   if (cfg6bEl) {
     var onCfg6bChange = function () {
       if (OS.freeEdit) {
-        var parsed = OS.parse6BConfigString(cfg6bEl.value);
-        if (Object.keys(parsed).length) {
-          OS.config6B = parsed;
+        var rawCfgText = String(cfg6bEl.value || "").trim();
+        if (typeof OS.setOwn6BComposition === "function") {
+          if (rawCfgText) {
+            OS.setOwn6BComposition(rawCfgText, {
+              preserveConfigInput: true,
+              markExplicit: true
+            });
+          } else if (OS.hasOwn6B === true) {
+            OS.setOwn6BComposition("", {
+              preserveConfigInput: true,
+              skipSave: true
+            });
+          }
+        } else {
+          var parsed = OS.parse6BConfigString(rawCfgText);
+          if (Object.keys(parsed).length) {
+            OS.config6B = parsed;
+          }
         }
         OS.updateMagiasStatusBar();
         if (typeof OS.syncUsedChambersVisual === "function") {

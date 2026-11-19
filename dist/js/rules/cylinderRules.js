@@ -2,8 +2,11 @@ import { OS } from "../app.js";
 
 export function canReloadCylinder(usedChambers) {
   if (OS && OS.freeEdit) {
+    if (OS.hasOwn6B === false && OS._own6BExplicit) return false;
     var dicePool = OS.get6BDiceArray ? OS.get6BDiceArray() : ["d6"];
+    if (!dicePool || !dicePool.length) return false;
     var activeLimit = Math.max(1, Math.min(6, dicePool.length || 1));
+
     var used = Array.isArray(usedChambers) ? usedChambers : [];
     var hasActiveValue = false;
     for (var i = 0; i < activeLimit; i++) {

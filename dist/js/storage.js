@@ -326,6 +326,7 @@ OS.setFreeEditMode = function (enabled) {
     }
   }
   if (OS.syncCriaturaModeUI) OS.syncCriaturaModeUI();
+  if (OS.syncOwn6BEditorUI) OS.syncOwn6BEditorUI();
 };
 
 OS.collectState = function () {
@@ -334,6 +335,8 @@ OS.collectState = function () {
     OS.getFormElements().forEach(function (el) {
       if (!el.name && !el.id) return;
       if (el.id === "is-criatura" || el.name === "is-criatura") return;
+      if (el.id === "has-own-6b" || el.name === "has-own-6b") return;
+      if (el.id && el.id.indexOf("own-6b-count-") === 0) return;
       var key = el.name || el.id;
 
       if (el.type === "checkbox") {
@@ -373,20 +376,73 @@ OS.collectState = function () {
     }
 
     if (OS.freeEdit) {
-      var rawCfgStr = String(state["config-6b"] || "").trim();
-      if (rawCfgStr && typeof OS.parse6BConfigString === "function") {
-        var parsed6b = OS.parse6BConfigString(rawCfgStr);
-        if (Object.keys(parsed6b).length) {
-          state.config6B = Object.assign({}, parsed6b);
-          OS.config6B = Object.assign({}, parsed6b);
+      if (OS._own6BExplicit === true) {
+        if (OS.hasOwn6B === false) {
+          state.hasOwn6B = false;
+          state["has-own-6b"] = false;
+          state.own6B = OS.getOwn6BTemplateSnapshot
+            ? OS.getOwn6BTemplateSnapshot()
+            : {
+                schemaVersion: 1,
+                enabled: false,
+                totalDice: 0,
+                counts: { d4: 0, d6: 0, d8: 0, d10: 0, d12: 0 },
+                diceTypes: [],
+                diceSides: [],
+                formatted: ""
+              };
+          state.config6B = {};
+          state["config-6b"] = "";
+        } else if (OS.hasOwn6B === true) {
+          var ownSnap = OS.getOwn6BTemplateSnapshot
+            ? OS.getOwn6BTemplateSnapshot()
+            : null;
+          state.hasOwn6B = true;
+          state["has-own-6b"] = true;
+          if (ownSnap) {
+            state.own6B = ownSnap;
+            var compactOwn = {};
+            Object.keys(ownSnap.counts || {}).forEach(function (dk) {
+              var qty = parseInt(ownSnap.counts[dk], 10) || 0;
+              if (qty > 0) compactOwn[dk] = qty;
+            });
+            state.config6B = compactOwn;
+            OS.config6B = Object.assign({}, compactOwn);
+            state["config-6b"] = ownSnap.formatted || "";
+            if (ownSnap.totalDice > 6) {
+              var extraSaved = OS._loadedExtraChambers || {};
+              for (var eci = 6; eci < ownSnap.totalDice; eci++) {
+                var ek = "chamber-" + eci;
+                if (state[ek] === undefined) {
+                  state[ek] = extraSaved[ek] !== undefined ? String(extraSaved[ek]) : "0";
+                }
+              }
+            }
+          }
         }
-      } else if (
-        state.config6B &&
-        typeof state.config6B === "object" &&
-        Object.keys(state.config6B).length &&
-        typeof OS.format6BConfig === "function"
-      ) {
-        state["config-6b"] = OS.format6BConfig(state.config6B);
+      } else {
+        var rawCfgStr = String(state["config-6b"] || "").trim();
+        if (rawCfgStr && typeof OS.parse6BConfigString === "function") {
+          var parsed6b = OS.parse6BConfigString(rawCfgStr);
+          if (Object.keys(parsed6b).length) {
+            state.config6B = Object.assign({}, parsed6b);
+            OS.config6B = Object.assign({}, parsed6b);
+          }
+        } else if (
+          state.config6B &&
+          typeof state.config6B === "object" &&
+          Object.keys(state.config6B).length &&
+          typeof OS.format6BConfig === "function"
+        ) {
+          state["config-6b"] = OS.format6BConfig(state.config6B);
+        }
+        if (OS._loadedExtraChambers && typeof OS._loadedExtraChambers === "object") {
+          Object.keys(OS._loadedExtraChambers).forEach(function (ek) {
+            if (state[ek] === undefined) {
+              state[ek] = String(OS._loadedExtraChambers[ek]);
+            }
+          });
+        }
       }
     }
 
@@ -542,6 +598,12 @@ OS.collectState = function () {
     OS.getFormElements().forEach(function (el) {
       var key = el.name || el.id;
       if (el.id === "is-criatura" || el.name === "is-criatura") {
+        return;
+      }
+      if (el.id === "has-own-6b" || el.name === "has-own-6b") {
+        return;
+      }
+      if (el.id && el.id.indexOf("own-6b-count-") === 0) {
         return;
       }
       if (!(key in state) && el.type === "radio" && !(el.name in state)) {
@@ -781,6 +843,72 @@ OS.collectState = function () {
     } else {
       OS.isCriatura = isFree ? loadedCriaturaChoice : null;
     }
+
+    // XER-04: Restaurar estado do 6B próprio de NPC/Boss sem poluir fichas de jogador ou legados não editados
+    OS._loadedExtraChambers = {};
+    for (var xci = 6; xci < 15; xci++) {
+      var xk = "chamber-" + xci;
+      if (state[xk] !== undefined) {
+        OS._loadedExtraChambers[xk] = String(state[xk]);
+      }
+    }
+    if (!isFree) {
+      if (OS.setOwn6BEnabled) {
+        OS.setOwn6BEnabled(null, { skipSave: true, markExplicit: false });
+      }
+    } else {
+      var hasExplicitOwnFalse =
+        state.hasOwn6B === false ||
+        state["has-own-6b"] === false ||
+        Boolean(state.own6B && typeof state.own6B === "object" && state.own6B.enabled === false);
+      var hasExplicitOwnTrue =
+        state.hasOwn6B === true ||
+        state["has-own-6b"] === true ||
+        Boolean(state.own6B && typeof state.own6B === "object" && state.own6B.enabled === true);
+
+      if (hasExplicitOwnFalse) {
+        if (OS.setOwn6BEnabled) {
+          OS.setOwn6BEnabled(false, { skipSave: true, markExplicit: true });
+        }
+      } else if (hasExplicitOwnTrue) {
+        var explicitCompSource =
+          state.own6B && typeof state.own6B === "object"
+            ? state.own6B.counts || state.own6B.formatted || state.own6B.diceTypes
+            : null;
+        if (!explicitCompSource) {
+          explicitCompSource = state["config-6b"] || state.config6B || { d6: 6 };
+        }
+        if (OS.setOwn6BComposition) {
+          OS.setOwn6BComposition(explicitCompSource, { skipSave: true, markExplicit: true });
+        }
+      } else {
+        // Legado sem flag explícita hasOwn6B/own6B: sincroniza UI para refletir config-6b existente sem marcar _own6BExplicit
+        var legacySource = state["config-6b"] || state.config6B || null;
+        if (legacySource && OS.validateOwn6BComposition) {
+          var legRes = OS.validateOwn6BComposition(legacySource, { enabled: true });
+          if (legRes.valid) {
+            OS.hasOwn6B = true;
+            OS.own6BCounts = Object.assign({}, legRes.counts);
+            OS._lastValidOwn6BCounts = Object.assign({}, legRes.counts);
+            OS._own6BExplicit = false;
+            OS.own6BValidationError = null;
+            OS.own6BValidationCode = null;
+          } else {
+            OS.hasOwn6B = false;
+            OS.own6BCounts = OS.createEmptyOwn6BCounts ? OS.createEmptyOwn6BCounts() : { d4: 0, d6: 0, d8: 0, d10: 0, d12: 0 };
+            OS._own6BExplicit = false;
+          }
+        } else {
+          OS.hasOwn6B = false;
+          OS.own6BCounts = OS.createEmptyOwn6BCounts ? OS.createEmptyOwn6BCounts() : { d4: 0, d6: 0, d8: 0, d10: 0, d12: 0 };
+          OS._own6BExplicit = false;
+        }
+        if (OS.syncOwn6BEditorUI) {
+          OS.syncOwn6BEditorUI({ preserveConfigInput: true });
+        }
+      }
+    }
+
     if (OS.updateBuffButtonUI) OS.updateBuffButtonUI();
     if (OS.updateStatsFields) OS.updateStatsFields(false);
 
@@ -795,7 +923,13 @@ OS.collectState = function () {
       if (iniEl && state.iniciativa !== undefined) iniEl.value = String(state.iniciativa);
       if (remTEl && state["rem-total"] !== undefined) remTEl.value = String(state["rem-total"]);
       if (remAEl && state["rem-atual"] !== undefined) remAEl.value = String(state["rem-atual"]);
-      if (cfgEl && state["config-6b"] !== undefined) cfgEl.value = String(state["config-6b"]);
+      if (cfgEl) {
+        if (OS.hasOwn6B === false && OS._own6BExplicit) {
+          cfgEl.value = "";
+        } else if (state["config-6b"] !== undefined) {
+          cfgEl.value = String(state["config-6b"]);
+        }
+      }
       if (typeof OS.syncUsedChambersVisual === "function") {
         OS.syncUsedChambersVisual(true);
       }
@@ -903,6 +1037,12 @@ OS.collectState = function () {
     OS.sceneTerrorLevel = 0;
     OS.isVeterano = false;
     OS.isCriatura = null;
+    OS.hasOwn6B = isFree ? false : null;
+    OS.own6BCounts = OS.createEmptyOwn6BCounts ? OS.createEmptyOwn6BCounts() : { d4: 0, d6: 0, d8: 0, d10: 0, d12: 0 };
+    OS._own6BExplicit = false;
+    OS.own6BValidationError = null;
+    OS.own6BValidationCode = null;
+    OS._loadedExtraChambers = null;
     OS._loadedHasTipoFicha = false;
     OS._loadedCreatureModeNullKeys = null;
     OS.downtimeWeeks = 0;
@@ -922,6 +1062,7 @@ OS.collectState = function () {
     if (OS.renderActiveConditions) OS.renderActiveConditions();
     if (OS.syncTerrorAndVeteranoUI) OS.syncTerrorAndVeteranoUI();
     if (OS.syncCriaturaModeUI) OS.syncCriaturaModeUI();
+    if (OS.syncOwn6BEditorUI) OS.syncOwn6BEditorUI();
     if (OS.clearInventoryItems) OS.clearInventoryItems();
     if (OS.clearMagiasState) OS.clearMagiasState({ freeEdit: isFree });
     OS.activeBuffs = [];

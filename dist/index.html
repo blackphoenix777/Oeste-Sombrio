@@ -468,6 +468,11 @@
               <span>Criatura</span>
               <small id="criatura-mode-badge" class="criatura-mode-badge" hidden></small>
             </label>
+            <label class="veterano-toggle-label own-6b-toggle-label" id="own-6b-toggle-wrap" for="has-own-6b" title="6B próprio do NPC/Boss (1 a 15 dados d4..d12). Não transforma o NPC em Criatura nem altera iniciativa ou ações." hidden>
+              <input type="checkbox" id="has-own-6b" name="has-own-6b">
+              <span>6B Próprio</span>
+              <small id="own-6b-mode-badge" class="own-6b-mode-badge" hidden>DESATIVADO</small>
+            </label>
           </div>
 
           <div class="info-row info-row-top">
@@ -548,6 +553,63 @@
               <div class="condicoes-feedback" id="condicoes-feedback" aria-live="polite"></div>
             </div>
           </div>
+
+          <section class="npc-own-6b-editor" id="npc-own-6b-editor" aria-label="Editor de 6B Próprio do NPC ou Boss" hidden>
+            <div class="npc-own-6b-header">
+              <div class="npc-own-6b-title-group">
+                <span class="field-label">COMPOSITOR DE 6B PRÓPRIO (NPC / BOSS)</span>
+                <span class="npc-own-6b-summary" id="own-6b-composition-summary">Sem 6B próprio</span>
+              </div>
+              <div class="npc-own-6b-meta">
+                <span class="npc-own-6b-counter" id="own-6b-dice-counter">0 / 15 dados</span>
+                <button type="button" class="btn btn-secondary btn-small npc-own-6b-preset-btn" id="btn-own-6b-preset-6d6" title="Aplicar composição padrão de 6d6">6d6</button>
+              </div>
+            </div>
+            <div class="npc-own-6b-controls" id="own-6b-die-controls">
+              <div class="own-6b-die-control" data-die-type="d4">
+                <label class="own-6b-die-label" for="own-6b-count-d4">d4</label>
+                <div class="own-6b-stepper">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d4" data-own6b-step="-1" aria-label="Diminuir d4">−</button>
+                  <input type="number" id="own-6b-count-d4" class="own-6b-die-input" data-own6b-die="d4" min="0" max="15" step="1" value="0" inputmode="numeric">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d4" data-own6b-step="1" aria-label="Aumentar d4">+</button>
+                </div>
+              </div>
+              <div class="own-6b-die-control" data-die-type="d6">
+                <label class="own-6b-die-label" for="own-6b-count-d6">d6</label>
+                <div class="own-6b-stepper">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d6" data-own6b-step="-1" aria-label="Diminuir d6">−</button>
+                  <input type="number" id="own-6b-count-d6" class="own-6b-die-input" data-own6b-die="d6" min="0" max="15" step="1" value="0" inputmode="numeric">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d6" data-own6b-step="1" aria-label="Aumentar d6">+</button>
+                </div>
+              </div>
+              <div class="own-6b-die-control" data-die-type="d8">
+                <label class="own-6b-die-label" for="own-6b-count-d8">d8</label>
+                <div class="own-6b-stepper">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d8" data-own6b-step="-1" aria-label="Diminuir d8">−</button>
+                  <input type="number" id="own-6b-count-d8" class="own-6b-die-input" data-own6b-die="d8" min="0" max="15" step="1" value="0" inputmode="numeric">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d8" data-own6b-step="1" aria-label="Aumentar d8">+</button>
+                </div>
+              </div>
+              <div class="own-6b-die-control" data-die-type="d10">
+                <label class="own-6b-die-label" for="own-6b-count-d10">d10</label>
+                <div class="own-6b-stepper">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d10" data-own6b-step="-1" aria-label="Diminuir d10">−</button>
+                  <input type="number" id="own-6b-count-d10" class="own-6b-die-input" data-own6b-die="d10" min="0" max="15" step="1" value="0" inputmode="numeric">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d10" data-own6b-step="1" aria-label="Aumentar d10">+</button>
+                </div>
+              </div>
+              <div class="own-6b-die-control" data-die-type="d12">
+                <label class="own-6b-die-label" for="own-6b-count-d12">d12</label>
+                <div class="own-6b-stepper">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d12" data-own6b-step="-1" aria-label="Diminuir d12">−</button>
+                  <input type="number" id="own-6b-count-d12" class="own-6b-die-input" data-own6b-die="d12" min="0" max="15" step="1" value="0" inputmode="numeric">
+                  <button type="button" class="own-6b-step-btn" data-own6b-die="d12" data-own6b-step="1" aria-label="Aumentar d12">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="npc-own-6b-preview" id="own-6b-preview-pills" aria-live="polite"></div>
+            <div class="npc-own-6b-validation" id="own-6b-validation-feedback" role="alert" hidden></div>
+          </section>
         </div>
 
         <div class="cylinder-block" aria-label="Tambor do revólver — valores numéricos por câmara">
@@ -1651,6 +1713,27 @@
 
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="regras-modal-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Escolha do Defensor para Dano no 6B da Instância (XER-06) -->
+  <div class="modal-overlay" id="defender-damage-modal" role="dialog" aria-modal="true" aria-labelledby="defender-damage-modal-title">
+    <div class="modal-box defender-damage-modal-box">
+      <h3 class="modal-title" id="defender-damage-modal-title">Escolha do Defensor — Dados Perdidos por Dano</h3>
+      <p class="modal-sub" id="defender-damage-modal-sub">O defensor escolhe quais dados intactos do 6B próprio serão bloqueados por este ferimento.</p>
+
+      <div class="defender-damage-controls-row">
+        <label class="field-label" for="defender-damage-points-input">Pontos de Dano Recebidos:</label>
+        <input type="number" id="defender-damage-points-input" class="field-line field-short" min="1" max="15" step="1" value="1" inputmode="numeric">
+      </div>
+
+      <div class="roll-grid defender-damage-dice-grid" id="defender-damage-dice-grid" role="group" aria-label="Dados do 6B da instância"></div>
+      <p class="modal-hint" id="defender-damage-modal-hint" aria-live="polite">Selecione os dados intactos a perder.</p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="defender-damage-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="defender-damage-confirm" disabled>Confirmar Bloqueio por Dano</button>
       </div>
     </div>
   </div>
