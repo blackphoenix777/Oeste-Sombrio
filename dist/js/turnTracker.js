@@ -10,6 +10,8 @@ function createEmptyRoundState() {
     serverVersion: 0,
     byTokenId: {},
     orderIds: [],
+    opportunities: [],
+    requests: [],
     emittedEventKeys: [],
     eventHistory: [],
     lastTurnIdx: -1,
@@ -24,6 +26,18 @@ var tracker = {
   busy: false,
   position: null,
   error: "",
+  selectedTokenId: null,
+  selectedActionType: "atacar",
+  actionBarBusy: false,
+  actionBarFeedback: "",
+  gmOppDraft: {
+    actionType: "ataque_oportunidade",
+    targetTokenId: "",
+    triggerLabel: "",
+    rangeConfirmed: false,
+    passiveConfirmed: false,
+    open: false
+  },
   roundState: createEmptyRoundState()
 };
 var turnEventListeners = [];
@@ -127,6 +141,19 @@ function sanitizeCanonicalCacheForStorage(mesaId, rs) {
         return copy;
       });
 
+  var safeOpps = (Array.isArray(rs.opportunities) ? rs.opportunities : []).filter(function (o) {
+    if (!o || !o.combatantId) return false;
+    if (isGm) return true;
+    var tid = String(o.combatantId);
+    return isTokenOwnedByCurrentUser(tokenById[tid] || null, itemById[tid] || null, st, uid);
+  });
+  var safeReqs = (Array.isArray(rs.requests) ? rs.requests : []).filter(function (r) {
+    if (!r || !r.combatantId) return false;
+    if (isGm) return true;
+    var tid = String(r.combatantId);
+    return isTokenOwnedByCurrentUser(tokenById[tid] || null, itemById[tid] || null, st, uid);
+  });
+
   return {
     userId: uid,
     mesaId: String(mesaId),
@@ -136,6 +163,8 @@ function sanitizeCanonicalCacheForStorage(mesaId, rs) {
     serverVersion: rs.serverVersion,
     orderIds: safeOrder,
     byTokenId: safeByToken,
+    opportunities: deepCloneSafe(safeOpps),
+    requests: deepCloneSafe(safeReqs),
     emittedEventKeys: Array.isArray(rs.emittedEventKeys) ? rs.emittedEventKeys.slice(-200) : [],
     eventHistory: safeEvents,
     lastTurnIdx: typeof rs.lastTurnIdx === "number" ? rs.lastTurnIdx : -1,
@@ -432,6 +461,12 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
       rs.serverVersion = Number(persisted.serverVersion || 0);
       rs.byTokenId = sanitizedByToken;
       rs.orderIds = Array.isArray(persisted.orderIds) ? persisted.orderIds.slice() : [];
+      rs.opportunities = persistedSameServerVersion && Array.isArray(persisted.opportunities)
+        ? deepCloneSafe(persisted.opportunities)
+        : [];
+      rs.requests = persistedSameServerVersion && Array.isArray(persisted.requests)
+        ? deepCloneSafe(persisted.requests)
+        : [];
       rs.emittedEventKeys = Array.isArray(persisted.emittedEventKeys) ? persisted.emittedEventKeys.slice() : [];
       rs.eventHistory = Array.isArray(persisted.eventHistory) ? persisted.eventHistory.slice() : [];
       rs.lastTurnIdx = typeof persisted.lastTurnIdx === "number" ? persisted.lastTurnIdx : -1;
@@ -451,6 +486,8 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
     rs.serverVersion = nextVersion;
     rs.byTokenId = {};
     rs.orderIds = [];
+    rs.opportunities = Array.isArray(next.oportunidades_reacao) ? deepCloneSafe(next.oportunidades_reacao) : [];
+    rs.requests = Array.isArray(next.solicitacoes_reacao) ? deepCloneSafe(next.solicitacoes_reacao) : [];
     rs.emittedEventKeys = [];
     rs.eventHistory = [];
     rs.lastTurnIdx = -1;
@@ -464,13 +501,14 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
       var srvNext = item.next_round_initiative !== undefined ? item.next_round_initiative
         : item.nextRoundInitiative !== undefined ? item.nextRoundInitiative
         : null;
+      var srvTurnEnded = !!(item.action_state && typeof item.action_state === "object" && item.action_state.turnEnded === true);
       var initVal = normTrackerInit(srvCurr);
       var entry = {
         tokenId: tid,
         currentInitiative: initVal,
         nextRoundInitiative: srvNext !== null ? normTrackerInit(srvNext) : null,
         initiativeSource: item.iniciativa_fonte || "ficha",
-        turnEnded: false,
+        turnEnded: srvTurnEnded,
         budget: null,
         actionState: null
       };
@@ -479,12 +517,17 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
       item.nextRoundInitiative = entry.nextRoundInitiative;
       entry.budget = computeBudgetForCombatItem(item, nextRound, entry.currentInitiative);
       entry.actionState = createActionStateForItem(item, nextRound, next, entry.budget, null);
+      if (entry.actionState && item.action_state && typeof item.action_state === "object") {
+        entry.turnEnded = !!entry.actionState.turnEnded;
+      }
       item.actionBudget = entry.budget;
       item.actionState = entry.actionState;
       rs.byTokenId[tid] = entry;
       rs.orderIds.push(tid);
     });
     next.ordem = ordem;
+    next.oportunidades_reacao = deepCloneSafe(rs.opportunities);
+    next.solicitacoes_reacao = deepCloneSafe(rs.requests);
 
     var initIdx = Number(next.turno_atual_idx);
     var initTurnItem = initIdx >= 0 && initIdx < ordem.length ? ordem[initIdx] : null;
@@ -557,6 +600,7 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
       var srvNext = item.next_round_initiative !== undefined ? item.next_round_initiative
         : item.nextRoundInitiative !== undefined ? item.nextRoundInitiative
         : null;
+      var hasServerTurnEnded = !!(item.action_state && typeof item.action_state === "object" && typeof item.action_state.turnEnded === "boolean");
       var entry;
       if (!prev) {
         entry = {
@@ -564,7 +608,7 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
           currentInitiative: srvCurr !== null ? normTrackerInit(srvCurr) : serverInit,
           nextRoundInitiative: srvNext !== null ? normTrackerInit(srvNext) : null,
           initiativeSource: item.iniciativa_fonte || "fixa",
-          turnEnded: false,
+          turnEnded: hasServerTurnEnded ? !!item.action_state.turnEnded : false,
           budget: null,
           actionState: null
         };
@@ -581,7 +625,7 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
           currentInitiative: frozenCurr,
           nextRoundInitiative: nextRoundVal,
           initiativeSource: item.iniciativa_fonte || prev.initiativeSource || "ficha",
-          turnEnded: !!prev.turnEnded,
+          turnEnded: hasServerTurnEnded ? !!item.action_state.turnEnded : !!prev.turnEnded,
           budget: null,
           actionState: prev.actionState || null
         };
@@ -591,7 +635,12 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
       item.nextRoundInitiative = entry.nextRoundInitiative;
       entry.budget = computeBudgetForCombatItem(item, rs.round, entry.currentInitiative);
       entry.actionState = createActionStateForItem(item, rs.round, next, entry.budget, entry.actionState);
-      entry.actionState.turnEnded = !!entry.turnEnded;
+      if (hasServerTurnEnded) {
+        entry.turnEnded = !!item.action_state.turnEnded;
+        entry.actionState.turnEnded = entry.turnEnded;
+      } else {
+        entry.actionState.turnEnded = !!entry.turnEnded;
+      }
       item.actionBudget = entry.budget;
       item.actionState = entry.actionState;
       nextMap[tid] = entry;
@@ -600,7 +649,19 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
 
     rs.byTokenId = nextMap;
     rs.orderIds = preservedIds;
+    if (Array.isArray(next.oportunidades_reacao)) {
+      rs.opportunities = deepCloneSafe(next.oportunidades_reacao);
+    } else if (!Array.isArray(rs.opportunities)) {
+      rs.opportunities = [];
+    }
+    if (Array.isArray(next.solicitacoes_reacao)) {
+      rs.requests = deepCloneSafe(next.solicitacoes_reacao);
+    } else if (!Array.isArray(rs.requests)) {
+      rs.requests = [];
+    }
     next.ordem = rebuiltOrdem;
+    next.oportunidades_reacao = deepCloneSafe(rs.opportunities);
+    next.solicitacoes_reacao = deepCloneSafe(rs.requests);
     if (activeCurrentTid) {
       var newIdx = rebuiltOrdem.findIndex(function (c) { return String(c.token_id) === activeCurrentTid; });
       if (newIdx >= 0) next.turno_atual_idx = newIdx;
@@ -753,7 +814,11 @@ function reconcileCombatRoundState(mesaId, beforeCombat, next) {
 
   rs.byTokenId = promotedMap;
   rs.orderIds = ordem.map(function (c) { return String(c.token_id || ""); });
+  rs.opportunities = Array.isArray(next.oportunidades_reacao) ? deepCloneSafe(next.oportunidades_reacao) : [];
+  rs.requests = Array.isArray(next.solicitacoes_reacao) ? deepCloneSafe(next.solicitacoes_reacao) : [];
   next.ordem = ordem;
+  next.oportunidades_reacao = deepCloneSafe(rs.opportunities);
+  next.solicitacoes_reacao = deepCloneSafe(rs.requests);
 
   var rTurnIdx = Number(next.turno_atual_idx);
   var rTurnItem = rTurnIdx >= 0 && rTurnIdx < ordem.length ? ordem[rTurnIdx] : null;
@@ -799,6 +864,8 @@ OS.resetMesaCombat = function (options) {
   }
   tracker.mesaId = null; tracker.revision = -1; tracker.request++;
   tracker.minimized = false; tracker.busy = false; tracker.position = null; tracker.error = "";
+  tracker.selectedTokenId = null; tracker.actionBarBusy = false; tracker.actionBarFeedback = "";
+  tracker.gmOppDraft.open = false;
   tracker.roundState = createEmptyRoundState();
   OS.activeMesaState.combateAtivo = null;
   closeCombatDialog("modal-setup-combate"); closeCombatDialog("modal-end-combate");
@@ -1158,7 +1225,7 @@ function executeActionControllerMutation(operation, req) {
             state: deepCloneSafe(actionState)
           };
         }
-        if (String(errCode) === "40001" || String(errCode) === "P0409") {
+        if (String(errCode) === "40001" || String(errCode) === "P0409" || String(errCode) === "PT409" || String(errCode) === "409") {
           Promise.resolve(OS.loadMesaCombat()).catch(function () {});
         }
         return {
@@ -1227,6 +1294,276 @@ function executeActionControllerMutation(operation, req) {
   return job;
 }
 
+function generateCombatOpId(prefix) {
+  var base = String(prefix || "op");
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return base + "_" + crypto.randomUUID();
+  }
+  return base + "_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10);
+}
+
+function resolveCombatantSheetAnd6B(found) {
+  var st = OS.activeMesaState || {};
+  if (!found || !found.item) return { token: null, sheetData: null, instance6BState: null };
+  var tid = String(found.tokenId || found.item.token_id || "");
+  var token = Array.isArray(st.mesaTokens)
+    ? st.mesaTokens.find(function (t) { return t && String(t.id) === tid; }) || null
+    : null;
+  var sheetData = null;
+  var instance6BState = null;
+  if (found.item.owner_type === "player") {
+    var sheetRow = Array.isArray(st.playerSheets)
+      ? st.playerSheets.find(function (r) { return r && String(r.id) === String(found.item.owner_ref); }) || null
+      : null;
+    sheetData = (sheetRow && sheetRow.dados) || null;
+  } else {
+    var inst = Array.isArray(st.sceneCreatures)
+      ? st.sceneCreatures.find(function (c) { return c && String(c.instanceId) === String(found.item.owner_ref); }) || null
+      : null;
+    sheetData = (inst && inst.data) || null;
+    if (st.instance6BById && found.item.owner_ref) {
+      instance6BState = st.instance6BById[String(found.item.owner_ref)] || null;
+    }
+  }
+  return { token: token, sheetData: sheetData, instance6BState: instance6BState };
+}
+
+function getFallbackTurnPhase(state, item, itemIndex) {
+  if (!state || !state.ativo || !item) return "round_ended";
+  var as = item.actionState || item.action_state || null;
+  if (as && as.turnEnded === true) return "post_turn";
+  var turnIdx = Number(state.turno_atual_idx);
+  if (itemIndex >= 0 && turnIdx >= 0 && itemIndex === turnIdx) return "active_turn";
+  if (itemIndex >= 0 && turnIdx >= 0 && itemIndex < turnIdx && !item.entrou_no_meio) return "post_turn";
+  return "pre_turn";
+}
+
+function buildActionSummaryForFound(found) {
+  if (!found) return null;
+  var rs = tracker.roundState || {};
+  if (typeof OS.summarizeCombatantActionEconomy === "function") {
+    return OS.summarizeCombatantActionEconomy(found.state, found.item, {
+      itemIndex: found.itemIndex,
+      opportunities: rs.opportunities || found.state.oportunidades_reacao || [],
+      requests: rs.requests || found.state.solicitacoes_reacao || []
+    });
+  }
+  var as = getCanonicalActionStateForFound(found);
+  var avail = computeDerivedAvailable(as);
+  var phase = getFallbackTurnPhase(found.state, found.item, found.itemIndex);
+  var opps = (rs.opportunities || []).filter(function (o) {
+    return o && o.status === "open" && String(o.combatantId) === String(found.tokenId) && Number(o.round) === Number(found.state.round || 1);
+  });
+  var reqs = (rs.requests || []).filter(function (r) {
+    return r && r.status === "pending" && String(r.combatantId) === String(found.tokenId) && Number(r.round) === Number(found.state.round || 1);
+  });
+  return {
+    combatantId: found.tokenId,
+    round: found.state.round || 1,
+    turnPhase: phase,
+    turnPhaseLabel: phase === "active_turn" ? "Turno ativo" : phase === "post_turn" ? "Turno encerrado (reações válidas)" : phase === "pre_turn" ? "Antes da própria vez (requer Xerife)" : "Rodada encerrada",
+    actionsExpired: phase === "round_ended",
+    budgetDefined: !!(as && as.budgetDefined),
+    pendingReason: as ? as.pendingReason : null,
+    initialBudget: as && as.budgetDefined ? as.initialBudget : null,
+    spentActions: as ? Number(as.spentActions || 0) : 0,
+    reservedActions: as ? Number(as.reservedActions || 0) : 0,
+    availableActions: avail,
+    reactionsAvailableCount: avail != null ? avail : 0,
+    canPerformOrdinaryAction: phase === "active_turn" && avail > 0,
+    canExecutePostTurnReaction: (phase === "post_turn" || phase === "active_turn") && avail > 0 && opps.length > 0,
+    canRequestEarlyReaction: phase === "pre_turn" && avail > 0 && reqs.length === 0,
+    hasPendingReservation: !!(as && Array.isArray(as.ledger) && as.ledger.some(function (l) { return l && l.status === "reserved"; })),
+    pendingReservations: as && Array.isArray(as.ledger) ? as.ledger.filter(function (l) { return l && l.status === "reserved"; }) : [],
+    openOpportunities: opps,
+    pendingEarlyRequests: reqs,
+    actionStateVersion: as && as.version ? Number(as.version) : 1,
+    blockReasons: []
+  };
+}
+
+function executeReactionControllerMutation(operation, req) {
+  req = req || {};
+  var job = actionControllerChain.catch(function () {}).then(async function () {
+    var actorUserId = await resolveAuthenticatedActorUserId();
+    if (!actorUserId) {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "UNAUTHENTICATED_USER", sqlstate: "42501" };
+    }
+    var st = OS.activeMesaState;
+    var state = st && st.combateAtivo;
+    if (!st || !st.mesaId || !state || !state.ativo) {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "NO_ACTIVE_COMBAT", sqlstate: "22023" };
+    }
+    if (req.combateId !== undefined && req.combateId !== null && state.id && String(req.combateId) !== String(state.id)) {
+      return { ok: false, unavailable: false, conflict: true, persistedOnServer: false, idempotentReplay: false, errorCode: "COMBAT_MISMATCH", sqlstate: "PT409" };
+    }
+    var targetMapaId = req.mapaId !== undefined ? req.mapaId : st.activeMapId;
+    if (state.mapa_id && targetMapaId && String(targetMapaId) !== String(state.mapa_id)) {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "MAP_MISMATCH", sqlstate: "22023" };
+    }
+    if (req.round !== undefined && req.round !== null && Number(req.round) !== Number(state.round || 1)) {
+      return { ok: false, unavailable: false, conflict: true, persistedOnServer: false, idempotentReplay: false, errorCode: "ROUND_MISMATCH", sqlstate: "PT409" };
+    }
+
+    var opLower = String(operation || "").trim().toLowerCase();
+    var opId = String(req.opId || "").trim();
+    if (!opId) {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "MISSING_OP_ID", sqlstate: "22023" };
+    }
+
+    var gmOnlyOps = ["open_opportunity", "close_opportunity", "approve_early_reaction", "deny_early_reaction"];
+    if (gmOnlyOps.indexOf(opLower) >= 0 && st.isMestre !== true) {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "REACTION_REQUIRES_GM_AUTHORIZATION", sqlstate: "42501" };
+    }
+
+    var resolvedTokenId = req.combatantId || req.tokenId || null;
+    if (!resolvedTokenId && req.requestId) {
+      var foundReq = (tracker.roundState.requests || []).find(function (r) { return r && String(r.requestId) === String(req.requestId); });
+      if (foundReq) resolvedTokenId = foundReq.combatantId;
+    }
+    if (!resolvedTokenId && req.opportunityId) {
+      var foundOpp = (tracker.roundState.opportunities || []).find(function (o) { return o && String(o.opportunityId) === String(req.opportunityId); });
+      if (foundOpp) resolvedTokenId = foundOpp.combatantId;
+    }
+
+    var found = resolvedTokenId ? findActiveCombatItemAndEntry(resolvedTokenId) : null;
+    if (!found && opLower !== "close_opportunity" && opLower !== "approve_early_reaction" && opLower !== "deny_early_reaction" && opLower !== "cancel_early_reaction") {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "COMBATANT_NOT_IN_COMBAT", sqlstate: "22023" };
+    }
+    if (found && !isActorAuthorizedForCombatant(found, actorUserId)) {
+      return { ok: false, unavailable: false, conflict: false, persistedOnServer: false, idempotentReplay: false, errorCode: "UNAUTHORIZED_COMBATANT_ACCESS", sqlstate: "42501" };
+    }
+
+    var client = OS.getSupabaseClient ? OS.getSupabaseClient() : null;
+    if (!client || typeof client.rpc !== "function" || req.localOnly) {
+      return {
+        ok: false,
+        unavailable: true,
+        conflict: false,
+        persistedOnServer: false,
+        idempotentReplay: false,
+        errorCode: "REACTION_CONTROLLER_RPC_UNAVAILABLE",
+        sqlstate: "PGRST202",
+        message: "RPC autoritativa gerenciar_reacao_combate indisponível."
+      };
+    }
+
+    try {
+      var rpcRes = await client.rpc("gerenciar_reacao_combate", {
+        p_mesa_id: st.mesaId,
+        p_combate_id: req.combateId !== undefined && req.combateId !== null ? req.combateId : state.id,
+        p_token_id: found ? found.tokenId : (resolvedTokenId || null),
+        p_operacao: opLower,
+        p_op_id: opId,
+        p_action_type: req.actionType || "reacao",
+        p_cost: req.cost !== undefined ? req.cost : null,
+        p_opportunity_id: req.opportunityId || null,
+        p_request_id: req.requestId || null,
+        p_target_token_id: req.targetTokenId || null,
+        p_reach_meters: req.reachMeters !== undefined && req.reachMeters !== null && req.reachMeters !== "" ? Number(req.reachMeters) : null,
+        p_range_confirmed: !!req.rangeConfirmedByGm,
+        p_passive_skill: req.passiveSkillKey || null,
+        p_passive_skill_required: req.passiveSkillRequired !== undefined ? !!req.passiveSkillRequired : null,
+        p_passive_skill_confirmed: !!req.passiveSkillConfirmedByGm,
+        p_trigger_label: req.triggerLabel || req.triggerSummary || null,
+        p_mapa_id: targetMapaId || state.mapa_id || null,
+        p_round: req.round !== undefined ? req.round : (state.round || 1),
+        p_expected_combat_version: req.expectedCombatVersion !== undefined ? req.expectedCombatVersion : null,
+        p_expected_action_version: req.expectedActionVersion !== undefined ? req.expectedActionVersion : null,
+        p_justificativa: (req.reason || req.justificativa || "").trim() || null
+      });
+
+      var rpcErr = rpcRes && rpcRes.error;
+      if (rpcErr) {
+        var errCode = String(rpcErr.code || rpcErr.status || rpcErr.details || "RPC_ERROR");
+        var errMsg = String(rpcErr.message || "");
+        var rpcMissing =
+          errCode === "PGRST202" ||
+          errCode === "42883" ||
+          errMsg.indexOf("Could not find the function") >= 0 ||
+          (errMsg.indexOf("gerenciar_reacao_combate") >= 0 && errMsg.indexOf("does not exist") >= 0);
+        if (rpcMissing) {
+          return {
+            ok: false,
+            unavailable: true,
+            conflict: false,
+            persistedOnServer: false,
+            idempotentReplay: false,
+            errorCode: "REACTION_CONTROLLER_RPC_UNAVAILABLE",
+            sqlstate: errCode || "PGRST202",
+            message: errMsg || "Controle de reações indisponível no servidor."
+          };
+        }
+        var isConflict =
+          errCode === "PT409" ||
+          errCode === "P0409" ||
+          errCode === "40001" ||
+          errCode === "409" ||
+          Number(rpcErr.status) === 409;
+        if (isConflict) {
+          Promise.resolve(OS.loadMesaCombat()).catch(function () {});
+        }
+        return {
+          ok: false,
+          unavailable: false,
+          conflict: isConflict,
+          persistedOnServer: false,
+          idempotentReplay: false,
+          errorCode: isConflict ? "REACTION_STATE_CONFLICT" : (errMsg || errCode),
+          sqlstate: errCode,
+          message: errMsg || "Falha ao processar operação de reação."
+        };
+      }
+
+      if (rpcRes && rpcRes.data && rpcRes.data.result) {
+        if (rpcRes.data.combate || rpcRes.data.revisao !== undefined) {
+          OS.acceptMesaCombatSnapshot(st.mesaId, {
+            combate: rpcRes.data.combate || state,
+            revisao: rpcRes.data.revisao !== undefined ? rpcRes.data.revisao : tracker.revision + 1
+          });
+        }
+        var out = deepCloneSafe(rpcRes.data.result);
+        out.unavailable = false;
+        out.conflict = false;
+        out.persistedOnServer = true;
+        return out;
+      }
+
+      return {
+        ok: false,
+        unavailable: false,
+        conflict: false,
+        persistedOnServer: false,
+        idempotentReplay: false,
+        errorCode: "INVALID_RPC_RESPONSE",
+        sqlstate: null
+      };
+    } catch (rpcEx) {
+      var exMsg = String((rpcEx && rpcEx.message) || "");
+      var exCode = String((rpcEx && (rpcEx.code || rpcEx.status)) || "NETWORK_ERROR");
+      var isMissingEx =
+        exCode === "PGRST202" ||
+        exCode === "42883" ||
+        exMsg.indexOf("PGRST202") >= 0 ||
+        exMsg.indexOf("42883") >= 0 ||
+        exMsg.indexOf("Could not find the function") >= 0;
+      return {
+        ok: false,
+        unavailable: isMissingEx,
+        conflict: false,
+        persistedOnServer: false,
+        idempotentReplay: false,
+        errorCode: isMissingEx ? "REACTION_CONTROLLER_RPC_UNAVAILABLE" : (exMsg || "RPC_NETWORK_ERROR"),
+        sqlstate: isMissingEx ? (exCode || "PGRST202") : exCode,
+        message: exMsg || null
+      };
+    }
+  });
+
+  actionControllerChain = job;
+  return job;
+}
+
 OS.combatActionController = {
   getRoundBudget: function (combatantId) {
     var b = OS.getCombatantActionBudget(combatantId);
@@ -1252,6 +1589,55 @@ OS.combatActionController = {
     var actionState = getCanonicalActionStateForFound(found);
     return deepCloneSafe((actionState && actionState.auditLog) || []);
   },
+  getTurnPhase: function (combatantId) {
+    var found = findActiveCombatItemAndEntry(combatantId);
+    if (!found) return "round_ended";
+    if (typeof OS.deriveCombatantTurnPhase === "function") {
+      return OS.deriveCombatantTurnPhase(found.state, found.item, { itemIndex: found.itemIndex });
+    }
+    return getFallbackTurnPhase(found.state, found.item, found.itemIndex);
+  },
+  getActionSummary: function (combatantId) {
+    var found = findActiveCombatItemAndEntry(combatantId);
+    if (!found) return null;
+    return deepCloneSafe(buildActionSummaryForFound(found));
+  },
+  getReactionOpportunities: function (combatantId) {
+    var list = (tracker.roundState && Array.isArray(tracker.roundState.opportunities)) ? tracker.roundState.opportunities : [];
+    if (!combatantId) return deepCloneSafe(list);
+    return deepCloneSafe(list.filter(function (o) { return o && String(o.combatantId) === String(combatantId); }));
+  },
+  getReactionRequests: function (combatantId) {
+    var list = (tracker.roundState && Array.isArray(tracker.roundState.requests)) ? tracker.roundState.requests : [];
+    if (!combatantId) return deepCloneSafe(list);
+    return deepCloneSafe(list.filter(function (r) { return r && String(r.combatantId) === String(combatantId); }));
+  },
+  evaluateOpportunity: function (params) {
+    params = params || {};
+    var st = OS.activeMesaState || {};
+    var state = st.combateAtivo || null;
+    var found = params.combatantId ? findActiveCombatItemAndEntry(params.combatantId) : null;
+    var ctx = found ? resolveCombatantSheetAnd6B(found) : { token: null, sheetData: null, instance6BState: null };
+    var targetToken = params.targetToken || null;
+    if (!targetToken && params.targetTokenId && Array.isArray(st.mesaTokens)) {
+      targetToken = st.mesaTokens.find(function (t) { return t && String(t.id) === String(params.targetTokenId); }) || null;
+    }
+    if (typeof OS.evaluateContextualOpportunity === "function") {
+      return OS.evaluateContextualOpportunity(Object.assign({
+        combatState: state,
+        mesaId: st.mesaId || null,
+        activeMesaId: st.mesaId || null,
+        mapaId: st.activeMapId || (state && state.mapa_id) || null,
+        round: state ? state.round : 0,
+        isMestre: !!st.isMestre,
+        reactorToken: ctx.token,
+        targetToken: targetToken,
+        sheetData: ctx.sheetData,
+        instance6BState: ctx.instance6BState
+      }, params));
+    }
+    return null;
+  },
   reserveAction: function (req) {
     return executeActionControllerMutation("reserve", req);
   },
@@ -1260,6 +1646,27 @@ OS.combatActionController = {
   },
   cancelReservation: function (req) {
     return executeActionControllerMutation("cancel", req);
+  },
+  openOpportunity: function (req) {
+    return executeReactionControllerMutation("open_opportunity", req);
+  },
+  closeOpportunity: function (req) {
+    return executeReactionControllerMutation("close_opportunity", req);
+  },
+  executeOpportunityReaction: function (req) {
+    return executeReactionControllerMutation("execute_opportunity_reaction", req);
+  },
+  requestEarlyReaction: function (req) {
+    return executeReactionControllerMutation("request_early_reaction", req);
+  },
+  approveEarlyReaction: function (req) {
+    return executeReactionControllerMutation("approve_early_reaction", req);
+  },
+  denyEarlyReaction: function (req) {
+    return executeReactionControllerMutation("deny_early_reaction", req);
+  },
+  cancelEarlyReaction: function (req) {
+    return executeReactionControllerMutation("cancel_early_reaction", req);
   }
 };
 
@@ -1458,6 +1865,678 @@ OS.positionMesaCombatTracker = function () {
   panel.style.left = tracker.position.x + "px"; panel.style.top = tracker.position.y + "px";
 };
 
+OS.syncContextualActionBarSelection = function (tokenId) {
+  var st = OS.activeMesaState;
+  var state = st && st.combateAtivo;
+  if (!state || !state.ativo || !Array.isArray(state.ordem)) return;
+  if (tokenId && state.ordem.some(function (c) { return c && String(c.token_id) === String(tokenId); })) {
+    tracker.selectedTokenId = String(tokenId);
+    OS.renderMesaCombat();
+  }
+};
+
+function resolveSelectedCombatantForBar(st, state) {
+  var ordem = Array.isArray(state.ordem) ? state.ordem : [];
+  if (!ordem.length) return null;
+  var uid = resolveActorUserIdSync();
+  var tokens = Array.isArray(st.mesaTokens) ? st.mesaTokens : [];
+  var byId = {};
+  tokens.forEach(function (t) { if (t && t.id) byId[String(t.id)] = t; });
+
+  if (tracker.selectedTokenId) {
+    var explicit = ordem.find(function (c) { return c && String(c.token_id) === String(tracker.selectedTokenId); });
+    if (explicit) return explicit;
+  }
+  if (!st.isMestre) {
+    var owned = ordem.find(function (c) {
+      return c && isTokenOwnedByCurrentUser(byId[String(c.token_id)] || null, c, st, uid);
+    });
+    if (owned) {
+      tracker.selectedTokenId = String(owned.token_id);
+      return owned;
+    }
+  }
+  var active = ordem[state.turno_atual_idx] || ordem[0];
+  if (active) tracker.selectedTokenId = String(active.token_id);
+  return active || null;
+}
+
+function formatActionBarResultMessage(res, okLabel) {
+  if (!res) return "Sem resposta do servidor.";
+  if (res.ok) {
+    return res.idempotentReplay ? okLabel + " (confirmado via idempotência)." : okLabel;
+  }
+  if (res.conflict || res.sqlstate === "PT409" || res.sqlstate === "P0409" || res.sqlstate === "40001") {
+    return "Conflito de estado detectado (" + (res.sqlstate || "PT409") + "): " + (res.message || "estado recarregado do servidor.");
+  }
+  return res.message || res.errorCode || "Operação não autorizada ou inválida.";
+}
+
+function runActionBarCommand(fn, okLabel) {
+  if (tracker.actionBarBusy || tracker.busy) return Promise.resolve(null);
+  tracker.actionBarBusy = true;
+  tracker.actionBarFeedback = "";
+  OS.renderMesaCombat();
+  return Promise.resolve()
+    .then(fn)
+    .then(function (res) {
+      tracker.actionBarFeedback = formatActionBarResultMessage(res, okLabel);
+      return res;
+    })
+    .catch(function (err) {
+      tracker.actionBarFeedback = (err && err.message) || "Erro ao executar ação de combate.";
+      return null;
+    })
+    .finally(function () {
+      tracker.actionBarBusy = false;
+      OS.renderMesaCombat();
+    });
+}
+
+function renderContextualActionBar(st, state) {
+  var bar = $combat("mesa-tracker-action-bar");
+  if (!bar) return;
+  if (!st || !st.mesaId || !state || !state.ativo) {
+    bar.hidden = true;
+    bar.innerHTML = "";
+    return;
+  }
+
+  var selected = resolveSelectedCombatantForBar(st, state);
+  var allReqs = Array.isArray(tracker.roundState.requests) ? tracker.roundState.requests : (state.solicitacoes_reacao || []);
+  var allOpps = Array.isArray(tracker.roundState.opportunities) ? tracker.roundState.opportunities : (state.oportunidades_reacao || []);
+  var globalPendingGmReqs = st.isMestre
+    ? allReqs.filter(function (r) { return r && r.status === "pending" && Number(r.round) === Number(state.round || 1); })
+    : [];
+
+  bar.hidden = false;
+  bar.innerHTML = "";
+
+  if (!selected) {
+    bar.innerHTML = '<div class="mesa-action-block-note">Nenhum combatente disponível para a barra contextual.</div>';
+    return;
+  }
+
+  var found = findActiveCombatItemAndEntry(selected.token_id);
+  var uid = resolveActorUserIdSync();
+  var canOperate = !!(found && isActorAuthorizedForCombatant(found, uid));
+  var canInspectPrivate = !!(st.isMestre || canOperate);
+
+  bar.dataset.selectedCombatant = String(selected.token_id);
+
+  if (!canInspectPrivate) {
+    var pubHead = document.createElement("div");
+    pubHead.className = "mesa-action-bar-head";
+    pubHead.innerHTML =
+      '<span class="mesa-action-bar-title">🎯 ' + combatEscape(selected.name) + '</span>' +
+      '<span class="mesa-action-phase-badge">Round ' + combatEscape(state.round) + ' · Somente leitura</span>';
+    var pubNote = document.createElement("div");
+    pubNote.className = "mesa-action-block-note";
+    pubNote.textContent = "Selecione seu próprio personagem para visualizar saldo, ações válidas e reações.";
+    bar.append(pubHead, pubNote);
+    return;
+  }
+
+  var catalog = Array.isArray(OS.CONTEXTUAL_ACTION_CATALOG) && OS.CONTEXTUAL_ACTION_CATALOG.length
+    ? OS.CONTEXTUAL_ACTION_CATALOG
+    : [
+        { key: "atacar", label: "Atacar", category: "ordinary", cost: 1, resources: "1 ação · arma ou ataque natural + 6B" },
+        { key: "mover", label: "Mover", category: "ordinary", cost: 1, resources: "1 ação · deslocamento tático" },
+        { key: "mirar", label: "Mirar", category: "ordinary", cost: 1, resources: "1 ação · arma à distância" },
+        { key: "recarregar", label: "Recarregar", category: "ordinary", cost: 1, resources: "1 ação · munição" },
+        { key: "usar_item", label: "Usar Item", category: "ordinary", cost: 1, resources: "1 ação · item" },
+        { key: "ataque_oportunidade", label: "Ataque de Oportunidade", category: "reaction", cost: 1, resources: "1 ação · corpo a corpo · teste passivo" },
+        { key: "reacao", label: "Reação", category: "reaction", cost: 1, resources: "1 ação · gatilho autorizado pelo Xerife" }
+      ];
+
+  var vm = typeof OS.evaluateContextualBarCommands === "function"
+    ? OS.evaluateContextualBarCommands({
+        combatState: state,
+        selectedItem: selected,
+        isMestre: !!st.isMestre,
+        currentUserId: uid,
+        canOperateCombatant: canOperate,
+        selectedActionType: tracker.selectedActionType,
+        opportunities: allOpps,
+        requests: allReqs,
+        busy: !!(tracker.busy || tracker.actionBarBusy)
+      })
+    : {
+        summary: buildActionSummaryForFound(found),
+        selectedAction: catalog.find(function (c) { return c.key === tracker.selectedActionType; }) || catalog[0],
+        canReserveOrdinary: false,
+        reserveBlockedReason: "Motor contextual carregando.",
+        canRequestEarlyReaction: false,
+        earlyRequestBlockedReason: null,
+        canOpenOpportunity: !!st.isMestre,
+        pendingReservations: [],
+        openOpportunities: [],
+        pendingRequests: []
+      };
+
+  var sum = vm.summary;
+  bar.dataset.turnPhase = String(sum.turnPhase || "round_ended");
+
+  // 1. Cabeçalho: combatente, rodada e condição do turno
+  var head = document.createElement("div");
+  head.className = "mesa-action-bar-head";
+  head.innerHTML =
+    '<span class="mesa-action-bar-title">🎯 ' + combatEscape(selected.name) + '</span>' +
+    '<span class="mesa-action-phase-badge phase-' + combatEscape(sum.turnPhase) + '">' +
+    'R' + combatEscape(state.round) + ' · ' + combatEscape(sum.turnPhaseLabel) + '</span>';
+  bar.appendChild(head);
+
+  // 2. Contadores somente-leitura (sem inputs editáveis)
+  var counters = document.createElement("div");
+  counters.className = "mesa-action-counters";
+  var availTxt = sum.budgetDefined && sum.availableActions !== null ? String(sum.availableActions) : "—";
+  var reactTxt = sum.budgetDefined ? String(sum.reactionsAvailableCount || 0) : "—";
+  counters.innerHTML =
+    '<div class="mesa-action-counter"><span>Disponíveis</span><strong data-stat="available">' + combatEscape(availTxt) + '</strong></div>' +
+    '<div class="mesa-action-counter"><span>Reservadas</span><strong data-stat="reserved">' + combatEscape(sum.reservedActions) + '</strong></div>' +
+    '<div class="mesa-action-counter"><span>Gastas</span><strong data-stat="spent">' + combatEscape(sum.spentActions) + '</strong></div>' +
+    '<div class="mesa-action-counter"><span>Reações</span><strong data-stat="reactions">' + combatEscape(reactTxt) + '</strong></div>';
+  bar.appendChild(counters);
+
+  // 3. Seletor de ação + custo + recursos + botão de reservar ação ordinária
+  var controlsRow = document.createElement("div");
+  controlsRow.className = "mesa-action-controls-row";
+  var sel = document.createElement("select");
+  sel.className = "mesa-action-select";
+  sel.id = "mesa-action-bar-select";
+  sel.setAttribute("aria-label", "Ação contextual selecionada");
+  catalog.forEach(function (act) {
+    var opt = document.createElement("option");
+    opt.value = act.key;
+    opt.textContent = act.label + " (" + act.cost + (act.cost === 1 ? " ação)" : " ações)") + (act.category === "reaction" ? " · Reação" : "");
+    if (act.key === vm.selectedAction.key) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change", function () {
+    tracker.selectedActionType = sel.value;
+    OS.renderMesaCombat();
+  });
+
+  var btnReserve = document.createElement("button");
+  btnReserve.type = "button";
+  btnReserve.id = "btn-action-bar-reserve";
+  btnReserve.className = "btn btn-primary btn-small";
+  btnReserve.textContent = "Reservar (" + vm.selectedAction.cost + ")";
+  btnReserve.disabled = !vm.canReserveOrdinary;
+  if (vm.reserveBlockedReason) btnReserve.title = vm.reserveBlockedReason;
+  btnReserve.addEventListener("click", function () {
+    runActionBarCommand(function () {
+      return OS.combatActionController.reserveAction({
+        combatantId: selected.token_id,
+        opId: generateCombatOpId("res"),
+        actionType: vm.selectedAction.key,
+        cost: vm.selectedAction.cost,
+        isReaction: false,
+        round: state.round,
+        combateId: state.id,
+        mapaId: state.mapa_id,
+        expectedVersion: sum.actionStateVersion
+      });
+    }, "Ação reservada (" + vm.selectedAction.label + ")");
+  });
+  controlsRow.append(sel, btnReserve);
+  bar.appendChild(controlsRow);
+
+  var metaEl = document.createElement("div");
+  metaEl.className = "mesa-action-meta";
+  metaEl.textContent =
+    "Custo: " + vm.selectedAction.cost + (vm.selectedAction.cost === 1 ? " ação" : " ações") +
+    " · Recursos: " + vm.selectedAction.resources;
+  bar.appendChild(metaEl);
+
+  // 4. Reservas pendentes (Confirmar / Cancelar)
+  if (vm.pendingReservations.length > 0) {
+    var resWrap = document.createElement("div");
+    resWrap.className = "mesa-action-sublist";
+    vm.pendingReservations.forEach(function (resItem) {
+      var card = document.createElement("div");
+      card.className = "mesa-action-subitem";
+      card.dataset.reservationId = resItem.reservationId;
+      var cHead = document.createElement("div");
+      cHead.className = "mesa-action-subitem-head";
+      cHead.textContent = "⏳ Reserva: " + resItem.actionType + " (" + resItem.cost + " ação)";
+      var btns = document.createElement("div");
+      btns.className = "mesa-action-subitem-btns";
+      var btnCommit = document.createElement("button");
+      btnCommit.type = "button";
+      btnCommit.className = "btn btn-primary btn-small";
+      btnCommit.dataset.cmd = "commit-reservation";
+      btnCommit.textContent = "Confirmar";
+      btnCommit.disabled = !resItem.canCommit;
+      btnCommit.addEventListener("click", function () {
+        runActionBarCommand(function () {
+          return OS.combatActionController.commitReservation({
+            combatantId: selected.token_id,
+            opId: generateCombatOpId("cmt"),
+            reservationId: resItem.reservationId,
+            resultRevealed: true,
+            round: state.round,
+            combateId: state.id,
+            mapaId: state.mapa_id,
+            expectedVersion: sum.actionStateVersion
+          });
+        }, "Ação confirmada");
+      });
+      var btnCancel = document.createElement("button");
+      btnCancel.type = "button";
+      btnCancel.className = "btn btn-secondary btn-small";
+      btnCancel.dataset.cmd = "cancel-reservation";
+      btnCancel.textContent = "Cancelar";
+      btnCancel.disabled = !resItem.canCancel;
+      btnCancel.addEventListener("click", function () {
+        runActionBarCommand(function () {
+          return OS.combatActionController.cancelReservation({
+            combatantId: selected.token_id,
+            opId: generateCombatOpId("cnc"),
+            reservationId: resItem.reservationId,
+            round: state.round,
+            combateId: state.id,
+            mapaId: state.mapa_id,
+            expectedVersion: sum.actionStateVersion
+          });
+        }, "Reserva cancelada");
+      });
+      btns.append(btnCommit, btnCancel);
+      card.append(cHead, btns);
+      resWrap.appendChild(card);
+    });
+    bar.appendChild(resWrap);
+  }
+
+  // 5. Oportunidades abertas para este combatente (COM-09 / COM-11)
+  if (vm.openOpportunities.length > 0) {
+    var oppWrap = document.createElement("div");
+    oppWrap.className = "mesa-action-sublist";
+    vm.openOpportunities.forEach(function (oppCmd) {
+      var oppRaw = sum.openOpportunities.find(function (o) { return o && o.opportunityId === oppCmd.opportunityId; }) || oppCmd;
+      var card = document.createElement("div");
+      card.className = "mesa-action-subitem";
+      card.dataset.opportunityId = oppCmd.opportunityId;
+      var oHead = document.createElement("div");
+      oHead.className = "mesa-action-subitem-head";
+      oHead.textContent = "⚡ Oportunidade: " + oppCmd.triggerLabel + " (" + oppCmd.cost + " ação)";
+      var oMeta = document.createElement("div");
+      oMeta.className = "mesa-action-subitem-meta";
+      var distTxt = oppRaw.gridDistanceMeters !== null && oppRaw.gridDistanceMeters !== undefined
+        ? "Distância: " + oppRaw.gridDistanceMeters + "m"
+        : oppRaw.rangeConfirmedByGm ? "Alcance confirmado pelo Xerife" : "Alcance narrativo";
+      var passTxt = oppRaw.passiveSkillRequired ? " · Teste passivo (" + (oppRaw.passiveSkillKey || "corpo a corpo") + ")" : "";
+      oMeta.textContent = distTxt + passTxt + (oppCmd.reason ? " · " + oppCmd.reason : "");
+      var btns = document.createElement("div");
+      btns.className = "mesa-action-subitem-btns";
+
+      if (oppCmd.canExecuteDirectly) {
+        var btnExec = document.createElement("button");
+        btnExec.type = "button";
+        btnExec.className = "btn btn-primary btn-small";
+        btnExec.dataset.cmd = "execute-opportunity";
+        btnExec.textContent = "Confirmar Reação";
+        btnExec.addEventListener("click", function () {
+          runActionBarCommand(function () {
+            return OS.combatActionController.executeOpportunityReaction({
+              combatantId: selected.token_id,
+              opId: generateCombatOpId("xop"),
+              opportunityId: oppCmd.opportunityId,
+              actionType: oppCmd.actionType,
+              round: state.round,
+              combateId: state.id,
+              mapaId: state.mapa_id,
+              expectedCombatVersion: state.versao,
+              expectedActionVersion: sum.actionStateVersion
+            });
+          }, "Reação executada");
+        });
+        btns.appendChild(btnExec);
+      } else if (oppCmd.canRequestEarly) {
+        var btnReqOpp = document.createElement("button");
+        btnReqOpp.type = "button";
+        btnReqOpp.className = "btn btn-primary btn-small";
+        btnReqOpp.dataset.cmd = "request-early-opportunity";
+        btnReqOpp.textContent = "Solicitar Reação Antecipada";
+        btnReqOpp.addEventListener("click", function () {
+          runActionBarCommand(function () {
+            return OS.combatActionController.requestEarlyReaction({
+              combatantId: selected.token_id,
+              opId: generateCombatOpId("req"),
+              opportunityId: oppCmd.opportunityId,
+              actionType: oppCmd.actionType,
+              triggerSummary: oppCmd.triggerLabel,
+              round: state.round,
+              combateId: state.id,
+              mapaId: state.mapa_id,
+              expectedCombatVersion: state.versao
+            });
+          }, "Solicitação enviada ao Xerife");
+        });
+        btns.appendChild(btnReqOpp);
+      }
+
+      if (oppCmd.canClose) {
+        var btnClose = document.createElement("button");
+        btnClose.type = "button";
+        btnClose.className = "btn btn-secondary btn-small";
+        btnClose.dataset.cmd = "close-opportunity";
+        btnClose.textContent = "Fechar";
+        btnClose.addEventListener("click", function () {
+          runActionBarCommand(function () {
+            return OS.combatActionController.closeOpportunity({
+              combatantId: selected.token_id,
+              opId: generateCombatOpId("cls"),
+              opportunityId: oppCmd.opportunityId,
+              round: state.round,
+              combateId: state.id,
+              mapaId: state.mapa_id,
+              expectedCombatVersion: state.versao
+            });
+          }, "Oportunidade encerrada");
+        });
+        btns.appendChild(btnClose);
+      }
+
+      card.append(oHead, oMeta, btns);
+      oppWrap.appendChild(card);
+    });
+    bar.appendChild(oppWrap);
+  }
+
+  // 6. Botão de solicitar reação antecipada (COM-10) quando pré-turno sem oportunidade específica
+  if (sum.turnPhase === "pre_turn") {
+    var btnEarly = document.createElement("button");
+    btnEarly.type = "button";
+    btnEarly.id = "btn-action-bar-request-early";
+    btnEarly.className = "btn btn-secondary btn-small";
+    btnEarly.textContent = "Solicitar Reação Antecipada (1 ação)";
+    btnEarly.disabled = !vm.canRequestEarlyReaction;
+    if (vm.earlyRequestBlockedReason) btnEarly.title = vm.earlyRequestBlockedReason;
+    btnEarly.addEventListener("click", function () {
+      var reqActionType = vm.selectedAction.category === "reaction" ? vm.selectedAction.key : "reacao";
+      runActionBarCommand(function () {
+        return OS.combatActionController.requestEarlyReaction({
+          combatantId: selected.token_id,
+          opId: generateCombatOpId("req"),
+          actionType: reqActionType,
+          triggerSummary: vm.selectedAction.category === "reaction" ? vm.selectedAction.label : "Reação antecipada",
+          round: state.round,
+          combateId: state.id,
+          mapaId: state.mapa_id,
+          expectedCombatVersion: state.versao
+        });
+      }, "Solicitação de reação enviada ao Xerife");
+    });
+    bar.appendChild(btnEarly);
+  }
+
+  // 7. Solicitações pendentes aguardando o Xerife (para o selecionado ou fila completa do Xerife)
+  var reqsToShow = st.isMestre ? globalPendingGmReqs : sum.pendingEarlyRequests;
+  if (reqsToShow.length > 0) {
+    var reqWrap = document.createElement("div");
+    reqWrap.className = "mesa-action-sublist";
+    reqWrap.dataset.section = "pending-requests";
+    reqsToShow.forEach(function (reqItem) {
+      var card = document.createElement("div");
+      card.className = "mesa-action-subitem is-pending-gm";
+      card.dataset.requestId = reqItem.requestId;
+      var rHead = document.createElement("div");
+      rHead.className = "mesa-action-subitem-head";
+      rHead.textContent = "🔔 Aguardando Xerife: " + (reqItem.combatantName || reqItem.combatantId);
+      var rMeta = document.createElement("div");
+      rMeta.className = "mesa-action-subitem-meta";
+      rMeta.textContent = (reqItem.triggerSummary || reqItem.actionType) + " · Custo: " + (reqItem.cost || 1) + " ação · Ordem de iniciativa preservada";
+      var btns = document.createElement("div");
+      btns.className = "mesa-action-subitem-btns";
+
+      if (st.isMestre) {
+        var btnApp = document.createElement("button");
+        btnApp.type = "button";
+        btnApp.className = "btn btn-primary btn-small";
+        btnApp.dataset.cmd = "approve-request";
+        btnApp.textContent = "Aprovar";
+        btnApp.disabled = !!(tracker.busy || tracker.actionBarBusy);
+        btnApp.addEventListener("click", function () {
+          var targetFound = findActiveCombatItemAndEntry(reqItem.combatantId);
+          var targetAs = targetFound ? getCanonicalActionStateForFound(targetFound) : null;
+          runActionBarCommand(function () {
+            return OS.combatActionController.approveEarlyReaction({
+              combatantId: reqItem.combatantId,
+              opId: generateCombatOpId("apr"),
+              requestId: reqItem.requestId,
+              round: state.round,
+              combateId: state.id,
+              mapaId: state.mapa_id,
+              expectedCombatVersion: state.versao,
+              expectedActionVersion: targetAs ? targetAs.version : null
+            });
+          }, "Reação antecipada aprovada");
+        });
+
+        var btnDeny = document.createElement("button");
+        btnDeny.type = "button";
+        btnDeny.className = "btn btn-danger btn-small";
+        btnDeny.dataset.cmd = "deny-request";
+        btnDeny.textContent = "Negar";
+        btnDeny.disabled = !!(tracker.busy || tracker.actionBarBusy);
+        btnDeny.addEventListener("click", function () {
+          runActionBarCommand(function () {
+            return OS.combatActionController.denyEarlyReaction({
+              combatantId: reqItem.combatantId,
+              opId: generateCombatOpId("dny"),
+              requestId: reqItem.requestId,
+              round: state.round,
+              combateId: state.id,
+              mapaId: state.mapa_id,
+              expectedCombatVersion: state.versao
+            });
+          }, "Reação antecipada negada");
+        });
+        btns.append(btnApp, btnDeny);
+      }
+
+      var targetForCancel = findActiveCombatItemAndEntry(reqItem.combatantId);
+      if (st.isMestre || (targetForCancel && isActorAuthorizedForCombatant(targetForCancel, uid))) {
+        var btnCancelReq = document.createElement("button");
+        btnCancelReq.type = "button";
+        btnCancelReq.className = "btn btn-secondary btn-small";
+        btnCancelReq.dataset.cmd = "cancel-request";
+        btnCancelReq.textContent = "Cancelar";
+        btnCancelReq.disabled = !!(tracker.busy || tracker.actionBarBusy);
+        btnCancelReq.addEventListener("click", function () {
+          runActionBarCommand(function () {
+            return OS.combatActionController.cancelEarlyReaction({
+              combatantId: reqItem.combatantId,
+              opId: generateCombatOpId("cnr"),
+              requestId: reqItem.requestId,
+              round: state.round,
+              combateId: state.id,
+              mapaId: state.mapa_id,
+              expectedCombatVersion: state.versao
+            });
+          }, "Solicitação cancelada");
+        });
+        btns.appendChild(btnCancelReq);
+      }
+
+      card.append(rHead, rMeta, btns);
+      reqWrap.appendChild(card);
+    });
+    bar.appendChild(reqWrap);
+  }
+
+  // 8. Controles exclusivos do Xerife para indicar Oportunidade Contextual (COM-11 V1)
+  if (st.isMestre) {
+    var details = document.createElement("details");
+    details.className = "mesa-action-gm-opp";
+    details.id = "mesa-action-gm-opp-panel";
+    details.open = !!tracker.gmOppDraft.open;
+    details.addEventListener("toggle", function () {
+      tracker.gmOppDraft.open = details.open;
+    });
+    var summaryEl = document.createElement("summary");
+    summaryEl.textContent = "⚡ Indicar Oportunidade (Xerife)";
+    details.appendChild(summaryEl);
+
+    var body = document.createElement("div");
+    body.className = "mesa-action-gm-opp-body";
+
+    var typeLbl = document.createElement("label");
+    typeLbl.textContent = "Tipo de reação";
+    var typeSel = document.createElement("select");
+    typeSel.id = "gm-opp-type";
+    [
+      { value: "ataque_oportunidade", label: "Ataque de Oportunidade (1 ação · corpo a corpo)" },
+      { value: "reacao", label: "Reação Contextual (1 ação)" }
+    ].forEach(function (optMeta) {
+      var opt = document.createElement("option");
+      opt.value = optMeta.value;
+      opt.textContent = optMeta.label;
+      if (tracker.gmOppDraft.actionType === optMeta.value) opt.selected = true;
+      typeSel.appendChild(opt);
+    });
+    typeSel.addEventListener("change", function () {
+      tracker.gmOppDraft.actionType = typeSel.value;
+      OS.renderMesaCombat();
+    });
+    typeLbl.appendChild(typeSel);
+
+    var targetLbl = document.createElement("label");
+    targetLbl.textContent = "Alvo no mapa (opcional para cálculo na grade)";
+    var targetSel = document.createElement("select");
+    targetSel.id = "gm-opp-target";
+    var emptyOpt = document.createElement("option");
+    emptyOpt.value = "";
+    emptyOpt.textContent = "Sem alvo específico (confirmação manual)";
+    targetSel.appendChild(emptyOpt);
+    (st.mesaTokens || []).forEach(function (t) {
+      if (!t || String(t.id) === String(selected.token_id)) return;
+      if (state.mapa_id && t.mapa_id && String(t.mapa_id) !== String(state.mapa_id)) return;
+      var o = document.createElement("option");
+      o.value = String(t.id);
+      o.textContent = (t.display_name || "Token") + " (" + (t.grid_x != null ? t.grid_x : "?") + "," + (t.grid_y != null ? t.grid_y : "?") + ")";
+      if (String(tracker.gmOppDraft.targetTokenId || "") === String(t.id)) o.selected = true;
+      targetSel.appendChild(o);
+    });
+    targetSel.addEventListener("change", function () {
+      tracker.gmOppDraft.targetTokenId = targetSel.value;
+      OS.renderMesaCombat();
+    });
+    targetLbl.appendChild(targetSel);
+
+    var trigLbl = document.createElement("label");
+    trigLbl.textContent = "Gatilho / observação";
+    var trigInp = document.createElement("input");
+    trigInp.type = "text";
+    trigInp.id = "gm-opp-trigger";
+    trigInp.placeholder = "Ex.: Alvo saiu do alcance corpo a corpo";
+    trigInp.value = tracker.gmOppDraft.triggerLabel || "";
+    trigInp.addEventListener("input", function () {
+      tracker.gmOppDraft.triggerLabel = trigInp.value;
+    });
+    trigLbl.appendChild(trigInp);
+
+    var checks = document.createElement("div");
+    checks.className = "mesa-action-gm-opp-checks";
+    var rangeLbl = document.createElement("label");
+    var rangeCb = document.createElement("input");
+    rangeCb.type = "checkbox";
+    rangeCb.id = "gm-opp-range-confirm";
+    rangeCb.checked = !!tracker.gmOppDraft.rangeConfirmed;
+    rangeCb.addEventListener("change", function () {
+      tracker.gmOppDraft.rangeConfirmed = rangeCb.checked;
+      OS.renderMesaCombat();
+    });
+    rangeLbl.append(rangeCb, document.createTextNode("Confirmar alcance"));
+
+    var passLbl = document.createElement("label");
+    var passCb = document.createElement("input");
+    passCb.type = "checkbox";
+    passCb.id = "gm-opp-passive-confirm";
+    passCb.checked = !!tracker.gmOppDraft.passiveConfirmed;
+    passCb.addEventListener("change", function () {
+      tracker.gmOppDraft.passiveConfirmed = passCb.checked;
+      OS.renderMesaCombat();
+    });
+    passLbl.append(passCb, document.createTextNode("Confirmar perícia passiva"));
+    checks.append(rangeLbl, passLbl);
+
+    var evalPreview = OS.combatActionController.evaluateOpportunity({
+      combatantId: selected.token_id,
+      actionType: tracker.gmOppDraft.actionType,
+      targetTokenId: tracker.gmOppDraft.targetTokenId || null,
+      rangeConfirmedByGm: !!tracker.gmOppDraft.rangeConfirmed,
+      passiveSkillConfirmedByGm: !!tracker.gmOppDraft.passiveConfirmed
+    });
+    var evalNote = document.createElement("div");
+    evalNote.className = "mesa-action-meta";
+    if (evalPreview) {
+      var parts = [];
+      if (evalPreview.rangeCheck && evalPreview.rangeCheck.distanceMeters !== null) {
+        parts.push("Grade: " + evalPreview.rangeCheck.distanceMeters + "m (" + evalPreview.rangeCheck.status + ")");
+      }
+      if (evalPreview.passiveSkillCheck && evalPreview.passiveSkillCheck.formulaPreview) {
+        parts.push("Passivo: " + evalPreview.passiveSkillCheck.formulaPreview);
+      }
+      if (evalPreview.requiresEarlyApproval) {
+        parts.push("Pré-turno: exigirá aprovação do Xerife");
+      }
+      if (!evalPreview.eligible && evalPreview.blockReasons.length) {
+        parts.push("Pendências: " + evalPreview.blockReasons[0]);
+      }
+      evalNote.textContent = parts.join(" · ");
+    }
+
+    var btnOpenOpp = document.createElement("button");
+    btnOpenOpp.type = "button";
+    btnOpenOpp.id = "btn-gm-open-opportunity";
+    btnOpenOpp.className = "btn btn-primary btn-small";
+    btnOpenOpp.textContent = "Abrir Oportunidade para " + selected.name;
+    btnOpenOpp.disabled = !vm.canOpenOpportunity || (evalPreview ? !evalPreview.eligible : false);
+    btnOpenOpp.addEventListener("click", function () {
+      runActionBarCommand(function () {
+        return OS.combatActionController.openOpportunity({
+          combatantId: selected.token_id,
+          opId: generateCombatOpId("opp"),
+          actionType: tracker.gmOppDraft.actionType,
+          targetTokenId: tracker.gmOppDraft.targetTokenId || null,
+          rangeConfirmedByGm: !!tracker.gmOppDraft.rangeConfirmed,
+          passiveSkillConfirmedByGm: !!tracker.gmOppDraft.passiveConfirmed,
+          triggerLabel: tracker.gmOppDraft.triggerLabel || null,
+          round: state.round,
+          combateId: state.id,
+          mapaId: state.mapa_id,
+          expectedCombatVersion: state.versao
+        });
+      }, "Oportunidade aberta para " + selected.name);
+    });
+
+    body.append(typeLbl, targetLbl, trigLbl, checks, evalNote, btnOpenOpp);
+    details.appendChild(body);
+    bar.appendChild(details);
+  }
+
+  // 9. Explicação explícita de bloqueios ou restrições + feedback de operação
+  var blockText = (sum.blockReasons && sum.blockReasons.length > 0)
+    ? sum.blockReasons[0]
+    : (vm.reserveBlockedReason && !vm.canReserveOrdinary ? vm.reserveBlockedReason : "");
+  if (blockText) {
+    var blk = document.createElement("div");
+    blk.className = "mesa-action-block-note";
+    blk.dataset.section = "block-reason";
+    blk.textContent = blockText;
+    bar.appendChild(blk);
+  }
+  if (tracker.actionBarFeedback) {
+    var fb = document.createElement("div");
+    fb.className = "mesa-action-meta";
+    fb.dataset.section = "action-bar-feedback";
+    fb.textContent = tracker.actionBarFeedback;
+    bar.appendChild(fb);
+  }
+}
+
 OS.renderMesaCombat = function () {
   var st = OS.activeMesaState, state = st && st.combateAtivo;
   var panel = $combat("mesa-turn-tracker"); if (!panel) return;
@@ -1468,7 +2547,10 @@ OS.renderMesaCombat = function () {
   $combat("btn-mesa-start-combat").disabled = tracker.busy;
   ["combat-setup-error", "combat-end-error", "mesa-tracker-feedback"].forEach(function (id) { $combat(id).textContent = tracker.error; });
   ["btn-combat-confirm", "btn-combat-end-confirm", "btn-tracker-next", "btn-tracker-end"].forEach(function (id) { $combat(id).disabled = tracker.busy; });
-  if (!active) return;
+  if (!active) {
+    renderContextualActionBar(st, null);
+    return;
+  }
   $combat("mesa-tracker-round").textContent = "⚔️ Round " + state.round;
   $combat("btn-tracker-end").hidden = !st.isMestre;
   $combat("mesa-tracker-footer").hidden = !st.isMestre;
@@ -1476,6 +2558,8 @@ OS.renderMesaCombat = function () {
   var current = state.ordem[state.turno_atual_idx];
   $combat("mesa-tracker-current").textContent = current ? "Vez de " + current.name :
     state.turno_oculto ? "Aguardando o Mestre" : "Nenhum participante em cena.";
+  var selectedForBar = resolveSelectedCombatantForBar(st, state);
+  var selectedBarId = selectedForBar ? String(selectedForBar.token_id) : null;
   var list = $combat("mesa-tracker-order"); list.innerHTML = "";
   state.ordem.forEach(function (c, index) {
     var currScore = c.currentInitiative !== undefined ? c.currentInitiative : c.iniciativa;
@@ -1495,6 +2579,11 @@ OS.renderMesaCombat = function () {
       }
     }
     if (index === state.turno_atual_idx) { li.classList.add("is-current"); li.setAttribute("aria-current", "step"); }
+    if (selectedBarId && String(c.token_id) === selectedBarId) { li.classList.add("is-selected"); }
+    li.addEventListener("click", function () {
+      tracker.selectedTokenId = String(c.token_id);
+      OS.renderMesaCombat();
+    });
     var portrait = document.createElement("span"); portrait.className = "mesa-tracker-portrait"; portrait.textContent = c.owner_type === "player" ? "🤠" : "☠";
     if (c.image_url && /^(https?:|data:image\/|blob:|asset:)/i.test(c.image_url)) {
       var img = document.createElement("img"); img.src = c.image_url; img.alt = "";
@@ -1515,6 +2604,7 @@ OS.renderMesaCombat = function () {
     var score = document.createElement("strong"); score.className = "mesa-tracker-score"; score.textContent = currScore;
     li.append(portrait, label, score); list.appendChild(li);
   });
+  renderContextualActionBar(st, state);
   if (st.isMestre && state.cascata_total && !tracker.error) $combat("mesa-tracker-feedback").textContent =
     "Cascata inicial: d20 (" + state.cascata_d20 + ") + " + state.cascata_total + ".";
   OS.positionMesaCombatTracker();

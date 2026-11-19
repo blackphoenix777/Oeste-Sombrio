@@ -6647,15 +6647,45 @@ body.mesa-fullscreen-active #mesa-sidebar-feed.is-resizing { transition: none; u
 .scene-card-header > div:first-child { flex-basis: 100%; }
 .scene-card-header-btns { flex-wrap: wrap; max-width: 100%; }
 .mesa-turn-tracker[hidden], .mesa-tracker-actions [hidden], .mesa-turn-tracker footer[hidden],
-.combat-priority-label[hidden], #btn-mesa-combat-open[hidden] { display: none !important; }
-.mesa-turn-tracker { z-index: 160; width: 360px; max-height: calc(100vh - 32px); color: #f1e4cf; }
+.mesa-tracker-action-bar[hidden], .combat-priority-label[hidden], #btn-mesa-combat-open[hidden] { display: none !important; }
+.mesa-turn-tracker { z-index: 160; width: 372px; max-width: calc(100vw - 16px); max-height: calc(100vh - 32px); color: #f1e4cf; display: flex; flex-direction: column; }
 .mesa-turn-tracker .mesa-floating-popup-header { touch-action: none; }
 .mesa-tracker-actions { display: flex; gap: 6px; align-items: center; }
 .mesa-tracker-status { font-size: 12px; padding: 9px 12px; margin: 0; color: #d6bd9c; }
 .mesa-tracker-status:empty { display: none; }
-.mesa-tracker-order { list-style: none; padding: 0 8px; margin: 0; overflow-y: auto; min-height: 0; }
-.mesa-tracker-combatant { display: flex; align-items: center; gap: 10px; margin: 5px 0; padding: 9px; border: 1px solid #614834; border-left: 4px solid transparent; background: #201914; }
+.mesa-tracker-order { list-style: none; padding: 0 8px; margin: 0; overflow-y: auto; min-height: 0; max-height: 220px; }
+.mesa-tracker-combatant { display: flex; align-items: center; gap: 10px; margin: 5px 0; padding: 9px; border: 1px solid #614834; border-left: 4px solid transparent; background: #201914; cursor: pointer; }
 .mesa-tracker-combatant.is-current { border-color: #e4ad5e; border-left-color: #ffcd71; background: #513620; box-shadow: inset 0 0 0 1px #a4743e; }
+.mesa-tracker-combatant.is-selected { outline: 1px solid #f0c27b; outline-offset: -1px; }
+.mesa-tracker-action-bar { border-top: 1px solid #76563b; background: #19130f; padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; font-size: 11.5px; overflow-y: auto; max-height: 310px; }
+.mesa-action-bar-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
+.mesa-action-bar-title { font-weight: bold; color: #f4dec0; font-size: 12px; overflow-wrap: anywhere; }
+.mesa-action-phase-badge { font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid #7a5a3c; background: #2a2018; color: #e8c796; }
+.mesa-action-phase-badge.phase-active_turn { border-color: #e4ad5e; background: #4a3119; color: #ffd992; }
+.mesa-action-phase-badge.phase-post_turn { border-color: #6b8e6b; background: #1f2d21; color: #b7e2b8; }
+.mesa-action-phase-badge.phase-pre_turn { border-color: #9e7b44; background: #2e2414; color: #f2cf8d; }
+.mesa-action-phase-badge.phase-round_ended { border-color: #7c4a4a; background: #2c1919; color: #e8b0b0; }
+.mesa-action-counters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.mesa-action-counter { background: #231b15; border: 1px solid #59412d; padding: 4px 5px; text-align: center; }
+.mesa-action-counter span { display: block; font-size: 9.5px; color: #baa386; }
+.mesa-action-counter strong { display: block; font-size: 13px; color: #ffce8a; }
+.mesa-action-controls-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.mesa-action-select { flex: 1 1 140px; min-width: 0; background: #2a211a; color: #f1e4cf; border: 1px solid #7e5d3d; padding: 5px 6px; font-size: 11.5px; }
+.mesa-action-meta { font-size: 10.5px; color: #cbb596; line-height: 1.35; }
+.mesa-action-block-note { font-size: 10.5px; color: #f0b07a; background: #2b1d15; border: 1px solid #7d4a2d; padding: 5px 7px; line-height: 1.35; }
+.mesa-action-sublist { display: flex; flex-direction: column; gap: 5px; }
+.mesa-action-subitem { background: #231b15; border: 1px solid #654a34; padding: 6px 7px; display: flex; flex-direction: column; gap: 4px; }
+.mesa-action-subitem.is-pending-gm { border-color: #d79c4c; background: #2d2115; }
+.mesa-action-subitem-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-weight: bold; font-size: 11px; color: #f5dec0; }
+.mesa-action-subitem-meta { font-size: 10px; color: #c7b092; }
+.mesa-action-subitem-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+.mesa-action-gm-opp { border: 1px solid #5e442f; background: #211914; padding: 5px 7px; }
+.mesa-action-gm-opp summary { cursor: pointer; font-weight: bold; font-size: 11px; color: #e8c796; }
+.mesa-action-gm-opp-body { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.mesa-action-gm-opp-body label { font-size: 10.5px; color: #d6bd9c; display: flex; flex-direction: column; gap: 2px; }
+.mesa-action-gm-opp-body input[type="text"], .mesa-action-gm-opp-body select { background: #2a211a; color: #f1e4cf; border: 1px solid #7e5d3d; padding: 4px 6px; font-size: 11px; }
+.mesa-action-gm-opp-checks { display: flex; gap: 10px; flex-wrap: wrap; font-size: 10.5px; }
+.mesa-action-gm-opp-checks label { flex-direction: row; align-items: center; gap: 4px; }
 .mesa-tracker-portrait { position: relative; display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 36px; background: #110e0b; border-radius: 50%; overflow: hidden; font-size: 21px; }
 .mesa-tracker-portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .mesa-tracker-name { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: bold; font-size: 13px; }

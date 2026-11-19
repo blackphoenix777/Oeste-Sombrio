@@ -5,7 +5,7 @@
  * Compilado de Magias somente leitura e Modal de Resumo de Regras (#regras-modal).
  */
 import { OS } from "./app.js";
-import { computeTurnActionBudget, resolveIndividual6BInitiative, resolveCombatantInitiativeMode, computeCascadeInitiatives, extractMonsterFixedActions, inspectCombatConditionsForActions, evaluateSheetOverloadForActions, CANONICAL_ACTION_COSTS, ALLOWED_REACTION_ACTION_TYPES, resolveCanonicalActionCost, createCombatantActionState, computeAvailableActionsFromState, hasPendingActionReservations, applyActionControllerOperation, applyFatigueCascadeToInstanceRoll, createOwn6BInstanceStateContract, validateAndProjectOwn6BInstanceCommand, extractOwn6BTemplate, entityHasExplicitOwn6B } from "./rules/index.js";
+import { computeTurnActionBudget, resolveIndividual6BInitiative, resolveCombatantInitiativeMode, computeCascadeInitiatives, extractMonsterFixedActions, inspectCombatConditionsForActions, evaluateSheetOverloadForActions, CANONICAL_ACTION_COSTS, ALLOWED_REACTION_ACTION_TYPES, resolveCanonicalActionCost, createCombatantActionState, computeAvailableActionsFromState, hasPendingActionReservations, applyActionControllerOperation, GRID_SQUARE_METERS, DEFAULT_MELEE_REACH_METERS, CONTEXTUAL_ACTION_CATALOG, getContextualActionSpec, deriveCombatantTurnPhase, getTurnPhaseLabel, summarizeCombatantActionEconomy, computeGridDistanceBetweenTokens, inspectPassiveSkillForReaction, evaluateContextualOpportunity, evaluateContextualBarCommands, applyFatigueCascadeToInstanceRoll, createOwn6BInstanceStateContract, validateAndProjectOwn6BInstanceCommand, extractOwn6BTemplate, entityHasExplicitOwn6B } from "./rules/index.js";
 
 var BESTIARIO_INDEX_URL = "data/bestiario/bestiario-index.json";
 var SCENE_LS_PREFIX = "oesteSombrioMesaScene_";
@@ -889,6 +889,39 @@ if (typeof hasPendingActionReservations === "function") {
 }
 if (typeof applyActionControllerOperation === "function") {
   OS.applyActionControllerOperation = applyActionControllerOperation;
+}
+if (typeof GRID_SQUARE_METERS !== "undefined") {
+  OS.GRID_SQUARE_METERS = GRID_SQUARE_METERS;
+}
+if (typeof DEFAULT_MELEE_REACH_METERS !== "undefined") {
+  OS.DEFAULT_MELEE_REACH_METERS = DEFAULT_MELEE_REACH_METERS;
+}
+if (typeof CONTEXTUAL_ACTION_CATALOG !== "undefined") {
+  OS.CONTEXTUAL_ACTION_CATALOG = CONTEXTUAL_ACTION_CATALOG;
+}
+if (typeof getContextualActionSpec === "function") {
+  OS.getContextualActionSpec = getContextualActionSpec;
+}
+if (typeof deriveCombatantTurnPhase === "function") {
+  OS.deriveCombatantTurnPhase = deriveCombatantTurnPhase;
+}
+if (typeof getTurnPhaseLabel === "function") {
+  OS.getTurnPhaseLabel = getTurnPhaseLabel;
+}
+if (typeof summarizeCombatantActionEconomy === "function") {
+  OS.summarizeCombatantActionEconomy = summarizeCombatantActionEconomy;
+}
+if (typeof computeGridDistanceBetweenTokens === "function") {
+  OS.computeGridDistanceBetweenTokens = computeGridDistanceBetweenTokens;
+}
+if (typeof inspectPassiveSkillForReaction === "function") {
+  OS.inspectPassiveSkillForReaction = inspectPassiveSkillForReaction;
+}
+if (typeof evaluateContextualOpportunity === "function") {
+  OS.evaluateContextualOpportunity = evaluateContextualOpportunity;
+}
+if (typeof evaluateContextualBarCommands === "function") {
+  OS.evaluateContextualBarCommands = evaluateContextualBarCommands;
 }
 if (typeof applyFatigueCascadeToInstanceRoll === "function" && !OS.applyFatigueCascadeToInstanceRoll) {
   OS.applyFatigueCascadeToInstanceRoll = applyFatigueCascadeToInstanceRoll;
@@ -3040,6 +3073,9 @@ OS.selectMesaMapToken = function (tokenId) {
     node.classList.toggle("is-selected", active);
     node.setAttribute("aria-pressed", String(active));
   });
+  if (OS.syncContextualActionBarSelection) {
+    OS.syncContextualActionBarSelection(selected ? selected.id : null);
+  }
 };
 
 function syncMesaMapTokenDom(el, token, metricsArg) {
